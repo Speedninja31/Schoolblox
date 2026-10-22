@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>2020 Games Hub 3D</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+<aside id="side"><div class="logo">🎮<span>Games Hub</span></div>
+<nav><button data-nav="home" class="on">🏠<span>Home</span></button><button data-nav="games">🕹️<span>Games</span></button><button data-nav="avatar">🧢<span>Avatar</span></button><button data-nav="friends">👥<span>Friends</span></button><button data-nav="settings">⚙️<span>Settings</span></button></nav>
+<div class="sfoot">Made with Three.js · Multiplayer by Supabase · Not affiliated with Roblox</div></aside>
+<section id="mainp">
+<div class="top"><div class="search">🔎<input id="q" placeholder="Search games..." autocomplete="off"></div>
+<div class="who"><label title="Your name">👤<input id="nick" placeholder="Your name" maxlength="14"></label><label title="Room code: friends with the same code play together">🔑<input id="roomcode" placeholder="Room" maxlength="20" value="public"></label><span id="online"></span><button id="inv" class="chipb">🔗 Invite link</button><button id="frb" class="chipb pri">👥 Friends</button></div></div>
+<div id="hero"></div><div id="rows"></div>
+</section></div>
+<div id="gd"></div>
+<div id="sp"><div class="frh"><b>⚙️ Settings</b><button id="spx2">✕</button></div>
+<label class="set"><span>Mouse sensitivity <b id="sensv"></b></span><input type="range" id="sens" min="1" max="10"></label>
+<label class="set"><span>Graphics</span><select id="qual"><option value="auto">Auto</option><option value="low">Low (faster)</option><option value="high">High (sharper)</option></select></label>
+<label class="set"><span>Theme</span><select id="thm"><option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+<label class="set"><span>Sound</span><button id="snb">🔊 On</button></label>
+<button id="rst" class="dng">Reset all saved data</button></div>
+
+<div id="frp"><div class="frh"><b>👥 Friends</b><button id="frx">✕</button></div>
+<div>Your friend code<div class="frc"><code id="myc"></code><button id="cpc">Copy link</button></div></div>
+<div class="fra"><input id="addc" placeholder="Add a friend by code" maxlength="8"><button id="addb">Add</button></div>
+<div id="frl"></div><small id="frn" style="color:var(--sub)"></small></div><div id="toasts"></div>
+<div id="modal"><div class="win">
+<div class="bar"><b id="gtitle"></b><span id="score"></span><span><button id="hlp" title="Controls">❔</button><button id="frb2" title="Friends">👥</button><button id="mt" title="Sound">🔊</button><button id="fs" title="Fullscreen">⛶</button><button id="close">Exit</button></span></div>
+<div id="view"><div id="over"></div><div id="banner"></div><div id="lobby"><div class="lbx"><div class="lba" id="lba"></div><div class="lbc2"><h2 id="lbt"></h2><div class="lbtg" id="lbtg"></div><p class="lbh" id="lbh"></p><div class="lbr"><span id="lbc"></span><button class="lbs" id="lbcp">🔗 Copy invite</button></div><div id="lbl"></div><div class="lbb"><button class="lbs" id="lbback">← Back</button><button class="btn" id="lbgo">▶ Play</button></div></div></div></div><button id="emb">😀 Emotes</button><div id="emp"></div><div id="clog"></div><div id="hp"><div id="hpf"></div><span id="hpt"></span></div><div id="hurt"></div><div id="vote"></div><div id="role"><b id="rt"></b><i id="rcd"></i></div><div id="rev"></div><div id="xh"></div><div id="hm">✕</div><div id="lockmsg">🖱 Click to lock your mouse (Esc releases it)</div><div id="spec"><button id="spt">👁 Spectate</button><span id="spc" style="display:none"><button id="spp">◀</button> <b id="spn"></b> <button id="spx">▶</button></span></div><input id="chatin" placeholder="Press Enter to chat" maxlength="80"></div>
+<div id="petview" style="display:none"></div><div id="custom"></div>
+<div class="touch" id="touch"><button data-k="KeyA">◀</button><button data-k="KeyW">▲</button><button data-k="KeyS">▼</button><button data-k="KeyD">▶</button><button data-k="Space">JUMP</button><span id="mmb" style="display:none"><button data-k="KeyE">ACT</button><button data-k="KeyF">THROW</button></span></div>
+<div class="hint" id="hint"></div>
+</div></div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.75.0/dist/umd/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/core.js"></script>
+<script src="js/games/avatar.js"></script>
+<script src="js/games/tower.js"></script>
+<script src="js/games/survive.js"></script>
+<script src="js/games/pets.js"></script>
+<script src="js/games/mm.js"></script>
+<script src="js/games/hang.js"></script>
+<script src="js/games/fish.js"></script>
+<script src="js/games/garden.js"></script>
+<script src="js/games/zom.js"></script>
+<script src="js/games/snow.js"></script>
+<script src="js/games/coming-soon.js"></script>
+<script src="js/menu.js"></script>
+</body>
+</html>
