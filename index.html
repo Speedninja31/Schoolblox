@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>2020 Games Hub 3D</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css" onerror="(window.__fail=window.__fail||[]).push('css/style.css')">
 </head>
 <body>
 <div id="app">
@@ -40,19 +40,27 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.75.0/dist/umd/supabase.js"></script>
-<script src="js/config.js"></script>
-<script src="js/core.js"></script>
-<script src="js/games/avatar.js"></script>
-<script src="js/games/tower.js"></script>
-<script src="js/games/survive.js"></script>
-<script src="js/games/pets.js"></script>
-<script src="js/games/mm.js"></script>
-<script src="js/games/hang.js"></script>
-<script src="js/games/fish.js"></script>
-<script src="js/games/garden.js"></script>
-<script src="js/games/zom.js"></script>
-<script src="js/games/snow.js"></script>
-<script src="js/games/coming-soon.js"></script>
-<script src="js/menu.js"></script>
+<script src="js/config.js" onerror="(window.__fail=window.__fail||[]).push('js/config.js')"></script>
+<script src="js/core.js" onerror="(window.__fail=window.__fail||[]).push('js/core.js')"></script>
+<script src="js/games/avatar.js" onerror="(window.__fail=window.__fail||[]).push('js/games/avatar.js')"></script>
+<script src="js/games/tower.js" onerror="(window.__fail=window.__fail||[]).push('js/games/tower.js')"></script>
+<script src="js/games/survive.js" onerror="(window.__fail=window.__fail||[]).push('js/games/survive.js')"></script>
+<script src="js/games/pets.js" onerror="(window.__fail=window.__fail||[]).push('js/games/pets.js')"></script>
+<script src="js/games/mm.js" onerror="(window.__fail=window.__fail||[]).push('js/games/mm.js')"></script>
+<script src="js/games/hang.js" onerror="(window.__fail=window.__fail||[]).push('js/games/hang.js')"></script>
+<script src="js/games/fish.js" onerror="(window.__fail=window.__fail||[]).push('js/games/fish.js')"></script>
+<script src="js/games/garden.js" onerror="(window.__fail=window.__fail||[]).push('js/games/garden.js')"></script>
+<script src="js/games/zom.js" onerror="(window.__fail=window.__fail||[]).push('js/games/zom.js')"></script>
+<script src="js/games/snow.js" onerror="(window.__fail=window.__fail||[]).push('js/games/snow.js')"></script>
+<script src="js/games/coming-soon.js" onerror="(window.__fail=window.__fail||[]).push('js/games/coming-soon.js')"></script>
+<script src="js/menu.js" onerror="(window.__fail=window.__fail||[]).push('js/menu.js')"></script>
+<script>
+/* If any file failed to load (wrong folder, missing upload, old deploy), show exactly which one. */
+(function(){var f=window.__fail||[],n=(typeof GAMES==='undefined')?0:GAMES.length;
+ if(!f.length&&n>=10)return;
+ var d=document.createElement('div');d.style.cssText='position:fixed;left:0;right:0;top:0;background:#b71c1c;color:#fff;padding:12px 16px;z-index:99999;font:14px/1.5 system-ui;white-space:pre-line';
+ d.textContent='Some site files did not load, so the menu cannot start.\n'+(f.length?'Missing: '+f.join(', '):'Only '+n+' of 11 games were found.')+'\nCheck that these files are in your repository in the same folders (css/, js/, js/games/), wait for Netlify to finish deploying, then hard refresh (Ctrl+Shift+R).';
+ document.body.appendChild(d)})();
+</script>
 </body>
 </html>
