@@ -1,13 +1,13 @@
 /* menu.js - home screen: hero banner, game cards, search, favorites, settings.
    Loaded last so every game has registered itself. */
-const FEAT=['zom','snow','fish','garden','survive','mm','hang'];let fi=0,cat='All',qry='';
+const FEAT=['zom','snow','fish','garden','survive','mm','hang'].filter(id=>GAMES.some(g=>g.id===id));let fi=0,cat='All',qry='';
 const G$=id=>GAMES.find(g=>g.id===id),bgOf=g=>'linear-gradient(135deg,'+g.c[0]+','+g.c[1]+')',catOf=g=>(META[g.id]||{}).c||g.tag;
 function mkCard(g){const m=META[g.id]||{},b=document.createElement('div');b.className='gc';b.tabIndex=0;
  b.innerHTML='<div class="art" style="background:'+bgOf(g)+'">'+g.e+(g.soon?'<span class="nw" style="background:#555">SOON</span>':m.n?'<span class="nw">NEW</span>':'')+'<button class="fav" title="Favorite">'+(ST.fav.includes(g.id)?'\u2665':'\u2661')+'</button></div><div class="bd"><b>'+g.name+'</b><div class="mt"><span>'+catOf(g)+'</span><span>'+(m.m||'')+'</span></div></div>';
  b.onclick=e=>{if(e.target.classList.contains('fav')){e.stopPropagation();toggleFav(g.id);return}if(g.soon)return;openGd(g)};b.onkeydown=e=>{if(e.key==='Enter'&&!g.soon)openGd(g)};return b}
 function toggleFav(id){const i=ST.fav.indexOf(id);if(i<0)ST.fav.push(id);else ST.fav.splice(i,1);saveS();renderMenu()}
 function noteRecent(id){ST.rec=[id,...ST.rec.filter(x=>x!==id)].slice(0,4);saveS();renderMenu()}
-function renderHero(){const g=G$(FEAT[fi]),h=document.getElementById('hero');h.style.background=bgOf(g);
+function renderHero(){if(!FEAT.length)return;const g=G$(FEAT[fi]),h=document.getElementById('hero');h.style.background=bgOf(g);
  h.innerHTML='<div class="big">'+g.e+'</div><div><h1>'+g.name+'</h1><p>'+g.hint.split('. ')[0]+'.</p><button class="hbtn" id="hp1">\u25b6 Play now</button><button class="hbtn alt" id="hp2">Details</button></div><div class="dots">'+FEAT.map((x,i)=>'<i class="'+(i===fi?'on':'')+'" data-i="'+i+'"></i>').join('')+'</div>';
  document.getElementById('hp1').onclick=()=>openGame(g);document.getElementById('hp2').onclick=()=>openGd(g);h.querySelectorAll('.dots i').forEach(d=>d.onclick=()=>{fi=+d.dataset.i;renderHero()})}
 function renderMenu(){const R=document.getElementById('rows');R.innerHTML='';
@@ -33,5 +33,5 @@ document.querySelectorAll('#side nav button').forEach(b=>b.onclick=()=>{const k=
  if(k==='home'||k==='games'){document.querySelectorAll('#side nav button').forEach(x=>x.classList.toggle('on',x===b));if(k==='home')window.scrollTo({top:0,behavior:'smooth'});else document.getElementById('rows').scrollIntoView({behavior:'smooth'})}
  else if(k==='avatar')openGame(G$('avatar'));else if(k==='friends')openFr();else openSet()});
 addEventListener('keydown',e=>{if(e.code==='Escape'){document.getElementById('gd').classList.remove('on');document.getElementById('sp').classList.remove('on')}});
-renderHero();renderMenu();setInterval(()=>{if(!document.getElementById('modal').classList.contains('on')&&!document.getElementById('gd').classList.contains('on')){fi=(fi+1)%FEAT.length;renderHero()}},7000);
+try{renderHero()}catch(e){console.error(e)}try{renderMenu()}catch(e){console.error(e)}setInterval(()=>{if(!document.getElementById('modal').classList.contains('on')&&!document.getElementById('gd').classList.contains('on')){fi=(fi+1)%FEAT.length;renderHero()}},7000);
 (()=>{const gp=new URLSearchParams(location.search).get('game');if(gp&&G$(gp))openGd(G$(gp))})();
