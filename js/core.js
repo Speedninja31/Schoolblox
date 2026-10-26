@@ -145,9 +145,32 @@ function dress3(C,add,h,b){
  if(ef&&ef.startsWith('ring')){const col=ef==='ringb'?0x3bb0ff:ef==='ringg'?0xffd23a:0xffffff,r=add(new THREE.TorusGeometry(2.2,.12,8,32),col,0,.15,0,C.g,1);r.rotation.x=Math.PI/2;C.fxu=t=>{if(ef==='ringr')r.material.color.setHSL((t*.3)%1,.9,.6);r.rotation.z=t*2}}
 }
 const custom=document.getElementById('custom');
+/* ---- SchoolBux: earn 10 every minute on the site; spend them in the Avatar Shop ---- */
+const BX={b:0,own:{},acc:0};
+try{const s=localStorage.getItem('hubbux');if(s)Object.assign(BX,JSON.parse(s));else{for(const k in AV)if(AV[k])BX.own[k+':'+AV[k]]=1}}catch(e){}
+const saveBX=()=>{try{localStorage.setItem('hubbux',JSON.stringify(BX))}catch(e){}};saveBX();
+const CLOTHES=['shirt','pants','design','sleeves','legs','shoes'];
+const priceOf=k=>CLOTHES.includes(k)?5:k==='face'?20:50;
+const owned=(k,i)=>i===0||!!BX.own[k+':'+i];
+const CATN={skin:'Skin',shirt:'Shirt',design:'Shirt design',sleeves:'Sleeves',pants:'Pants',legs:'Legs',shoes:'Shoes',face:'Face',glasses:'Glasses',hat:'Hats',neck:'Neck',back:'Back',hand:'Hand',effect:'Effects'};
+let CAT='hat';
+function bxUpdate(){document.querySelectorAll('#bxn,.bxs').forEach(e=>e.textContent=BX.b);const t=document.getElementById('bxt');if(t)t.textContent=Math.max(1,Math.ceil(60-BX.acc))+'s'}
+let bxLast=Date.now(),bxSave=0;
+setInterval(()=>{const n=Date.now(),dt=Math.min(5,(n-bxLast)/1000);bxLast=n;if(document.hidden)return;BX.acc+=dt;
+ if(BX.acc>=60){BX.acc-=60;BX.b+=10;saveBX();toast('+10 SchoolBux \uD83D\uDCB5');if(custom.style.display==='block')buildCustom()}
+ else if(++bxSave%10===0)saveBX();bxUpdate()},1000);
+bxUpdate();
 function buildCustom(){
- custom.innerHTML=ORDER.map(k=>`<div class="row"><b>${k}</b>${OPT[k].map((o,i)=>`<button class="chip${AV[k]===i?' on':''}" data-k="${k}" data-i="${i}"${typeof o[1]==='number'&&o[1]>255?` style="border-left:10px solid #${o[1].toString(16).padStart(6,'0')}"`:''}>${o[0]}</button>`).join('')}</div>`).join('')+'<div class="meta">Everything here is free. Your look is saved and used in every game.</div>';
- custom.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{AV[b.dataset.k]=+b.dataset.i;try{localStorage.setItem('avatar',JSON.stringify(AV))}catch(e){}buildCustom();ENG.avatar.rebuild()})}
+ const k=CAT,pr=priceOf(k);
+ const tabs=ORDER.map(c=>`<button class="tab${c===k?' on':''}" data-t="${c}">${CATN[c]}</button>`).join('');
+ const items=OPT[k].map((o,i)=>{const own=owned(k,i),on=AV[k]===i,sw=typeof o[1]==='number'&&o[1]>255?`<i class="sw" style="background:#${o[1].toString(16).padStart(6,'0')}"></i>`:`<i class="sw n">${i===0?'\u2715':'\u2605'}</i>`;
+  const st=on?'<em>Wearing</em>':own?'<em>Owned</em>':`<em class="pc${BX.b<pr?' no':''}">\uD83D\uDCB5 ${pr}</em>`;
+  return `<button class="ic${on?' on':''}${own?'':' lock'}" data-i="${i}">${sw}<span>${o[0]}</span>${st}</button>`}).join('');
+ custom.innerHTML=`<div class="sh-top"><div class="sh-bal">\uD83D\uDCB5 <b class="bxs">${BX.b}</b> SchoolBux</div><div class="sh-nx">Next +10 in <b id="bxt">${Math.max(1,Math.ceil(60-BX.acc))}s</b></div></div><div class="sh-tabs">${tabs}</div><div class="sh-note">${CATN[k]} \u00b7 ${pr} SchoolBux each \u00b7 you earn 10 every minute you're on the site</div><div class="sh-grid">${items}</div>`;
+ custom.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{CAT=b.dataset.t;buildCustom()});
+ custom.querySelectorAll('.ic').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;
+  if(!owned(k,i)){if(BX.b<pr){toast('Not enough SchoolBux \u2013 you need '+(pr-BX.b)+' more');return}BX.b-=pr;BX.own[k+':'+i]=1;toast('Bought '+OPT[k][i][0]+'!')}
+  AV[k]=i;try{localStorage.setItem('avatar',JSON.stringify(AV))}catch(e){}saveBX();buildCustom();bxUpdate();ENG.avatar.rebuild()})}
 
 /* Roblox-style blocky character (R6 proportions, 5 studs tall) */
 function faceTex(kind){const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');
