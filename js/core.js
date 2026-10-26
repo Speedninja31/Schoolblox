@@ -166,17 +166,31 @@ setInterval(()=>{const n=Date.now(),dt=Math.min(5,(n-bxLast)/1000);bxLast=n;if(d
  if(BX.acc>=60){BX.acc-=60;BX.b+=10;saveBX();toast('+10 SchoolBux \uD83D\uDCB5');if(custom.style.display==='block')buildCustom()}
  else if(++bxSave%10===0)saveBX();bxUpdate()},1000);
 bxUpdate();
+let SHOPMODE='catalog',PV={};
+const withPV=f=>{const sv=AV;AV=Object.assign({},AV,PV);try{return f()}finally{AV=sv}};
 function buildCustom(){
- const k=CAT,pr=priceOf(k);
+ const cat=SHOPMODE==='catalog',k=CAT,pr=priceOf(k),sc=custom.scrollTop;
+ document.getElementById('gtitle').textContent=cat?'Catalog':'My Avatar';custom.classList.toggle('catm',cat);
  const tabs=ORDER.map(c=>`<button class="tab${c===k?' on':''}" data-t="${c}">${CATN[c]}</button>`).join('');
- const items=OPT[k].map((o,i)=>{const own=owned(k,i),on=AV[k]===i,sw=typeof o[1]==='number'&&o[1]>255?`<i class="sw" style="background:#${o[1].toString(16).padStart(6,'0')}"></i>`:`<i class="sw n">${i===0?'\u2715':'\u2605'}</i>`;
-  const st=on?'<em>Wearing</em>':own?'<em>'+(FREEC.includes(k)?'Free':'Owned')+'</em>':`<em class="pc${BX.b<pr?' no':''}">\uD83D\uDCB5 ${pr}</em>`;
-  return `<button class="ic${on?' on':''}${own?'':' lock'}" data-i="${i}">${sw}<span>${o[0]}</span>${st}</button>`}).join('');
- custom.innerHTML=`<div class="sh-top"><div class="sh-bal">\uD83D\uDCB5 <b class="bxs">${BX.b}</b> SchoolBux</div><div class="sh-nx">Next +10 in <b id="bxt">${Math.max(1,Math.ceil(60-BX.acc))}s</b></div></div><div class="sh-tabs">${tabs}</div><div class="sh-note">${CATN[k]} \u00b7 ${pr?pr+' SchoolBux each':'Free'} \u00b7 you earn 10 every minute you're on the site</div><div class="sh-grid">${items}</div>`;
+ const idxs=OPT[k].map((o,i)=>i).filter(i=>cat||owned(k,i)),hidden=OPT[k].length-idxs.length;
+ const items=idxs.map(i=>{const o=OPT[k][i],own=owned(k,i),on=AV[k]===i,tr=PV[k]===i,sw=typeof o[1]==='number'&&o[1]>255?`<i class="sw" style="background:#${o[1].toString(16).padStart(6,'0')}"></i>`:`<i class="sw n">${i===0?'\u2715':'\u2605'}</i>`;
+  const st=tr?'<em class="tr">Trying on</em>':on?'<em>Wearing</em>':own?'<em>'+(FREEC.includes(k)?'Free':'Owned')+'</em>':`<em class="pc${BX.b<pr?' no':''}">\uD83D\uDCB5 ${pr}</em>`;
+  return `<button class="ic${on?' on':''}${tr?' try':''}${own?'':' lock'}" data-i="${i}">${sw}<span>${o[0]}</span>${st}</button>`}).join('');
+ const pend=Object.keys(PV),tot=pend.reduce((a,c)=>a+priceOf(c),0);
+ const note=cat?`${CATN[k]} \u00b7 ${pr?pr+' SchoolBux each':'Free'} \u00b7 tap an item to try it on`:`${CATN[k]} \u00b7 items you own${hidden?` \u00b7 ${hidden} more in the Catalog`:''}`;
+ const bar=cat&&pend.length?`<div class="sh-buy"><span>Trying on ${pend.length} item${pend.length>1?'s':''}${tot?` \u00b7 \uD83D\uDCB5 ${tot}`:''}</span><button id="shbuy">${tot?'Buy & wear':'Wear'}</button><button id="shclr">Clear</button></div>`:'';
+ custom.innerHTML=`<div class="sh-top"><div class="sh-bal">\uD83D\uDCB5 <b class="bxs">${BX.b}</b> SchoolBux</div><div class="sh-nx">Next +10 in <b id="bxt">${Math.max(1,Math.ceil(60-BX.acc))}s</b></div><button class="sh-sw" id="shsw">${cat?'\uD83D\uDC64 My Avatar':'\uD83D\uDECD\uFE0F Catalog'}</button></div><div class="sh-tabs">${tabs}</div><div class="sh-note">${note}</div><div class="sh-grid">${items}</div>${bar}`;
+ custom.scrollTop=sc;
+ const redo=()=>{buildCustom();bxUpdate();ENG.avatar.rebuild()};
  custom.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{CAT=b.dataset.t;buildCustom()});
- custom.querySelectorAll('.ic').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;let nb=false;
-  if(!owned(k,i)){if(BX.b<pr){toast('Not enough SchoolBux \u2013 you need '+(pr-BX.b)+' more');return}BX.b-=pr;BX.own[k+':'+i]=1;nb=true;toast('Bought '+OPT[k][i][0]+'!')}
-  AV[k]=i;try{localStorage.setItem('avatar',JSON.stringify(AV))}catch(e){}saveBX();buildCustom();if(nb){const e=custom.querySelector('.ic.on');if(e)e.classList.add('pop')}bxUpdate();ENG.avatar.rebuild()})}
+ document.getElementById('shsw').onclick=()=>{SHOPMODE=cat?'avatar':'catalog';PV={};redo()};
+ custom.querySelectorAll('.ic').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;
+  if(owned(k,i)){AV[k]=i;delete PV[k];try{localStorage.setItem('avatar',JSON.stringify(AV))}catch(e){}}
+  else if(PV[k]===i)delete PV[k];else PV[k]=i;
+  redo()});
+ const bb=document.getElementById('shbuy');if(bb)bb.onclick=()=>{if(tot>BX.b){toast('Not enough SchoolBux \u2013 you need '+(tot-BX.b)+' more');return}
+  BX.b-=tot;pend.forEach(c=>{BX.own[c+':'+PV[c]]=1;AV[c]=PV[c]});PV={};try{localStorage.setItem('avatar',JSON.stringify(AV))}catch(e){}saveBX();toast(tot?'Purchase complete!':'Wearing it!');buildCustom();custom.querySelectorAll('.ic.on').forEach(e=>e.classList.add('pop'));bxUpdate();ENG.avatar.rebuild()};
+ const cb=document.getElementById('shclr');if(cb)cb.onclick=()=>{PV={};redo()}}
 
 /* Roblox-style blocky character (R6 proportions, 5 studs tall) */
 function faceTex(kind){const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');

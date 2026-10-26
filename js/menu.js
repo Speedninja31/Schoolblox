@@ -58,7 +58,7 @@ $e('snb').onclick=()=>{$e('mt').click();$e('snb').textContent=mute?'\ud83d\udd07
 $e('rst').onclick=()=>{if(confirm('Delete your saved name, friends, avatar and settings?')){try{localStorage.clear()}catch(e){}location.reload()}};
 /* ---------- navigation, search, banner ---------- */
 function goTo(k){if(k==='home')window.scrollTo({top:0,behavior:'smooth'});else if(k==='games'){const a=$e('allh');if(a)a.scrollIntoView({behavior:'smooth'})}
- else if(k==='catalog'||k==='avatar')openGame(G$('avatar'));else if(k==='friends')openFr();else if(k==='settings')openSet();
+ else if(k==='catalog'||k==='avatar'){SHOPMODE=k==='catalog'?'catalog':'avatar';openGame(G$('avatar'))}else if(k==='friends')openFr();else if(k==='settings')openSet();
  else if(k==='favorites'){cat='Favorites';renderMenu();$e('allh').scrollIntoView({behavior:'smooth'})}else if(k==='recent'){cat='All';qry='';renderMenu();$e('rows').scrollIntoView({behavior:'smooth'})}}
 document.querySelectorAll('[data-nav],[data-go]').forEach(b=>b.onclick=()=>goTo(b.dataset.nav||b.dataset.go));
 $e('gear').onclick=openSet;$e('brand').onclick=()=>goTo('home');
