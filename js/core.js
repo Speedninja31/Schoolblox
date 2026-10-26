@@ -155,8 +155,9 @@ const BX={b:0,own:{},acc:0};
 try{const s=localStorage.getItem('hubbux');if(s)Object.assign(BX,JSON.parse(s));else{for(const k in AV)if(AV[k])BX.own[k+':'+AV[k]]=1}}catch(e){}
 const saveBX=()=>{try{localStorage.setItem('hubbux',JSON.stringify(BX))}catch(e){}};saveBX();
 const CLOTHES=['shirt','pants','design','sleeves','legs','shoes'];
-const priceOf=k=>CLOTHES.includes(k)?5:k==='face'?20:50;
-const owned=(k,i)=>i===0||!!BX.own[k+':'+i];
+const FREEC=['skin','shirt','pants'];
+const priceOf=k=>FREEC.includes(k)?0:CLOTHES.includes(k)?5:k==='face'?20:50;
+const owned=(k,i)=>i===0||FREEC.includes(k)||!!BX.own[k+':'+i];
 const CATN={skin:'Skin',shirt:'Shirt',design:'Shirt design',sleeves:'Sleeves',pants:'Pants',legs:'Legs',shoes:'Shoes',face:'Face',glasses:'Glasses',hat:'Hats',neck:'Neck',back:'Back',hand:'Hand',effect:'Effects'};
 let CAT='hat';
 function bxUpdate(){document.querySelectorAll('#bxn,.bxs').forEach(e=>e.textContent=BX.b);const t=document.getElementById('bxt');if(t)t.textContent=Math.max(1,Math.ceil(60-BX.acc))+'s'}
@@ -169,9 +170,9 @@ function buildCustom(){
  const k=CAT,pr=priceOf(k);
  const tabs=ORDER.map(c=>`<button class="tab${c===k?' on':''}" data-t="${c}">${CATN[c]}</button>`).join('');
  const items=OPT[k].map((o,i)=>{const own=owned(k,i),on=AV[k]===i,sw=typeof o[1]==='number'&&o[1]>255?`<i class="sw" style="background:#${o[1].toString(16).padStart(6,'0')}"></i>`:`<i class="sw n">${i===0?'\u2715':'\u2605'}</i>`;
-  const st=on?'<em>Wearing</em>':own?'<em>Owned</em>':`<em class="pc${BX.b<pr?' no':''}">\uD83D\uDCB5 ${pr}</em>`;
+  const st=on?'<em>Wearing</em>':own?'<em>'+(FREEC.includes(k)?'Free':'Owned')+'</em>':`<em class="pc${BX.b<pr?' no':''}">\uD83D\uDCB5 ${pr}</em>`;
   return `<button class="ic${on?' on':''}${own?'':' lock'}" data-i="${i}">${sw}<span>${o[0]}</span>${st}</button>`}).join('');
- custom.innerHTML=`<div class="sh-top"><div class="sh-bal">\uD83D\uDCB5 <b class="bxs">${BX.b}</b> SchoolBux</div><div class="sh-nx">Next +10 in <b id="bxt">${Math.max(1,Math.ceil(60-BX.acc))}s</b></div></div><div class="sh-tabs">${tabs}</div><div class="sh-note">${CATN[k]} \u00b7 ${pr} SchoolBux each \u00b7 you earn 10 every minute you're on the site</div><div class="sh-grid">${items}</div>`;
+ custom.innerHTML=`<div class="sh-top"><div class="sh-bal">\uD83D\uDCB5 <b class="bxs">${BX.b}</b> SchoolBux</div><div class="sh-nx">Next +10 in <b id="bxt">${Math.max(1,Math.ceil(60-BX.acc))}s</b></div></div><div class="sh-tabs">${tabs}</div><div class="sh-note">${CATN[k]} \u00b7 ${pr?pr+' SchoolBux each':'Free'} \u00b7 you earn 10 every minute you're on the site</div><div class="sh-grid">${items}</div>`;
  custom.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{CAT=b.dataset.t;buildCustom()});
  custom.querySelectorAll('.ic').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;let nb=false;
   if(!owned(k,i)){if(BX.b<pr){toast('Not enough SchoolBux \u2013 you need '+(pr-BX.b)+' more');return}BX.b-=pr;BX.own[k+':'+i]=1;nb=true;toast('Bought '+OPT[k][i][0]+'!')}
