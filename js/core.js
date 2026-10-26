@@ -328,8 +328,8 @@ function mpTick(dt,id){
   if(c.g.parent!==scene)scene.add(c.g);
   c.x+=(num(q.x)-c.x)*k;c.y+=(num(q.y)-c.y)*k;c.z+=(num(q.z)-c.z)*k;
   let d=num(q.yaw)-c.yaw;d=Math.atan2(Math.sin(d),Math.cos(d));c.yaw+=d*k;
-  c.hs=q.hs?16:0;c.gr=!!q.gr;c.vy=num(q.vy);c.emote=Object.values(EMK).includes(q.em)?q.em:null;c.t+=dt;animate(c,dt);c.q=q;hpBar(c,typeof q.hp==='number'&&q.hp>=0?q.hp:null);if(cur.rem)cur.rem(c,q,dt);
-  if(!c.nm){c.nm=1;(async()=>{let nm=String(q.n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';try{if(p.by&&usr&&usr.profiles){const ps=await usr.profiles([p.by]);nm=(ps[p.by]&&ps[p.by].name)||nm}}catch(e){}if(c.tag)c.g.remove(c.tag);c.tag=tag(nm);c.g.add(c.tag)})()}
+  c.hs=q.hs?16:0;c.gr=!!q.gr;c.vy=num(q.vy);c.emote=Object.values(EMK).includes(q.em)?q.em:null;c.t+=dt;animate(c,dt);c.q=q;hpBar(c,id!=='mm'&&typeof q.hp==='number'&&q.hp>=0?q.hp:null);if(cur.rem)cur.rem(c,q,dt);
+  if(!c.nm){c.nm=1;(async()=>{let nm=String(q.n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';try{if(p.by&&usr&&usr.profiles){const ps=await usr.profiles([p.by]);nm=(ps[p.by]&&ps[p.by].name)||nm}}catch(e){}if(c.tag)c.g.remove(c.tag);c.tag=tag(nm);if(id!=='mm')c.g.add(c.tag)})()}
  }
  for(const [pk,c] of RM)if(!seen.has(pk)){scene.remove(c.g);RM.delete(pk)}
  scoreEl.textContent+=' · 👥 '+(seen.size+1)
