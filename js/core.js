@@ -346,7 +346,7 @@ function voteSet(el,counts,mine,on){el.style.display=on?'flex':'none';if(!on)ret
  if(p.n)n.value=p.n;if(q)r.value=q.slice(0,20);else if(p.r)r.value=p.r;if(p.m){mute=true;mt.textContent='\ud83d\udd07'}
  const sv=()=>{try{localStorage.setItem('hubp',JSON.stringify({n:n.value,r:r.value,m:mute}))}catch(e){}};n.onchange=sv;r.onchange=sv;
  mt.onclick=()=>{mute=!mute;mt.textContent=mute?'\ud83d\udd07':'\ud83d\udd0a';sv()};
- document.getElementById('inv').onclick=function(){const u=location.origin+location.pathname+'?room='+roomCode();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{this.textContent='Copied!'}).catch(()=>prompt('Copy this link',u));setTimeout(()=>{this.textContent='\ud83d\udd17 Copy invite link'},2000)}})();
+ document.getElementById('inv').onclick=function(){const u=location.origin+location.pathname+'?room='+roomCode();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{this.textContent='Copied!'}).catch(()=>prompt('Copy this link',u));setTimeout(()=>{this.textContent='\ud83d\udd17 Invite Friends'},2000)}})();
 addEventListener('keydown',e=>{if(e.code==='Escape'){emp.style.display='none';if(lobby.style.display==='flex')document.getElementById('close').click()}});
 let PMIN=.05;
 const ZAVS=[0,1,2,3].map(ty=>{const a={};for(const k in OPT)a[k]=0;a.skin=[5,4,3,8][ty];a.shirt=[2,0,1,2][ty];a.pants=1;a.face=ty===1?4:5;return a});

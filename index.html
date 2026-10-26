@@ -3,19 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>2020 Games Hub 3D</title>
+<title>SchoolBlox</title>
 <link rel="stylesheet" href="css/style.css" onerror="(window.__fail=window.__fail||[]).push('css/style.css')">
 </head>
 <body>
-<div id="app">
-<aside id="side"><div class="logo">🎮<span>Games Hub</span></div>
-<nav><button data-nav="home" class="on">🏠<span>Home</span></button><button data-nav="games">🕹️<span>Games</span></button><button data-nav="avatar">🧢<span>Avatar</span></button><button data-nav="friends">👥<span>Friends</span></button><button data-nav="settings">⚙️<span>Settings</span></button></nav>
-<div class="sfoot">Made with Three.js · Multiplayer by Supabase · Not affiliated with Roblox</div></aside>
-<section id="mainp">
-<div class="top"><div class="search">🔎<input id="q" placeholder="Search games..." autocomplete="off"></div>
-<div class="who"><label title="Your name">👤<input id="nick" placeholder="Your name" maxlength="14"></label><label title="Room code: friends with the same code play together">🔑<input id="roomcode" placeholder="Room" maxlength="20" value="public"></label><span id="online"></span><button id="inv" class="chipb">🔗 Invite link</button><button id="frb" class="chipb pri">👥 Friends</button></div></div>
-<div id="hero"></div><div id="rows"></div>
-</section></div>
+<div id="sbx">
+<header id="nav"><a class="brand" id="brand"><svg class="lgo" viewBox="0 0 40 40" width="30" height="30"><g transform="rotate(-12 20 20)"><rect x="6" y="6" width="28" height="28" rx="6" fill="#ff8a00" stroke="#fff" stroke-width="2.5"/><text x="20" y="28" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="21" fill="#fff">S</text></g></svg><span class="b1">School</span><span class="b2">Blox</span></a>
+<nav class="links"><button data-go="games">Games</button><button data-go="catalog">Catalog</button><button data-go="friends">Friends</button><button data-go="settings">Settings</button></nav>
+<div class="srch"><input id="q" placeholder="Search" autocomplete="off"><span>🔎</span></div>
+<div class="curs"><span class="cc" title="Pet Hatchery coins">🪙 <b id="cc1">0</b></span><span class="cc" title="Gems">💎 <b id="cc2">0</b></span><button id="gear" title="Settings">⚙️</button></div></header>
+<aside id="sbside"><div class="uname" id="uname">Player</div>
+<nav><button data-nav="home">🏠<span>Home</span></button><button data-nav="games">🕹️<span>Games</span></button><button data-nav="friends">👥<span>Friends</span><i id="fbadge"></i></button><button data-nav="avatar">🧢<span>Character</span></button><button data-nav="favorites">♥<span>Favorites</span></button><button data-nav="recent">⏱<span>Recent</span></button><button data-nav="settings">⚙️<span>Settings</span></button></nav>
+<button id="inv" class="upg">🔗 Invite Friends</button></aside>
+<main id="sbmain"><div id="ban"></div>
+<div id="prof"><div class="pav" id="pav"></div><div class="pgr"><h1>Hello, <span id="hn">Player</span>!</h1><div class="pin"><label>Your name<input id="nick" placeholder="Your name" maxlength="14"></label><label>Room code<input id="roomcode" placeholder="Room" maxlength="20" value="public"></label><span id="online"></span></div></div></div>
+<section id="frs"></section><div id="rows"></div>
+<footer>SchoolBlox · Made with Three.js · Multiplayer by Supabase · Not affiliated with Roblox</footer></main>
+<button id="frb" class="chatab">👥 Friends</button></div>
 <div id="gd"></div>
 <div id="sp"><div class="frh"><b>⚙️ Settings</b><button id="spx2">✕</button></div>
 <label class="set"><span>Mouse sensitivity <b id="sensv"></b></span><input type="range" id="sens" min="1" max="10"></label>
