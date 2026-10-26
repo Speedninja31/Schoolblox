@@ -241,3 +241,51 @@ html.calm *,html.calm *::before,html.calm *::after{animation:none!important;tran
 .tg{appearance:none;-webkit-appearance:none;flex:none;width:46px;height:26px;border-radius:13px;background:#5a3a88;position:relative;cursor:pointer;transition:background .2s;border:0;padding:0}
 .tg::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
 .tg:checked{background:#3ddc84}.tg:checked::after{left:23px}
+
+/* ===== v4: Roblox-style in-game GUI ===== */
+#rbtl,#plist,#slb,#slc,#rbmenu{display:none;line-height:1.3}
+#modal.rbx .bar{position:absolute;left:0;right:0;top:0;z-index:12;background:none;border:0;justify-content:center;pointer-events:none;padding:12px}
+#modal.rbx .bar>b,#modal.rbx .bar>span:last-child{display:none}
+#modal.rbx #rbtl{display:flex;position:absolute;left:12px;top:12px;gap:8px;z-index:11}
+#rbtl button{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(10,12,18,.6);backdrop-filter:blur(8px);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .12s}
+#rbtl button:hover{background:rgba(255,255,255,.2)}#rbtl button:active{transform:scale(.93)}
+#modal.rbx #clog{left:12px;top:66px;width:min(360px,62%);max-width:none;height:150px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;font:13px/1.35 system-ui}
+#modal.rbx #clog div{background:rgba(10,12,18,.5);padding:3px 9px;border-radius:7px;margin-top:3px;width:fit-content;max-width:100%;text-shadow:none;animation:winin .2s}
+#modal.rbx #chatin{left:12px;top:222px;bottom:auto;transform:none;width:min(360px,62%)}
+#modal.rbx.chatoff #clog,#modal.rbx.chatoff #chatin{display:none!important}
+#modal.rbx #plist{display:flex;position:absolute;right:12px;top:12px;width:190px;flex-direction:column;gap:2px;z-index:9;pointer-events:none}
+#modal.plhide #plist{display:none!important}
+.pr{display:flex;align-items:center;gap:8px;background:rgba(10,12,18,.55);color:#fff;padding:5px 10px;border-radius:7px;font:600 13px system-ui}
+.pr i{width:10px;height:10px;border-radius:50%;flex:none}.pr.me{background:rgba(247,137,11,.5)}
+.pr span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#modal.rbx #hp{top:auto;bottom:16px;right:16px}
+#slb{position:absolute;right:16px;bottom:64px;width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(10,12,18,.6);backdrop-filter:blur(8px);color:#fff;font-size:20px;cursor:pointer;align-items:center;justify-content:center;z-index:9;transition:background .15s,box-shadow .2s,transform .12s}
+#slb:active{transform:scale(.92)}#slb.on{background:linear-gradient(135deg,#ff9a2e,#f7890b);border-color:#fff;box-shadow:0 0 18px rgba(247,137,11,.7)}
+#slc{position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.6);pointer-events:none;z-index:9}
+#modal.menuopen #lockmsg{display:none!important}
+#rbmenu{position:absolute;inset:0;z-index:30;background:rgba(0,0,0,.55);backdrop-filter:blur(5px);align-items:center;justify-content:center;color:#fff}
+#rbmenu.on{display:flex;animation:winin .2s}
+.rbw{width:min(580px,94%);max-height:88%;background:linear-gradient(180deg,#34205a,#241440);border:1px solid #4a2f73;border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.rbh{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;font-size:18px}
+.rbh button{background:none;border:0;color:#fff;font-size:18px;cursor:pointer}
+.rbtabs{display:flex;gap:6px;padding:0 14px 10px}
+.rbtabs button{flex:1;padding:9px;border:0;border-radius:10px;background:rgba(255,255,255,.07);color:#fff;font:600 14px system-ui;cursor:pointer;transition:background .15s}
+.rbtabs button:hover{background:rgba(255,255,255,.16)}.rbtabs button.on{background:linear-gradient(135deg,#ff9a2e,#f7890b)}
+#rbbody{flex:1;overflow:auto;padding:6px 18px 14px;display:flex;flex-direction:column;gap:8px;min-height:180px}
+#rbbody .pr{background:rgba(255,255,255,.07);font-size:14px;padding:8px 12px}
+#rbbody .set{font-size:14px;color:#fff}#rbbody .set small{color:#b3a3d1}
+.rbbtn{padding:10px;border:0;border-radius:10px;background:rgba(255,255,255,.12);color:#fff;font:600 14px system-ui;cursor:pointer;margin-top:4px}.rbbtn:hover{background:rgba(255,255,255,.22)}
+.rbhelp{font-size:14px;line-height:1.9;color:#e7dcff}.rbhelp b{display:inline-block;min-width:110px;color:#ffb347}.rbhelp p{margin-top:10px;color:#b3a3d1;line-height:1.5}
+.rbf{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:8px;padding:12px 14px;border-top:1px solid #4a2f73}
+.rbf button{padding:12px;border:0;border-radius:12px;font:700 15px system-ui;color:#fff;cursor:pointer;background:rgba(255,255,255,.14);transition:transform .12s,filter .15s}
+.rbf button:hover{filter:brightness(1.2)}.rbf button:active{transform:scale(.96)}
+#rbleave{background:#c62828!important}#rbres{background:#2e9e5b!important}
+/* emote wheel */
+#emp button small{margin-left:6px}
+#modal.rbx #emb{display:none!important}
+#modal.rbx #emp{position:absolute;left:50%;top:50%;bottom:auto;width:310px;height:310px;margin:-155px 0 0 -155px;border-radius:50%;background:rgba(10,12,18,.62);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.16);z-index:20;animation:winin .18s}
+#modal.rbx #emp::after{content:'Emotes';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;font:700 15px system-ui;opacity:.8;pointer-events:none}
+#modal.rbx #emp button{position:absolute;left:calc(50% + var(--x));top:calc(50% + var(--y));transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;background:rgba(255,255,255,.1)!important;border:1px solid rgba(255,255,255,.14);transition:background .15s,transform .12s}
+#modal.rbx #emp button:hover{background:rgba(247,137,11,.7)!important;transform:translate(-50%,-50%) scale(1.1)}
+#modal.rbx #emp button span{font-size:28px;line-height:1}#modal.rbx #emp button small{margin:0;font-size:11px}
+@media(max-width:700px){#modal.rbx #plist{width:130px}}
