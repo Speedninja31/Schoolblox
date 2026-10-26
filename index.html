@@ -11,7 +11,7 @@
 <header id="nav"><a class="brand" id="brand"><svg class="lgo" viewBox="0 0 40 40" width="30" height="30"><g transform="rotate(-12 20 20)"><rect x="6" y="6" width="28" height="28" rx="6" fill="#ff8a00" stroke="#fff" stroke-width="2.5"/><text x="20" y="28" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="21" fill="#fff">S</text></g></svg><span class="b1">School</span><span class="b2">Blox</span></a>
 <nav class="links"><button data-go="games">Games</button><button data-go="catalog">Catalog</button><button data-go="friends">Friends</button><button data-go="settings">Settings</button></nav>
 <div class="srch"><input id="q" placeholder="Search" autocomplete="off"><span>🔎</span></div>
-<div class="curs"><span class="cc" title="SchoolBux: earn 10 every minute">💵 <b id="bxn">0</b></span><span class="cc" title="Pet Hatchery coins">🪙 <b id="cc1">0</b></span><span class="cc" title="Gems">💎 <b id="cc2">0</b></span><button id="gear" title="Settings">⚙️</button></div></header>
+<div class="curs"><span class="cc" title="SchoolBux: earn 10 every minute">💵 <b id="bxn">0</b></span><button id="gear" title="Settings">⚙️</button></div></header>
 <aside id="sbside"><div class="uname" id="uname">Player</div>
 <nav><button data-nav="home">🏠<span>Home</span></button><button data-nav="games">🕹️<span>Games</span></button><button data-nav="friends">👥<span>Friends</span><i id="fbadge"></i></button><button data-nav="avatar">🧢<span>Character</span></button><button data-nav="favorites">♥<span>Favorites</span></button><button data-nav="recent">⏱<span>Recent</span></button><button data-nav="settings">⚙️<span>Settings</span></button></nav>
 <button id="inv" class="upg">🔗 Invite Friends</button></aside>
@@ -22,10 +22,21 @@
 <button id="frb" class="chatab">👥 Friends</button></div>
 <div id="gd"></div>
 <div id="sp"><div class="frh"><b>⚙️ Settings</b><button id="spx2">✕</button></div>
+<div class="sgrp">Graphics</div>
+<label class="set"><span>Quality (resolution)</span><select id="qual"><option value="auto">Auto</option><option value="low">Low (faster)</option><option value="high">High (sharper)</option></select></label>
+<label class="set"><span>Shadows</span><select id="shd"><option value="high">High</option><option value="low">Low (faster)</option><option value="off">Off (fastest)</option></select></label>
+<label class="set"><span>FPS limit</span><select id="cap"><option value="0">Unlimited</option><option value="60">60 FPS</option><option value="30">30 FPS (saves battery)</option></select></label>
+<label class="set row"><span>Show FPS counter</span><input type="checkbox" class="tg" id="fpsb"></label>
+<label class="set row"><span>Camera shake</span><input type="checkbox" class="tg" id="shk"></label>
+<div class="sgrp">Controls</div>
 <label class="set"><span>Mouse sensitivity <b id="sensv"></b></span><input type="range" id="sens" min="1" max="10"></label>
-<label class="set"><span>Graphics</span><select id="qual"><option value="auto">Auto</option><option value="low">Low (faster)</option><option value="high">High (sharper)</option></select></label>
+<div class="sgrp">Sound</div>
+<label class="set"><span>Volume <b id="volv"></b></span><input type="range" id="vol" min="0" max="100" step="5"></label>
+<label class="set row"><span>Sound</span><button id="snb">🔊 On</button></label>
+<div class="sgrp">Interface</div>
 <label class="set"><span>Theme</span><select id="thm"><option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
-<label class="set"><span>Sound</span><button id="snb">🔊 On</button></label>
+<label class="set row"><span>Show game tips</span><input type="checkbox" class="tg" id="hnt"></label>
+<label class="set row"><span>Reduce animations</span><input type="checkbox" class="tg" id="calm"></label>
 <button id="rst" class="dng">Reset all saved data</button></div>
 
 <div id="frp"><div class="frh"><b>👥 Friends</b><button id="frx">✕</button></div>

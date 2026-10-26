@@ -9,8 +9,7 @@ let svgN=0;
 function avSvg(av,sz){const hex=n=>'#'+n.toString(16).padStart(6,'0'),sk=hex(OPT.skin[av.skin||0][1]),sh=hex(OPT.shirt[av.shirt||0][1]),hat=(OPT.hat[av.hat||0]||[])[1]||'',id='c'+(svgN++);
  const H={cap:'<path d="M32 28a18 16 0 0 1 36 0z" fill="#e0352b"/><rect x="30" y="27" width="40" height="4" rx="2" fill="#b02a22"/>',top:'<rect x="36" y="4" width="28" height="24" fill="#1a1a1a"/><rect x="28" y="26" width="44" height="5" rx="2" fill="#1a1a1a"/>',crown:'<path d="M33 28V10l9 9 8-12 8 12 9-9v18z" fill="#ffcf33"/>',party:'<path d="M50 2l15 28H35z" fill="#ff5fb0"/>',wizard:'<path d="M50 0l17 29H33z" fill="#4b2a9a"/><rect x="26" y="27" width="48" height="4" rx="2" fill="#4b2a9a"/>',cowboy:'<rect x="38" y="12" width="24" height="16" rx="4" fill="#8a5a2b"/><rect x="22" y="26" width="56" height="5" rx="2.5" fill="#8a5a2b"/>',beanie:'<path d="M33 28a17 17 0 0 1 34 0z" fill="#3b82f6"/><circle cx="50" cy="10" r="4" fill="#fff"/>',chef:'<rect x="36" y="14" width="28" height="15" fill="#fff"/><circle cx="42" cy="12" r="9" fill="#fff"/><circle cx="58" cy="12" r="9" fill="#fff"/>',santa:'<path d="M33 29c0-18 14-26 28-22l8 6-4 4 3 12z" fill="#d62828"/><rect x="32" y="26" width="38" height="6" rx="3" fill="#fff"/>',halo:'<ellipse cx="50" cy="14" rx="15" ry="4" fill="none" stroke="#ffe066" stroke-width="3"/>',phones:'<path d="M32 38a18 18 0 0 1 36 0" fill="none" stroke="#333" stroke-width="4"/><rect x="28" y="34" width="7" height="12" rx="3" fill="#e0352b"/><rect x="65" y="34" width="7" height="12" rx="3" fill="#e0352b"/>',straw:'<rect x="38" y="12" width="24" height="16" rx="4" fill="#e6c36a"/><rect x="22" y="26" width="56" height="5" rx="2.5" fill="#e6c36a"/>',pirate:'<path d="M26 28l24-14 24 14z" fill="#1a1a1a"/>',grad:'<rect x="26" y="20" width="48" height="6" fill="#1a1a1a"/><rect x="38" y="24" width="24" height="7" fill="#1a1a1a"/>'};
  return '<svg viewBox="0 0 100 100" width="'+sz+'" height="'+sz+'"><defs><clipPath id="'+id+'"><circle cx="50" cy="50" r="50"/></clipPath></defs><g clip-path="url(#'+id+')"><rect width="100" height="100" fill="#fff"/><rect x="14" y="60" width="16" height="44" rx="4" fill="'+sk+'"/><rect x="70" y="60" width="16" height="44" rx="4" fill="'+sk+'"/><rect x="28" y="58" width="44" height="46" rx="5" fill="'+sh+'"/><rect x="34" y="26" width="32" height="34" rx="9" fill="'+sk+'"/><circle cx="43" cy="42" r="2.4" fill="#111"/><circle cx="57" cy="42" r="2.4" fill="#111"/><path d="M42 50q8 7 16 0" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>'+(H[hat]||'')+'</g></svg>'}
-function renderProfile(){const n=myName();$e('pav').innerHTML=avSvg(AV,150);$e('hn').textContent=n;$e('uname').textContent=n;
- let p={};try{p=JSON.parse(localStorage.getItem('hubpet2')||'{}')}catch(e){}$e('cc1').textContent=fm(p.c||0);$e('cc2').textContent=p.g||0}
+function renderProfile(){const n=myName();$e('pav').innerHTML=avSvg(AV,150);$e('hn').textContent=n;$e('uname').textContent=n;}
 function renderFs(){const el=$e('frs');if(!el)return;const ids=Object.keys(FRS),now=Date.now(),on=ids.filter(c=>SEEN[c]&&now-SEEN[c].t<20000);el.innerHTML='';
  const hd=document.createElement('div');hd.className='shd';hd.innerHTML='<h2></h2><button class="sa">See All</button>';hd.firstChild.textContent='Friends ('+ids.length+') \u00b7 '+on.length+' online';hd.lastChild.onclick=()=>openFr();el.appendChild(hd);
  const bx=document.createElement('div');bx.className='fbox';
@@ -43,11 +42,18 @@ function openGd(g){const m=META[g.id]||{},d=$e('gd');
  $e('gdp').onclick=()=>{cls();openGame(g)};$e('gdf').onclick=()=>{toggleFav(g.id);openGd(g)};
  $e('gdi').onclick=function(){const u=location.origin+location.pathname+'?room='+roomCode()+'&game='+g.id;(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{this.textContent='Copied!'}).catch(()=>prompt('Copy this invite link',u))}}
 /* ---------- settings ---------- */
-function openSet(){const p=$e('sp');p.classList.add('on');$e('sens').value=ST.sens;$e('sensv').textContent=ST.sens;$e('qual').value=ST.q;$e('thm').value=ST.th;$e('snb').textContent=mute?'\ud83d\udd07 Off':'\ud83d\udd0a On'}
+function openSet(){const p=$e('sp');p.classList.add('on');$e('sens').value=ST.sens;$e('sensv').textContent=ST.sens;$e('qual').value=ST.q;$e('thm').value=ST.th;$e('snb').textContent=mute?'\ud83d\udd07 Off':'\ud83d\udd0a On';$e('shd').value=ST.sh;$e('cap').value=String(ST.cap);$e('fpsb').checked=!!ST.fps;$e('shk').checked=ST.shake!==false;$e('hnt').checked=ST.hints!==false;$e('calm').checked=!!ST.calm;$e('vol').value=Math.round(ST.vol*100);$e('volv').textContent=Math.round(ST.vol*100)+'%'}
 $e('spx2').onclick=()=>$e('sp').classList.remove('on');
 $e('sens').oninput=e=>{ST.sens=+e.target.value;SENS=ST.sens*.0006;$e('sensv').textContent=ST.sens;saveS()};
 $e('qual').onchange=e=>{ST.q=e.target.value;saveS();if(renderer){renderer.setPixelRatio(pr());resize()}};
 $e('thm').onchange=e=>{ST.th=e.target.value;saveS();if(ST.th==='auto')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=ST.th};
+$e('shd').onchange=e=>{ST.sh=e.target.value;saveS();applyGfx()};
+$e('cap').onchange=e=>{ST.cap=+e.target.value;saveS()};
+$e('fpsb').onchange=e=>{ST.fps=e.target.checked;saveS()};
+$e('shk').onchange=e=>{ST.shake=e.target.checked;saveS()};
+$e('hnt').onchange=e=>{ST.hints=e.target.checked;saveS()};
+$e('calm').onchange=e=>{ST.calm=e.target.checked;document.documentElement.classList.toggle('calm',ST.calm);saveS()};
+$e('vol').oninput=e=>{ST.vol=+e.target.value/100;$e('volv').textContent=e.target.value+'%';saveS()};
 $e('snb').onclick=()=>{$e('mt').click();$e('snb').textContent=mute?'\ud83d\udd07 Off':'\ud83d\udd0a On'};
 $e('rst').onclick=()=>{if(confirm('Delete your saved name, friends, avatar and settings?')){try{localStorage.clear()}catch(e){}location.reload()}};
 /* ---------- navigation, search, banner ---------- */
