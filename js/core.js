@@ -231,12 +231,12 @@ function animate(c,dt){
  c.pg=g;c.pvy=c.vy||0;c.sqv=((c.sqv||0)-(c.sq||0)*260*dt)/(1+20*dt);c.sq=(c.sq||0)+c.sqv*dt;
  /* turn lean */
  let yd=c.yaw-(c.pyaw==null?c.yaw:c.pyaw);yd=Math.atan2(Math.sin(yd),Math.cos(yd));c.pyaw=c.yaw;c.yv=(c.yv||0)+((dt>0?yd/dt:0)-(c.yv||0))*(1-Math.exp(-10*dt));
- const mk=o=>Object.assign({aLx:0,aLz:-.14,aRx:0,aRz:.14,lLx:0,lRx:0,ty:0,by:0,hx:0,hy:0,rx:0,rz:0,ry:0},o);
+ const mk=o=>Object.assign({aLx:0,aLz:-.03,aRx:0,aRz:.03,lLx:0,lRx:0,ty:0,by:0,hx:0,hy:0,rx:0,rz:0,ry:0},o);
  const b=Math.sin(t*2);
- const I=mk({aLx:Math.sin(t*1.1)*.07,aRx:-Math.sin(t*1.1)*.07,aLz:-.13-b*.04,aRz:.13+b*.04,hx:Math.sin(t*.9)*.07,hy:Math.sin(t*.7)*.3,by:Math.sin(t*1.8)*.06,rx:Math.sin(t*1.8)*.012});
+ const I=mk({aLx:Math.sin(t*1.1)*.07,aRx:-Math.sin(t*1.1)*.07,aLz:-.03-b*.015,aRz:.03+b*.015,hx:Math.sin(t*.9)*.07,hy:Math.sin(t*.7)*.3,by:Math.sin(t*1.8)*.06,rx:Math.sin(t*1.8)*.012});
  c.ph=(c.ph||0)+dt*14*Math.max(ww,sp*.6);
  const s=Math.sin(c.ph),co=Math.cos(c.ph),as=Math.abs(s);
- const Wk=mk({lLx:s*1.05,lRx:-s*1.05,aLx:-s*.95,aRx:s*.95,aLz:-.14-as*.06,aRz:.14+as*.06,ty:-s*.17,by:Math.abs(co)*.26,rx:.13,rz:co*.035+Math.max(-.14,Math.min(.14,-c.yv*.03)),hx:-.12,hy:s*.07});
+ const Wk=mk({lLx:s*1.05,lRx:-s*1.05,aLx:-s*.95,aRx:s*.95,aLz:-.04-as*.05,aRz:.04+as*.05,ty:-s*.17,by:Math.abs(co)*.26,rx:.13,rz:co*.035+Math.max(-.14,Math.min(.14,-c.yv*.03)),hx:-.12,hy:s*.07});
  const u=Math.max(-1,Math.min(1,(c.vy||0)/53)),f=(1-u)/2;
  const A=mk({aLx:-2.6+.6*f,aRx:-2.6+.6*f,aLz:-.3-.8*f,aRz:.3+.8*f,lLx:.3-.7*f,lRx:-.2+.6*f,hx:-.12*u,by:.1*u,rx:-.08*u});
  let E=null;
@@ -287,6 +287,9 @@ let room=null,usr=null,lastSend=0,curId='';
 const RM=new Map(),nick='Player'+(1000+Math.floor(Math.random()*9000)),online=document.getElementById('online');
 const num=v=>typeof v==='number'&&isFinite(v)?v:0;
 function mulb(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hpBar(c,v){if(v==null){if(c.hpS)c.hpS.visible=false;return}
+ if(!c.hpS){const cv=document.createElement('canvas');cv.width=128;cv.height=20;c.hpC=cv;c.hpS=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false}));c.hpS.scale.set(3.6,.56,1);c.hpS.position.y=6.55;c.hpS.renderOrder=5;c.g.add(c.hpS);c.hpV=-1}
+ c.hpS.visible=true;v=Math.max(0,Math.min(100,Math.round(v)));if(v===c.hpV)return;c.hpV=v;const x=c.hpC.getContext('2d');x.clearRect(0,0,128,20);x.fillStyle='rgba(0,0,0,.6)';x.beginPath();x.roundRect?x.roundRect(0,0,128,20,10):x.rect(0,0,128,20);x.fill();x.fillStyle='hsl('+(v*1.2)+',75%,48%)';x.beginPath();x.roundRect?x.roundRect(3,3,Math.max(0,122*v/100),14,7):x.rect(3,3,Math.max(0,122*v/100),14);x.fill();c.hpS.material.map.needsUpdate=true}
 function tag(txt){const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');x.font='bold 30px system-ui';x.textAlign='center';x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,8,256,48);x.fillStyle='#fff';x.fillText(String(txt).slice(0,16),128,43);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));s.scale.set(5,1.25,1);s.position.y=7.6;return s}
 let sb=null,ch=null,mine={};const PEERS=new Map(),myId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Math.random()).slice(2);
 function leaveRoom(){
@@ -315,7 +318,7 @@ addEventListener('beforeunload',leaveRoom);
 function mpTick(dt,id){
  if(!room||!cur||!cur.P)return;
  const P=cur.P,now=performance.now();
- if(now-lastSend>80){lastSend=now;const r=v=>Math.round(v*10)/10;room.presence(Object.assign({g:id,x:r(P.x),y:r(P.y),z:r(P.z),yaw:r(P.yaw),hs:P.hs?1:0,gr:P.gr?1:0,vy:Math.round(P.vy||0),em:P.emote||'',av:AV,n:(document.getElementById('nick').value||nick)},cur.ex?cur.ex():{})).catch(()=>{})}
+ if(now-lastSend>80){lastSend=now;const r=v=>Math.round(v*10)/10;room.presence(Object.assign({g:id,x:r(P.x),y:r(P.y),z:r(P.z),yaw:r(P.yaw),hs:P.hs?1:0,gr:P.gr?1:0,vy:Math.round(P.vy||0),em:P.emote||'',av:AV,n:(document.getElementById('nick').value||nick),hp:myHP==null?-1:Math.round(myHP)},cur.ex?cur.ex():{})).catch(()=>{})}
  const seen=new Set(),k=1-Math.exp(-12*dt);
  for(const p of room.peers()){
   const q=p.presence;if(p.sameTab||p.kind!=='viewer'||q.g!==id||typeof q.x!=='number')continue;
@@ -325,7 +328,7 @@ function mpTick(dt,id){
   if(c.g.parent!==scene)scene.add(c.g);
   c.x+=(num(q.x)-c.x)*k;c.y+=(num(q.y)-c.y)*k;c.z+=(num(q.z)-c.z)*k;
   let d=num(q.yaw)-c.yaw;d=Math.atan2(Math.sin(d),Math.cos(d));c.yaw+=d*k;
-  c.hs=q.hs?16:0;c.gr=!!q.gr;c.vy=num(q.vy);c.emote=Object.values(EMK).includes(q.em)?q.em:null;c.t+=dt;animate(c,dt);c.q=q;if(cur.rem)cur.rem(c,q,dt);
+  c.hs=q.hs?16:0;c.gr=!!q.gr;c.vy=num(q.vy);c.emote=Object.values(EMK).includes(q.em)?q.em:null;c.t+=dt;animate(c,dt);c.q=q;hpBar(c,typeof q.hp==='number'&&q.hp>=0?q.hp:null);if(cur.rem)cur.rem(c,q,dt);
   if(!c.nm){c.nm=1;(async()=>{let nm=String(q.n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';try{if(p.by&&usr&&usr.profiles){const ps=await usr.profiles([p.by]);nm=(ps[p.by]&&ps[p.by].name)||nm}}catch(e){}if(c.tag)c.g.remove(c.tag);c.tag=tag(nm);c.g.add(c.tag)})()}
  }
  for(const [pk,c] of RM)if(!seen.has(pk)){scene.remove(c.g);RM.delete(pk)}
@@ -338,7 +341,8 @@ EMN.forEach(([k,l],i)=>{const b=document.createElement('button');b.textContent=(
 emb.onclick=()=>{emp.style.display=emp.style.display==='flex'?'none':'flex'};
 document.getElementById('fs').onclick=()=>{const d=document.documentElement;if(document.fullscreenElement)document.exitFullscreen();else if(d.requestFullscreen)d.requestFullscreen().catch(()=>{})};
 let lastHp=100;
-function setHP(v){const h=document.getElementById('hp');if(v==null){h.style.display='none';return}h.style.display='block';const f=document.getElementById('hpf');f.style.width=Math.max(0,v)+'%';f.style.background='hsl('+(v*1.2)+',70%,45%)';document.getElementById('hpt').textContent=Math.ceil(v);
+let myHP=null;
+function setHP(v){myHP=v;const h=document.getElementById('hp');if(v==null){h.style.display='none';return}h.style.display='block';const f=document.getElementById('hpf');f.style.width=Math.max(0,v)+'%';f.style.background='hsl('+(v*1.2)+',70%,45%)';document.getElementById('hpt').textContent=Math.ceil(v);
  if(v<lastHp-.05){const u=document.getElementById('hurt');u.style.transition='none';u.style.opacity=.5;requestAnimationFrame(()=>{u.style.transition='opacity .5s';u.style.opacity=0})}lastHp=v}
 /* Roblox-style break apart: every body part (and hat) flies off */
 const DEB=[];
