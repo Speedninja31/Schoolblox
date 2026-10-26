@@ -290,7 +290,7 @@ function mulb(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>1
 function hpBar(c,v){if(v==null){if(c.hpS)c.hpS.visible=false;return}
  if(!c.hpS){const cv=document.createElement('canvas');cv.width=128;cv.height=20;c.hpC=cv;c.hpS=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false}));c.hpS.scale.set(3.6,.56,1);c.hpS.position.y=6.55;c.hpS.renderOrder=5;c.g.add(c.hpS);c.hpV=-1}
  c.hpS.visible=true;v=Math.max(0,Math.min(100,Math.round(v)));if(v===c.hpV)return;c.hpV=v;const x=c.hpC.getContext('2d');x.clearRect(0,0,128,20);x.fillStyle='rgba(0,0,0,.6)';x.beginPath();x.roundRect?x.roundRect(0,0,128,20,10):x.rect(0,0,128,20);x.fill();x.fillStyle='hsl('+(v*1.2)+',75%,48%)';x.beginPath();x.roundRect?x.roundRect(3,3,Math.max(0,122*v/100),14,7):x.rect(3,3,Math.max(0,122*v/100),14);x.fill();c.hpS.material.map.needsUpdate=true}
-function tag(txt){const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');x.font='bold 30px system-ui';x.textAlign='center';x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,8,256,48);x.fillStyle='#fff';x.fillText(String(txt).slice(0,16),128,43);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));s.scale.set(5,1.25,1);s.position.y=7.6;return s}
+function tag(txt){const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');x.font='bold 30px system-ui';x.textAlign='center';x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,8,256,48);x.fillStyle='#fff';x.fillText(chatCheck(txt).full.slice(0,16),128,43);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));s.scale.set(5,1.25,1);s.position.y=7.6;return s}
 let sb=null,ch=null,mine={};const PEERS=new Map(),myId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Math.random()).slice(2);
 function leaveRoom(){
  if(ch){try{ch.send({type:'broadcast',event:'bye',payload:{id:myId}})}catch(e){}try{sb.removeChannel(ch)}catch(e){}}
@@ -377,8 +377,26 @@ const roomCode=()=>(document.getElementById('roomcode').value||'public').trim().
 const myName=()=>String(document.getElementById('nick').value||nick).replace(/[^\w ]/g,'').slice(0,16)||'Player';
 function bubble(c,txt){if(!c)return;if(c.bub)c.g.remove(c.bub);const cv=document.createElement('canvas');cv.width=512;cv.height=64;const x=cv.getContext('2d');x.font='bold 26px system-ui';x.textAlign='center';x.fillStyle='rgba(255,255,255,.92)';x.fillRect(0,6,512,48);x.fillStyle='#111';x.fillText(txt.slice(0,34),256,41);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false}));sp.scale.set(10,1.25,1);sp.position.y=9;c.g.add(sp);c.bub=sp;setTimeout(()=>{if(c.bub===sp){c.g.remove(sp);c.bub=null}},6000)}
 function logChat(n,t){const d=document.createElement('div');const nb=document.createElement('b');nb.textContent=n+': ';nb.style.color=nameColor(n);d.append(nb,document.createTextNode(t));clog.appendChild(d);while(clog.children.length>8)clog.removeChild(clog.firstChild);setTimeout(()=>d.remove(),15000)}
-function gotChat(id,t,n){t=String(t).slice(0,80);n=String(n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';logChat(n,t);if(cur&&RM.has(id))bubble(RM.get(id),t)}
-function sendChat(t){t=t.slice(0,80);logChat(myName(),t);if(cur&&cur.P)bubble(cur.P,t);if(ch)ch.send({type:'broadcast',event:'c',payload:{id:myId,t,n:myName()}}).catch(()=>{})}
+function gotChat(id,t,n){t=chatCheck(String(t).slice(0,80)).full;n=String(n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';n=chatCheck(n).full;logChat(n,t);if(cur&&RM.has(id))bubble(RM.get(id),t)}
+/* ---- chat safety: filters bad words, blocks weapon/violence talk and personal info (school-safe) ---- */
+const CF=(()=>{const L={a:'[a4@]',e:'[e3]',i:'[i1!|]',o:'[o0]',s:'[s5$]',t:'[t7]',l:'[l1]'},j=w=>[...w].map(c=>L[c]||c).join('[\\W_]*');
+ const stem=w=>new RegExp(j(w),'gi'),word=(w,suf)=>new RegExp('(?<![a-z0-9])'+j(w)+(suf?'(?:s|es|ed|ing|er|ers)?':'')+'(?![a-z])','gi');
+ return{prof:[...['fuck','shit','bitch','cunt','nigg','fagg','whore','slut','pussy'].map(stem),...['dick','cock','ass','asshole','retard','rape','porn','sex','nude'].map(w=>word(w,1))],
+  school:['weapon','knife','knives','gun','shoot','kill','murder','bomb','stab','shotgun','rifle','pistol','grenade','explosive','terror','terrorist','suicide'].map(w=>word(w,1)),
+  personal:[/https?:\/\/\S+/gi,/\bwww\.\S+/gi,/\b[\w-]+\.(?:com|net|org|io|gg|ly|co|tv|xyz)\b/gi,/[\w.-]+@[\w-]+\.[a-z]{2,}/gi,/\b\d[\d\s().-]{7,}\d\b/g]}})();
+function chatCheck(t){t=String(t);let clean=t,full=t,bad=false,school=false,personal=false;const mk=m=>'#'.repeat(m.length);
+ CF.prof.forEach(r=>{clean=clean.replace(r,m=>{bad=true;return mk(m)})});full=clean;
+ CF.school.forEach(r=>{full=full.replace(r,m=>{school=true;return mk(m)})});
+ CF.personal.forEach(r=>{full=full.replace(r,m=>{personal=true;return mk(m)})});
+ return{bad,school,personal,any:bad||school||personal,clean,full}}
+function sysChat(txt,warn){const d=document.createElement('div');d.className=warn?'sysw':'sys';d.textContent=txt;clog.appendChild(d);while(clog.children.length>8)clog.removeChild(clog.firstChild);setTimeout(()=>d.remove(),warn?12000:6000)}
+let lastChat=0;
+function sendChat(t){t=t.slice(0,80);const r=chatCheck(t);
+ if(r.school){const m='\u26A0\uFE0F Message not sent. Talking about weapons or violence can get you in trouble at school. Please keep chat friendly!';sysChat(m,1);toast(m);return}
+ if(r.personal){const m='\u26A0\uFE0F Message not sent. Please don\u2019t share links, emails or phone numbers.';sysChat(m,1);toast(m);return}
+ const n=performance.now();if(n-lastChat<900){sysChat('Slow down a little!');return}lastChat=n;
+ if(r.bad)sysChat('Some words were filtered.');t=r.clean;
+ logChat(myName(),t);if(cur&&cur.P)bubble(cur.P,t);if(ch)ch.send({type:'broadcast',event:'c',payload:{id:myId,t,n:myName()}}).catch(()=>{})}
 addEventListener('keydown',e=>{if(e.code!=='Enter'||!cur||!cur.d3||!modal.classList.contains('on')||lobby.style.display==='flex')return;
  if(document.activeElement===chatin){const t=chatin.value.trim();chatin.value='';chatin.blur();if(t)sendChat(t);if(SLwant&&is3p())slLock()}else{if(document.pointerLockElement)document.exitPointerLock();chatin.focus();e.preventDefault()}});
 let lobbyT=0,pendG=null;
