@@ -25,10 +25,10 @@ function mkCard(g){const m=META[g.id]||{},b=document.createElement('div');b.clas
  b.onclick=e=>{if(e.target.classList.contains('fv')){e.stopPropagation();toggleFav(g.id);return}if(g.soon)return;openGd(g)};b.onkeydown=e=>{if(e.key==='Enter'&&!g.soon)openGd(g)};return b}
 function toggleFav(id){const i=ST.fav.indexOf(id);if(i<0)ST.fav.push(id);else ST.fav.splice(i,1);saveS();renderMenu()}
 function noteRecent(id){ST.rec=[id,...ST.rec.filter(x=>x!==id)].slice(0,4);saveS();renderMenu()}
-function renderMenu(){const R=$e('rows');R.innerHTML='';
+function renderMenu(){const R=$e('rows');R.innerHTML='';if(!Array.isArray(ST.fav))ST.fav=[];if(!Array.isArray(ST.rec))ST.rec=[];
  const hdr=(t,or,fn)=>{const h=document.createElement('div');h.className='shd';const x=document.createElement('h2');x.textContent=t;if(or)x.className='or';h.appendChild(x);if(fn){const b=document.createElement('button');b.className='sa';b.textContent='See All';b.onclick=fn;h.appendChild(b)}R.appendChild(h);return h};
  const row=list=>{const w=document.createElement('div');w.className='prow';const r=document.createElement('div');r.className='ro';list.forEach(g=>r.appendChild(mkCard(g)));w.appendChild(r);if(list.length>5){const n=document.createElement('button');n.className='nxt';n.textContent='\u203a';n.onclick=()=>r.scrollBy(320,0);w.appendChild(n)}R.appendChild(w)};
- if(!qry&&cat==='All'){const rc=ST.rec.map(G$).filter(Boolean);if(rc.length){hdr('Continue playing',true);row(rc)}const fv=ST.fav.map(G$).filter(Boolean);if(fv.length){hdr('Favorites',true);row(fv)}hdr('Popular',true,()=>$e('allh').scrollIntoView({behavior:'smooth'}));row(FEAT.map(G$))}
+ if(!qry&&cat==='All')try{const rc=ST.rec.map(G$).filter(Boolean);if(rc.length){hdr('Continue playing',true);row(rc)}const fv=ST.fav.map(G$).filter(Boolean);if(fv.length){hdr('Favorites',true);row(fv)}hdr('Popular',true,()=>$e('allh').scrollIntoView({behavior:'smooth'}));row(FEAT.map(G$).filter(Boolean))}catch(e){console.error('home rows',e)}
  hdr(qry?'Search results':'All games',false).id='allh';
  const ch=document.createElement('div');ch.className='chips2';['All','Favorites',...new Set(GAMES.map(catOf))].forEach(c=>{const b=document.createElement('button');b.textContent=c;if(c===cat)b.className='on';b.onclick=()=>{cat=c;renderMenu()};ch.appendChild(b)});R.appendChild(ch);
  const list=GAMES.filter(g=>(cat==='All'||(cat==='Favorites'?ST.fav.includes(g.id):catOf(g)===cat))&&(!qry||(g.name+' '+g.tag+' '+catOf(g)).toLowerCase().includes(qry)));
