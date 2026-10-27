@@ -63,7 +63,7 @@ ENG.fish={d3:true,noEmote:1,
    const pad=(x,z,to,lab,col)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(2.4,2.4,.3,20),new THREE.MeshBasicMaterial({color:col}));m.position.set(x,.2,z);G.add(m);const l=tag(lab);l.position.y=4;m.add(l);this.pads.push({x,z,to})};
    if(k===0){pad(14,-6,1,'\u2192 Swamp',0x3d6b4a);pad(14,4,2,'\u2192 Coral Bay',0x14b8c9)}else pad(ox+12,oz-4,0,'\u2190 Back to Lake',0xffd23a)});
   box(10,7,8,-16,-10,0xa0643c);G.add(slab(12,1,10,-16,7.5,-10,0x6b2e1e));
-  const sv=AV;AV=Object.assign({},ZAVS[0],{skin:1,face:0,shirt:3,hat:OPT.hat.findIndex(h=>h[1]==='straw')});this.npc=newP(-12,0,-2);AV=sv;const nt=tag('Fish Shop (F)');nt.scale.set(9,2.2,1);nt.position.y=7.2;this.npc.g.add(nt);
+  const sv=AV;AV=Object.assign({},ZAVS[0],{skin:1,face:0,shirt:3,hat:OPT.hat.findIndex(h=>h[1]==='straw'),hair:OPT.hair.findIndex(h=>h[1]==='shortbk'),jacket:OPT.jacket.findIndex(h=>h[1]==='rain')});this.npc=newP(-12,0,-2);AV=sv;const nt=tag('Fish Shop (F)');nt.scale.set(9,2.2,1);nt.position.y=7.2;this.npc.g.add(nt);
   this.water=new THREE.Mesh(new THREE.PlaneGeometry(300,300,50,50),new THREE.MeshLambertMaterial({color:0x2a7fd4,transparent:true,opacity:.85}));this.water.rotation.x=-Math.PI/2;scene.add(this.water);
   this.bob=this.mkBob();this.bob.visible=false;scene.add(this.bob);const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(6),3));this.line=new THREE.Line(lg,new THREE.LineBasicMaterial({color:0xffffff}));this.line.frustumCulled=false;this.line.visible=false;scene.add(this.line);
   this.P=newP(0,1,36);this.rodOn(this.P);
@@ -76,6 +76,7 @@ ENG.fish={d3:true,noEmote:1,
   let k=0,bd=1e9;this.LOCS.forEach((l,i)=>{const d=Math.hypot(P.x-l[1],P.z-l[2]);if(d<bd){bd=d;k=i}});this.loc=k;this.water.material.color.setHex([0x2a7fd4,0x3d6b4a,0x14b8c9][k]);
   const wx=Math.round(P.x/5)*5,wz=Math.round(P.z/5)*5,pa=this.water.geometry.attributes.position;this.water.position.set(wx,this.wy,wz);for(let i=0;i<pa.count;i++){const X=wx+pa.getX(i),Z=wz-pa.getY(i);pa.setZ(i,Math.sin(X*.12+T*1.4)*.22+Math.cos(Z*.1+T*1.1)*.2)}pa.needsUpdate=true;
   const eD=!!keys.KeyE,eP=eD&&!this.ep,eU=!eD&&this.ep;this.ep=eD;const fP=!!keys.KeyF&&!this.fpv;this.fpv=!!keys.KeyF;
+  npcTick(this.npc,P,dt);this.npc.g.visible=k===0;
   const nearNpc=k===0&&Math.hypot(P.x+12,P.z+2)<7;if(fP&&this.fst==='idle'&&nearNpc)this.toggleShop();if(this.shop&&!nearNpc)this.toggleShop();
   const busy=this.fst!=='idle'||this.shop;
   if(busy){P.hs=0;P.emote=null;P.t+=dt;animate(P,dt);orbitCam(P)}else ctrl(P,dt,this.S);

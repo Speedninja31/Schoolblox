@@ -42,11 +42,12 @@ function openGd(g){const m=META[g.id]||{},d=$e('gd');
  $e('gdp').onclick=()=>{cls();openGame(g)};$e('gdf').onclick=()=>{toggleFav(g.id);openGd(g)};
  $e('gdi').onclick=function(){const u=location.origin+location.pathname+'?room='+roomCode()+'&game='+g.id;(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{this.textContent='Copied!'}).catch(()=>prompt('Copy this invite link',u))}}
 /* ---------- settings ---------- */
-function openSet(){const p=$e('sp');p.classList.add('on');$e('sens').value=ST.sens;$e('sensv').textContent=ST.sens;$e('qual').value=ST.q;$e('thm').value=ST.th;$e('snb').textContent=mute?'\ud83d\udd07 Off':'\ud83d\udd0a On';$e('shd').value=ST.sh;$e('cap').value=String(ST.cap);$e('fpsb').checked=!!ST.fps;$e('shk').checked=ST.shake!==false;$e('hnt').checked=ST.hints!==false;$e('calm').checked=!!ST.calm;$e('vol').value=Math.round(ST.vol*100);$e('volv').textContent=Math.round(ST.vol*100)+'%'}
+function openSet(){const p=$e('sp');p.classList.add('on');$e('sens').value=ST.sens;$e('sensv').textContent=ST.sens;$e('qual').value=ST.q;$e('thm').value=ST.th;$e('skn').value=ST.skin;$e('snb').textContent=mute?'\ud83d\udd07 Off':'\ud83d\udd0a On';$e('shd').value=ST.sh;$e('cap').value=String(ST.cap);$e('fpsb').checked=!!ST.fps;$e('shk').checked=ST.shake!==false;$e('hnt').checked=ST.hints!==false;$e('calm').checked=!!ST.calm;$e('vol').value=Math.round(ST.vol*100);$e('volv').textContent=Math.round(ST.vol*100)+'%'}
 $e('spx2').onclick=()=>$e('sp').classList.remove('on');
 $e('sens').oninput=e=>{ST.sens=+e.target.value;SENS=ST.sens*.0006;$e('sensv').textContent=ST.sens;saveS()};
 $e('qual').onchange=e=>{ST.q=e.target.value;saveS();if(renderer){renderer.setPixelRatio(pr());resize()}};
-$e('thm').onchange=e=>{ST.th=e.target.value;saveS();if(ST.th==='auto')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=ST.th};
+$e('thm').onchange=e=>{ST.th=e.target.value;saveS();if(ST.th==='auto')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=ST.th;applyTheme()};
+$e('skn').onchange=e=>{ST.skin=e.target.value;saveS();applyTheme();const T=THEMES[themeId()];if(T&&T.msg&&ST.skin==='auto')toast(T.e+' '+T.msg)};
 $e('shd').onchange=e=>{ST.sh=e.target.value;saveS();applyGfx()};
 $e('cap').onchange=e=>{ST.cap=+e.target.value;saveS()};
 $e('fpsb').onchange=e=>{ST.fps=e.target.checked;saveS()};
