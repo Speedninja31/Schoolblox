@@ -1,29 +1,40 @@
 /* Game: Snowball Fight (id: snow) - card, menu info and game engine. */
-GAMES.push({id:'snow',name:'Snowball Fight',tag:'FPS',e:'⛄',c:['#7ec8ff','#d6ecff'],like:'96%',pl:'13.7K',hint:'First-person snowball fight in timed matches. The mouse locks when you press Play. WASD move, Space jump, click or E throws, R packs more snow. 3 hits freeze you; headshots hurt more. Vote for a map in the lobby.'});
+GAMES.push({id:'snow',name:'Snowball Fight',tag:'FPS',e:'⛄',c:['#7ec8ff','#d6ecff'],like:'96%',pl:'13.7K',hint:'First-person snowball fight in timed matches. The mouse locks when you press Play. WASD move, Space jump, click or E throws, R packs more snow. 3 hits freeze you; headshots hurt more. The maps are huge now, and you can see other players holding and throwing snowballs. Vote for a map in the lobby.'});
 META.snow={c:'Shooter',m:'Multiplayer',t:['FPS','Matches'],n:1};
 ENG.snow={d3:true,fps:true,MN:['Snow Fort','Ice Palace','Pine Forest','Frozen Lake'],
  ex(){return{sh:this.sh,th:this.th,dd:this.dead?1:0,dn:this.dn,kb:this.kb,kc:this.kc,v:this.vote,vc:this.cyc,mk:this.mk,mc:this.cyc}},
  ball(x,y,z,vx,vy,vz,own){const m=new THREE.Mesh(new THREE.SphereGeometry(.5,8,6),new THREE.MeshBasicMaterial({color:0xffffff}));m.position.set(x,y,z);scene.add(m);this.B.push({m,v:new THREE.Vector3(vx,vy,vz),own,life:3})},
  hit(d,by){if(this.dead||this.inv>0||!this.live)return;this.hp-=d;shk=.6;snd(300,.12,'square',.12,120);if(this.hp<=0){this.hp=0;this.dead=true;this.dn++;this.kb=by;this.P.dead=true;explode(this.P,1);fxBurst(this.P.x,3,this.P.z,0xbfe8ff);this.rt=3}},
- rem(c,q){const d=!!q.dd;if(d&&!c.dead)explode(c,1);c.dead=d;c.g.visible=!d;
-  if(Array.isArray(q.th))for(const t of q.th)if(t[0]>(c.lt||0)){c.lt=t[0];if(c.lt0)this.ball(t[1],t[2],t[3],t[4],t[5],t[6],false)}c.lt0=1;
+ rem(c,q,dt){const d=!!q.dd;if(d&&!c.dead)explode(c,1);c.dead=d;c.g.visible=!d;
+  if(!c.sb){c.sb=new THREE.Mesh(new THREE.SphereGeometry(.55,10,8),new THREE.MeshLambertMaterial({color:0xffffff,emissive:0x8fa4b8}));c.sb.position.set(0,-2.1,.5);c.J.aR.add(c.sb)}
+  if(Array.isArray(q.th))for(const t of q.th)if(t[0]>(c.lt||0)){c.lt=t[0];if(c.lt0){this.ball(t[1],t[2],t[3],t[4],t[5],t[6],false);c.att=.36}}c.lt0=1;
+  c.att=Math.max(0,(c.att||0)-(dt||.016));const th=c.att>0?c.att/.36:0;c.J.aR.rotation.x=-1.2-Math.sin(th*3.14)*1.5;c.J.aR.rotation.z=-.1;c.J.aL.rotation.x=-.45;c.sb.visible=!d&&th<=0;
   if(Array.isArray(q.sh))for(const h of q.sh)if(h[0]>(c.ls||0)){c.ls=h[0];if(c.ls0&&h[1]===myId)this.hit(h[2],c.pid)}c.ls0=1;
   if(c.ld===undefined&&typeof q.dn==='number')c.ld=q.dn;if(typeof q.dn==='number'&&q.dn>c.ld){if(q.kb===myId){this.kc++;snd(900,.1,'sine',.12,1400);hitMark(true,true)}c.ld=q.dn}},
+
  buildMap(k){
-  if(this.mg)scene.remove(this.mg);const G=this.mg=new THREE.Group();scene.add(G);
-  const S=this.S=[{x:0,z:0,hw:65,hd:65,top:0}],rs=mulb(k*61+2024),sky=[0xcfe8ff,0xcfe8ff,0xbfdcf5,0x9fb8c8,0xd8ecff][k+1];
-  scene.background.setHex(sky);scene.fog.color.setHex(sky);
-  const box=(w,h,d,x,z,c,y0)=>{y0=y0||0;const m=slab(w,h,d,x,y0+h/2,z,c);G.add(m);S.push({x,z,hw:w/2,hd:d/2,top:y0+h,bot:y0})};
-  G.add(slab(130,1,130,0,-.5,0,[0xeef6ff,0xeef6ff,0xd6eaff,0xe8f0f4,0xa9d6f5][k+1]));
-  [[0,-66,67,1],[0,66,67,1],[-66,0,1,67],[66,0,1,67]].forEach(([x,z,hw,hd])=>box(hw*2,8,hd*2,x,z,0xdfeaf5));
-  const man=(x,z)=>[[1.6,1.8],[4.3,1.3],[6.3,.9]].forEach(([y,r])=>{const m=new THREE.Mesh(new THREE.SphereGeometry(r,10,8),lam(0xffffff));m.position.set(x,y,z);G.add(m)});
-  if(k<=0){for(let i=0;i<5;i++)man((rs()-.5)*40,(rs()-.5)*40)}
-  if(k===0){for(let i=0;i<16;i++){const w=i%2?8:2,d=i%2?2:8;box(w,4,d,(rs()-.5)*110,(rs()-.5)*110,0xcfe0f0)}for(let i=0;i<4;i++)box(10,6,10,(i<2?-1:1)*38,(i%2?-1:1)*38,0xf5faff);for(let i=0;i<10;i++)man((rs()-.5)*110,(rs()-.5)*110)}
-  if(k===1){for(let i=-2;i<=2;i++)for(let j=-2;j<=2;j++)if(Math.abs(i)+Math.abs(j)>1)box(4,14,4,i*24,j*24,0xbfe6ff);box(20,18,20,0,0,0xdff3ff);[[22,4],[17,8],[12,12]].forEach(([x,t])=>box(5,t,8,x,0,0xcdeaff));[[-40,-10,-40,10],[40,-10,40,10]].forEach(([a,b,c,d])=>box(Math.max(2,Math.abs(c-a)),8,Math.max(2,Math.abs(d-b)),a,(b+d)/2,0xbfe6ff))}
-  if(k===2){for(let i=0;i<40;i++){const x=(rs()-.5)*120,z=(rs()-.5)*120;if(Math.hypot(x,z)<6)continue;box(2,12,2,x,z,0x5a3d28);const c=new THREE.Mesh(new THREE.ConeGeometry(5,11,8),lam(0x2f6b3a));c.position.set(x,15,z);G.add(c)}
-   for(let i=0;i<3;i++){const x=-35+i*35,z=(i%2?1:-1)*35;box(14,7,12,x,z,0x8a5a2b);box(16,1,14,x,z,0xffffff,7)}for(let i=0;i<8;i++)box(8,2,2,(rs()-.5)*100,(rs()-.5)*100,0x6b4a2b)}
-  if(k===3){for(let i=0;i<6;i++){const a=i*1.047,x=Math.cos(a)*36,z=Math.sin(a)*36;box(16,2,16,x,z,0xeef6ff);man(x,z)}[[30,3],[20,6],[10,9]].forEach(([w,t])=>box(w,t,w,0,0,0xf5faff));
-   for(let i=0;i<4;i++){const x=Math.cos(i*1.57+.8)*52,z=Math.sin(i*1.57+.8)*52;box(8,5,8,x,z,0xf0f8ff);const dm=new THREE.Mesh(new THREE.SphereGeometry(4.5,12,8,0,6.283,0,1.57),lam(0xf0f8ff));dm.position.set(x,5,z);G.add(dm)}}},
+  if(this.mg)scene.remove(this.mg);const G=this.mg=new THREE.Group();scene.add(G);const H=200,
+   S=this.S=[{x:0,z:0,hw:H,hd:H,top:0}],rs=mulb(k*61+2024),sky=[0xcfe8ff,0xcfe8ff,0xbfdcf5,0x9fb8c8,0xd8ecff][k+1];
+  scene.background.setHex(sky);scene.fog.color.setHex(sky);scene.fog.near=100;scene.fog.far=430;
+  const kn=c=>{const R=c>>16&255,Gg=c>>8&255,B=c&255;return(R+Gg+B)/3>180&&Math.max(R,Gg,B)-Math.min(R,Gg,B)<70?'snow':kindOfColor(c)},
+   box=(w,h,d,x,z,c,y0)=>{y0=y0||0;const m=slab(w,h,d,x,y0+h/2,z,c);m.material=tmat(c,kn(c));G.add(m);S.push({x,z,hw:w/2,hd:d/2,top:y0+h,bot:y0})},
+   rp=(m)=>[(rs()-.5)*2*(H-14),(rs()-.5)*2*(H-14)],
+   man=(x,z)=>[[1.6,1.8],[4.3,1.3],[6.3,.9]].forEach(([y,r])=>{const m=new THREE.Mesh(new THREE.SphereGeometry(r,10,8),tmat(0xffffff,'snow'));m.position.set(x,y,z);G.add(m)}),
+   drift=(x,z)=>{const m=new THREE.Mesh(new THREE.SphereGeometry(3+rs()*4,10,6,0,6.283,0,1.57),tmat(0xf3f9ff,'snow'));m.position.set(x,0,z);m.scale.y=.45;G.add(m)};
+  const fl=slab(2*H,1,2*H,0,-.5,0,[0xeef6ff,0xeef6ff,0xd6eaff,0xe8f0f4,0xa9d6f5][k+1]);fl.material=tmat(0xeef6ff,'snow',60);if(k===3)fl.material.color.setHex(0xa9d6f5);G.add(fl);
+  [[0,-H-1,H+2,1],[0,H+1,H+2,1],[-H-1,0,1,H+2],[H+1,0,1,H+2]].forEach(([x,z,hw,hd])=>box(hw*2,10,hd*2,x,z,0xdfeaf5));
+  if(k<=0){for(let i=0;i<(k<0?24:40);i++){const[x,z]=rp();man(x,z)}for(let i=0;i<30;i++){const[x,z]=rp();drift(x,z)}}
+  if(k===0){for(let i=0;i<110;i++){const w=i%2?9:2.4,d=i%2?2.4:9,[x,z]=rp();box(w,4.2,d,x,z,0xcfe0f0)}for(let i=0;i<18;i++){const[x,z]=rp();box(11,6,11,x,z,0xf5faff);box(13,1,13,x,z,0xffffff,6)}
+   for(let i=0;i<6;i++){const a=i*1.047,x=Math.cos(a)*95,z=Math.sin(a)*95;box(18,9,18,x,z,0xe8f2fa);box(6,16,6,x,z,0xcfe0f0,9)}}
+  if(k===1){for(let i=-5;i<=5;i++)for(let j=-5;j<=5;j++)if(Math.abs(i)+Math.abs(j)>2&&(i+j)%2===0)box(5,14+((i*7+j*3)&3)*3,5,i*34,j*34,0xbfe6ff);
+   box(40,22,40,0,0,0xdff3ff);[[26,5],[21,10],[16,15]].forEach(([x,t])=>box(6,t,12,x,0,0xcdeaff));box(14,30,14,0,0,0xbfe6ff,22);
+   for(let i=0;i<10;i++){const a=i*.628,x=Math.cos(a)*120,z=Math.sin(a)*120;box(10,18,10,x,z,0xbfe6ff);box(14,2,14,x,z,0xffffff,18)}
+   [[-90,-20,-90,20],[90,-20,90,20],[-20,-90,20,-90],[-20,90,20,90]].forEach(([a,b,c,d])=>box(Math.max(3,Math.abs(c-a)),9,Math.max(3,Math.abs(d-b)),a,(b+d)/2,0xbfe6ff))}
+  if(k===2){for(let i=0;i<130;i++){const[x,z]=rp();if(Math.hypot(x,z)<8)continue;box(2.2,12,2.2,x,z,0x5a3d28);const c=new THREE.Mesh(new THREE.ConeGeometry(5.5,11,8),tmat(0x2f6b3a,'grass'));c.position.set(x,15,z);G.add(c);const c2=new THREE.Mesh(new THREE.ConeGeometry(3.8,8,8),tmat(0x2f6b3a,'grass'));c2.position.set(x,20,z);G.add(c2)}
+   for(let i=0;i<9;i++){const[x,z]=rp();box(16,7,13,x,z,0x8a5a2b);box(18,1.2,15,x,z,0xffffff,7)}for(let i=0;i<40;i++){const[x,z]=rp();box(9,2,2,x,z,0x6b4a2b)}for(let i=0;i<20;i++){const[x,z]=rp();drift(x,z)}}
+  if(k===3){for(let i=0;i<22;i++){const a=i*.286,R=i%2?72:128,x=Math.cos(a)*R,z=Math.sin(a)*R;box(20,2,20,x,z,0xeef6ff);if(i%3===0)man(x,z)}[[64,3],[44,6],[24,9],[10,13]].forEach(([w,t])=>box(w,t,w,0,0,0xf5faff));
+   for(let i=0;i<12;i++){const a=i*.524+.3,R=i%2?165:105,x=Math.cos(a)*R,z=Math.sin(a)*R;box(9,5,9,x,z,0xf0f8ff);const dm=new THREE.Mesh(new THREE.SphereGeometry(5,12,8,0,6.283,0,1.57),tmat(0xf0f8ff,'snow'));dm.position.set(x,5,z);G.add(dm)}
+   for(let i=0;i<30;i++){const[x,z]=rp();box(4,3,4,x,z,0xd6eaff)}}},
  start(){
   baseScene(0xcfe8ff);showOver('');PMIN=-1.2;pitch=0;camera.fov=75;camera.updateProjectionMatrix();scene.add(camera);
   this.hand=new THREE.Mesh(new THREE.SphereGeometry(.35,10,8),new THREE.MeshBasicMaterial({color:0xffffff}));this.hand.position.set(.55,-.5,-1.1);camera.add(this.hand);
@@ -32,9 +43,9 @@ ENG.snow={d3:true,fps:true,MN:['Snow Fort','Ice Palace','Pine Forest','Frozen La
  update(dt){
   const P=this.P,peers=[...RM.values()],T=Date.now()/1000,cyc=Math.floor(T/200),s=T-cyc*200;
   if(cyc!==this.cyc){this.cyc=cyc;Object.assign(this,{kc:0,vote:-1,mk:-1,lk:false,hp:100,ammo:12,pk:0,dead:false});P.dead=false;clearDebris();this.buildMap(-1);Object.assign(P,{x:(Math.random()-.5)*20,y:1,z:(Math.random()-.5)*20,vy:0})}
-  if(s>=12&&!this.lk&&performance.now()-this.ts>2500){this.lk=true;this.mk=pickMap(4,cyc,this.vote);this.buildMap(this.mk);const a=Math.random()*6.283;Object.assign(P,{x:Math.cos(a)*50,y:1,z:Math.sin(a)*50,vy:0});snd(660,.15,'sine',.12,990)}
+  if(s>=12&&!this.lk&&performance.now()-this.ts>2500){this.lk=true;this.mk=pickMap(4,cyc,this.vote);this.buildMap(this.mk);const a=Math.random()*6.283;Object.assign(P,{x:Math.cos(a)*150,y:1,z:Math.sin(a)*150,vy:0});snd(660,.15,'sine',.12,990)}
   this.live=s>=15&&s<195;this.cdf-=dt;this.inv-=dt;
-  if(this.dead){this.rt-=dt;camera.position.set(P.x,P.y+9,P.z+10);camera.lookAt(P.x,P.y+3,P.z);if(this.rt<=0){this.hp=100;this.dead=false;P.dead=false;this.inv=2;this.ammo=12;this.pk=0;clearDebris();const a=Math.random()*6.283;Object.assign(P,{x:Math.cos(a)*50,y:1,z:Math.sin(a)*50,vy:0})}}
+  if(this.dead){this.rt-=dt;camera.position.set(P.x,P.y+9,P.z+10);camera.lookAt(P.x,P.y+3,P.z);if(this.rt<=0){this.hp=100;this.dead=false;P.dead=false;this.inv=2;this.ammo=12;this.pk=0;clearDebris();const a=Math.random()*6.283;Object.assign(P,{x:Math.cos(a)*150,y:1,z:Math.sin(a)*150,vy:0})}}
   else{ctrl(P,dt,this.S);P.g.visible=false;const d=fpsCam(P),ey=camera.position.y;
    if(this.pk>0){this.pk-=dt;if(this.pk<=0)this.ammo=12}
    else if(keys.KeyR&&this.ammo<12)this.pk=1.3;

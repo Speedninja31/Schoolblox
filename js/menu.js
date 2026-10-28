@@ -6,7 +6,7 @@ const $e=id=>document.getElementById(id),hashS=s=>{let h=0;for(const c of String
 const G$=id=>GAMES.find(g=>g.id===id),bgOf=g=>'linear-gradient(135deg,'+g.c[0]+','+g.c[1]+')',catOf=g=>(META[g.id]||{}).c||g.tag;
 /* ---------- little 2D avatar (profile + friends) ---------- */
 let svgN=0;
-function avSvg(av,sz){const hex=n=>'#'+n.toString(16).padStart(6,'0'),sk=hex(OPT.skin[av.skin||0][1]),sh=hex(OPT.shirt[av.shirt||0][1]),hat=(OPT.hat[av.hat||0]||[])[1]||'',id='c'+(svgN++);
+function avSvg(av,sz){const hex=n=>'#'+n.toString(16).padStart(6,'0'),sk=hex((OPT.skin[av.skin||0]||OPT.skin[0])[1]),sh=hex((OPT.shirt[av.shirt||0]||OPT.shirt[0])[1]),hat=(OPT.hat[av.hat||0]||[])[1]||'',id='c'+(svgN++);
  const H={cap:'<path d="M32 28a18 16 0 0 1 36 0z" fill="#e0352b"/><rect x="30" y="27" width="40" height="4" rx="2" fill="#b02a22"/>',top:'<rect x="36" y="4" width="28" height="24" fill="#1a1a1a"/><rect x="28" y="26" width="44" height="5" rx="2" fill="#1a1a1a"/>',crown:'<path d="M33 28V10l9 9 8-12 8 12 9-9v18z" fill="#ffcf33"/>',party:'<path d="M50 2l15 28H35z" fill="#ff5fb0"/>',wizard:'<path d="M50 0l17 29H33z" fill="#4b2a9a"/><rect x="26" y="27" width="48" height="4" rx="2" fill="#4b2a9a"/>',cowboy:'<rect x="38" y="12" width="24" height="16" rx="4" fill="#8a5a2b"/><rect x="22" y="26" width="56" height="5" rx="2.5" fill="#8a5a2b"/>',beanie:'<path d="M33 28a17 17 0 0 1 34 0z" fill="#3b82f6"/><circle cx="50" cy="10" r="4" fill="#fff"/>',chef:'<rect x="36" y="14" width="28" height="15" fill="#fff"/><circle cx="42" cy="12" r="9" fill="#fff"/><circle cx="58" cy="12" r="9" fill="#fff"/>',santa:'<path d="M33 29c0-18 14-26 28-22l8 6-4 4 3 12z" fill="#d62828"/><rect x="32" y="26" width="38" height="6" rx="3" fill="#fff"/>',halo:'<ellipse cx="50" cy="14" rx="15" ry="4" fill="none" stroke="#ffe066" stroke-width="3"/>',phones:'<path d="M32 38a18 18 0 0 1 36 0" fill="none" stroke="#333" stroke-width="4"/><rect x="28" y="34" width="7" height="12" rx="3" fill="#e0352b"/><rect x="65" y="34" width="7" height="12" rx="3" fill="#e0352b"/>',straw:'<rect x="38" y="12" width="24" height="16" rx="4" fill="#e6c36a"/><rect x="22" y="26" width="56" height="5" rx="2.5" fill="#e6c36a"/>',pirate:'<path d="M26 28l24-14 24 14z" fill="#1a1a1a"/>',grad:'<rect x="26" y="20" width="48" height="6" fill="#1a1a1a"/><rect x="38" y="24" width="24" height="7" fill="#1a1a1a"/>'};
  return '<svg viewBox="0 0 100 100" width="'+sz+'" height="'+sz+'"><defs><clipPath id="'+id+'"><circle cx="50" cy="50" r="50"/></clipPath></defs><g clip-path="url(#'+id+')"><rect width="100" height="100" fill="#fff"/><rect x="14" y="60" width="16" height="44" rx="4" fill="'+sk+'"/><rect x="70" y="60" width="16" height="44" rx="4" fill="'+sk+'"/><rect x="28" y="58" width="44" height="46" rx="5" fill="'+sh+'"/><rect x="34" y="26" width="32" height="34" rx="9" fill="'+sk+'"/><circle cx="43" cy="42" r="2.4" fill="#111"/><circle cx="57" cy="42" r="2.4" fill="#111"/><path d="M42 50q8 7 16 0" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round"/>'+(H[hat]||'')+'</g></svg>'}
 function renderProfile(){const n=myName();$e('pav').innerHTML=avSvg(AV,150);$e('hn').textContent=n;$e('uname').textContent=n;}
@@ -15,7 +15,7 @@ function renderFs(){const el=$e('frs');if(!el)return;const ids=Object.keys(FRS),
  const bx=document.createElement('div');bx.className='fbox';
  if(!ids.length){bx.innerHTML='<div class="fe">No friends yet. Press <b>Invite Friends</b> to share your link, or <a>add a friend by code</a>.</div>';bx.querySelector('a').onclick=()=>openFr()}
  ids.forEach(c=>{const s=SEEN[c],o=on.includes(c),nm=String(FRS[c]).replace(/[^\w -]/g,'').slice(0,14)||'Friend',h=hashS(nm),d=document.createElement('div');d.className='fav2'+(o?'':' off');
-  d.innerHTML='<div class="fa">'+avSvg({skin:h%6,shirt:(h>>3)%OPT.shirt.length,hat:[0,1,2,5,6,7,13][(h>>6)%7]},90)+'</div>'+(o?'<div class="st '+(s.g?'pl':'on')+'">'+(s.g?'\ud83c\udfae':'\ud83d\udc64')+'</div>':'')+'<span></span>';
+  d.innerHTML='<div class="fa">'+avSvg({skin:h%6,shirt:(h>>>3)%OPT.shirt.length,hat:[0,1,2,5,6,7,13][(h>>>6)%7]},90)+'</div>'+(o?'<div class="st '+(s.g?'pl':'on')+'">'+(s.g?'\ud83c\udfae':'\ud83d\udc64')+'</div>':'')+'<span></span>';
   d.lastChild.textContent=nm;d.onclick=()=>{if(o&&s.g)joinFriend(c);else openFr()};bx.appendChild(d)});
  el.appendChild(bx);const b=$e('fbadge');b.textContent=on.length;b.style.display=on.length?'flex':'none'}
 /* ---------- game cards ---------- */
@@ -68,8 +68,8 @@ $e('nick').addEventListener('input',renderProfile);
 const TIPS=['Welcome to SchoolBlox! Share your room code so your friends can join you.','Vote for the next map in the lobby of Murder Mystery, Disaster Survival and Snowball Fight!','New: Fishing Frenzy and Garden Grove - catch rare fish and grow giant crops!','Press R in Sky Tower to respawn at your last checkpoint.','Open Character to wear hats, outfits and effects. Everything is free!'];let tipN=0;
 const showTip=()=>{$e('ban').textContent=TIPS[tipN%TIPS.length]};
 addEventListener('keydown',e=>{if(e.code==='Escape'){$e('gd').classList.remove('on');$e('sp').classList.remove('on')}});
-showTip();renderProfile();renderFs();try{renderMenu()}catch(e){console.error(e)}
-setInterval(()=>{if(!$e('modal').classList.contains('on')){renderProfile();renderFs()}},2500);
+showTip();try{renderProfile();renderFs()}catch(e){console.error(e)}try{renderMenu()}catch(e){console.error(e)}
+setInterval(()=>{if(!$e('modal').classList.contains('on')){try{renderProfile();renderFs()}catch(e){console.error(e)}}},2500);
 setInterval(()=>{tipN++;showTip()},8000);
 (()=>{const gp=new URLSearchParams(location.search).get('game');if(gp&&G$(gp))openGd(G$(gp))})();
 /* ---------- forced username ---------- */
