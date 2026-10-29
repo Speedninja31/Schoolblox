@@ -37,10 +37,17 @@ ENG.zom={d3:true,fps:true,MN:['Abandoned Compound','Farmstead','Bunker','Graveya
   if(v===3){x.fillStyle='#d8d2b8';x.beginPath();x.ellipse(47,38,6,7,0,0,7);x.fill();x.strokeStyle='#6a6450';x.lineWidth=1;x.beginPath();x.moveTo(43,34);x.lineTo(48,40);x.lineTo(46,45);x.stroke()}
   x.strokeStyle='#4a2a1a';x.lineWidth=1.2;x.beginPath();x.moveTo(12,36);x.lineTo(20,40);for(let i=0;i<3;i++){x.moveTo(14+i*3,35+i);x.lineTo(15+i*3,42+i)}x.stroke();
   return this.FT[key]=new THREE.CanvasTexture(c)},
+ /* shambler animation: hunched lurching gait, arms stretched out in front, head lolling; up close they grab and gnaw; runners sprint with pumping arms */
+ zanim(c,ty,id,near,moving){const t=c.t,ph=id*1.7,U=c.up,J=c.J,sw=Math.sin(t*11+ph);
+  U.rotation.x=(ty===1?.34:.17)+(near?.12:0);U.rotation.z=Math.sin(t*3.2+ph)*(moving?.07:.03);
+  J.head.rotation.z=Math.sin(t*1.7+ph)*.17;J.head.rotation.x=(ty===1?.3:.12)+Math.sin(t*2.1+ph)*.07;
+  if(near){J.aL.rotation.x=-1.75+sw*.45;J.aR.rotation.x=-1.75-sw*.45;J.aL.rotation.z=.28;J.aR.rotation.z=-.28;J.head.rotation.x=.5+Math.abs(sw)*.32}
+  else if(ty===1&&moving){const p=Math.sin(t*15+ph);J.aL.rotation.x=-.95+p*.75;J.aR.rotation.x=-.95-p*.75;J.aL.rotation.z=.1;J.aR.rotation.z=-.1}
+  else{J.aL.rotation.x=-1.55+Math.sin(t*3+ph)*.1;J.aR.rotation.x=-1.22+Math.sin(t*3.4+ph+1)*.12;J.aL.rotation.z=.12+Math.sin(t*2.2+ph)*.06;J.aR.rotation.z=-.1+Math.sin(t*2.5+ph)*.06}},
  zv(id,ty,x,z){const sv=AV,H=n=>OPT.hair.findIndex(h=>h[1]===n),Jx=n=>OPT.jacket.findIndex(h=>h[1]===n),rr=mulb(id*97+ty+3),pick=a=>a[Math.floor(rr()*a.length)];
   const soldier=ty===0&&rr()<.5,coat=soldier||ty===3||(ty===0&&rr()<.3),hat=ty===2?'morion':ty===3?'bicorne':soldier&&rr()<.6?'tricorn':'',hair=hat?0:pick([H('messy'),H('shortbk'),H('longbk'),0,H('curly')]),jk=(ty===0&&!coat)?pick([0,Jx('cardi'),0]):0;
   AV=Object.assign({},ZAVS[ty],{hair,jacket:jk});const c=newP(x,0,z);AV=sv;c.g.scale.setScalar([1,.95,1.4,2][ty]);
-  const sk=OPT.skin[ZAVS[ty].skin][1],rot=[[0x7f9168,0x8a9a78,0x6f8a6a,0x93a07f][Math.floor(rr()*4)],0xb2bfa2,0x6d7d62,0x5b6a5b][ty];
+  const sk=OPT.skin[ZAVS[ty].skin][1],rot=0x7f9168;
   c.g.traverse(o=>{if(o.isMesh&&o.material&&o.material.color&&o.material.color.getHex()===sk){o.material=o.material.clone();o.material.color.setHex(rot)}});
   const fc=c.J.head.children.find(o=>o.geometry&&o.geometry.type==='PlaneGeometry');if(fc)fc.material=new THREE.MeshBasicMaterial({map:this.zf(ty,Math.floor(rr()*4)),transparent:true});
   const mat=(col,em)=>new THREE.MeshLambertMaterial({color:col,emissive:em||0}),dm=(col,em)=>new THREE.MeshLambertMaterial({color:col,emissive:em||0,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}),
@@ -53,7 +60,6 @@ ENG.zom={d3:true,fps:true,MN:['Abandoned Compound','Farmstead','Bunker','Graveya
   if(ty===1)for(let i=0;i<4;i++)add(bx(1.4,.08,.04),dm(0xe2dcc6),0,3.5-i*.35,fz);
   if(ty===2){add(bx(2.15,1.6,1.15),mat(0x5a5f68),0,3.15,0);[-.7,.7].forEach(px=>[3.6,2.7].forEach(py=>add(bx(.16,.16,.05),dm(0xc0c6cc),px,py,.6)));[-1,1].forEach(q=>add(new THREE.ConeGeometry(.28,.9,5),mat(0x555a63),q*1.5,4.5,0))}
   const bl=dm(0x7a1111);add(bx(.7,.5,.04),bl,-.3,3.2,fz);add(bx(.35,.9,.04),bl,.45,2.7,fz);if(rr()<.6)add(bx(.6,.4,.04),bl,.2,3.6,-fz);
-  [c.J.aL,c.J.aR].forEach(a=>[-.3,0,.3].forEach(dx=>{const k=add(new THREE.ConeGeometry(.07,.45,4),mat(0xdde0c8),dx,-2.2,.1,a);k.rotation.x=Math.PI}));
   if(hat==='tricorn'){add(new THREE.CylinderGeometry(1.05,1.05,.08,3),mat(0x1c1c22),0,.52,0,c.J.head);add(new THREE.CylinderGeometry(.5,.58,.38,10),mat(0x1c1c22),0,.78,0,c.J.head);add(new THREE.CylinderGeometry(.52,.52,.07,10),mat(0xd4a017),0,.66,0,c.J.head)}
   if(hat==='morion'){const cp=add(new THREE.SphereGeometry(.74,16,10,0,6.283,0,1.57),mat(0x6a707a),0,.1,0,c.J.head);cp.scale.y=.85;add(new THREE.CylinderGeometry(.92,.92,.07,16),mat(0x6a707a),0,.1,0,c.J.head);add(bx(.12,.28,1.2),mat(0x555a63),0,.78,0,c.J.head)}
   if(hat==='bicorne'){add(bx(1.9,.34,.8),mat(0x1c1c22),0,.78,0,c.J.head);add(bx(1.95,.08,.85),mat(0xd4a017),0,.6,0,c.J.head)}
@@ -177,7 +183,7 @@ ENG.zom={d3:true,fps:true,MN:['Abandoned Compound','Farmstead','Bunker','Graveya
   const src=this.host?this.Z.map(z=>[z.id,z.x,z.z,z.hp,z.ty]):(hz?hz.z:[]),seen=new Set();this.src=src;if(hz&&Array.isArray(hz.bd))hz.bd.forEach((n,g)=>{if(g<4&&Number.isInteger(n)&&n>=0&&n<=5&&n!==this.bd[g])this.bset(g,n)});this.ik=state.ik>now;this.dp=state.dp>now;
   for(const a of src){seen.add(a[0]);let c=this.zm.get(a[0]);
    if(!c){c=this.zv(a[0],a[4],a[1],a[2]);this.zm.set(a[0],c)}
-   const dx=a[1]-c.x,dz=a[2]-c.z,mv=Math.hypot(dx,dz),k=this.host?1:Math.min(1,dt*14);c.x+=dx*k;c.z+=dz*k;if(mv>.04)c.yaw+=wr(Math.atan2(dx,dz)-c.yaw)*Math.min(1,dt*12);c.hs=mv>.05?16:0;c.gr=true;c.y=0;c.t+=dt;animate(c,dt);c.J.aL.rotation.x=c.J.aR.rotation.x=-1.45+Math.sin(c.t*5+a[0])*.1;c.J.aL.rotation.z=Math.sin(c.t*3+a[0])*.1;c.J.aR.rotation.z=-Math.sin(c.t*3.4+a[0])*.1;c.J.head.rotation.z=Math.sin(c.t*2+a[0])*.14;c.J.head.rotation.x=a[4]===1?.3:.08;if(c.g.parent!==scene)scene.add(c.g)}
+   const dx=a[1]-c.x,dz=a[2]-c.z,mv=Math.hypot(dx,dz),k=this.host?1:Math.min(1,dt*14);c.x+=dx*k;c.z+=dz*k;if(mv>.04)c.yaw+=wr(Math.atan2(dx,dz)-c.yaw)*Math.min(1,dt*12);c.hs=mv>.05?16:0;c.gr=true;c.y=0;c.t+=dt;animate(c,dt);{let nd=this.dead?1e9:Math.hypot(c.x-P.x,c.z-P.z);for(const q of peers)if(!q.dead)nd=Math.min(nd,Math.hypot(c.x-q.x,c.z-q.z));this.zanim(c,a[4],a[0],nd<3.4*[1,.95,1.4,2][a[4]],mv>.05)}if(c.g.parent!==scene)scene.add(c.g)}
   {this.rcd-=dt;let ng=-1;if(!this.dead)this.BR.forEach((b,g)=>{if(Math.hypot(P.x-b.x,P.z-b.z)<7&&(b.uz?Math.abs(P.z):Math.abs(P.x))<49.2)ng=g});
    const rb=document.getElementById('role'),rt=document.getElementById('rt');
    if(ng>=0){const b=this.BR[ng];rb.style.display='block';rt.style.color='#ffd23a';rt.textContent=this.bd[ng]>=5?'Window barricade intact':'Hold E: repair window ('+this.bd[ng]+'/5)';document.getElementById('rcd').style.width=Math.max(0,Math.min(100,100*(1-this.rcd/.9)))+'%';

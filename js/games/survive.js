@@ -46,6 +46,41 @@ ENG.survive={d3:true,NAMES:['Meteor Shower','Flood','Tornado','Earthquake','Ligh
    for(let h=0;h<5;h++)bk(4,6,4,0,h*6,0,0xe0a830);for(let i=1;i<7;i++)bk(4,3,4,i*4-12,30,0,0xe0a830);for(let i=0;i<8;i++)bk(4,1.5,10,-30+i*8,0,62,0x7a6a58)}
   if(k===7){bld(-28,-18,4,4,2,0x8a8f98,0x6a6f78,3);st(-28-9.5,-18,-1,0,14,0xe0a830);
    [-30,0,30].forEach(z=>{for(let h=0;h<4;h++)bk(6,5,6,30,h*5,z,[0xcfd3da,0xb8bcc4][h%2])});for(let h=0;h<5;h++)bk(4,6,4,-28,h*6,34,0xa0453a);for(let i=0;i<4;i++)bk(12,2,2,10,2+i*2,-52,0xe05050)}
+  /* extra destructible props + cheap ground decor so the maps do not feel empty (kept clear of the middle where players land) */
+  {const free=(x,z,r)=>{const d=Math.hypot(x,z);if(d<11||d>86)return false;for(const b of B)if(Math.abs(b.x-x)<b.w/2+r&&Math.abs(b.z-z)<b.d/2+r)return false;return true},
+   spot=r=>{for(let i=0;i<40;i++){const a=rs()*6.283,d=12+rs()*72,x=Math.cos(a)*d,z=Math.sin(a)*d;if(free(x,z,r))return[x,z]}return null},
+   pick=a=>a[Math.floor(rs()*a.length)],cc=[0xe53935,0x1e88e5,0xfdd835,0x43a047,0xeceff1,0x6d4c41,0xfb8c00];
+   const PR={
+    crate:(x,z)=>{bk(2.4,2.4,2.4,x,0,z,0x9a6a3a);if(rs()<.5)bk(2.2,2.2,2.2,x+.2,2.4,z,0x8a5a2b)},
+    barrel:(x,z)=>{bk(1.7,2.4,1.7,x,0,z,pick([0x8a5a2b,0x3a6f9a,0xb03a2e]))},
+    bench:(x,z)=>{bk(3.6,.5,1.2,x,1.1,z,0x8a5a2b);bk(.5,1.1,1,x-1.4,0,z,0x555a63);bk(.5,1.1,1,x+1.4,0,z,0x555a63);bk(3.6,1,.3,x,1.6,z-.6,0x8a5a2b)},
+    lamp:(x,z)=>{bk(.5,6,.5,x,0,z,0x333a44);bk(1.5,.8,1.5,x,6,z,0xffe2a8)},
+    fence:(x,z)=>{const o=rs()<.5;for(let i=0;i<3;i++){const dx=o?i*4-4:0,dz=o?0:i*4-4;bk(.5,2.2,.5,x+dx,0,z+dz,0xe8e0d0);bk(o?4:.3,.5,o?.3:4,x+dx+(o?2:0),1.2,z+dz+(o?0:2),0xe8e0d0)}},
+    car:(x,z)=>{const o=rs()<.5,c=pick(cc);bk(o?8.5:4.4,1.5,o?4.4:8.5,x,.4,z,c);bk(o?4.4:3.7,1.2,o?3.7:4.4,x,1.9,z,0x9fd3ff)},
+    stall:(x,z)=>{[[-2,-1.5],[2,-1.5],[-2,1.5],[2,1.5]].forEach(([a,b])=>bk(.4,3.4,.4,x+a,0,z+b,0x6b4a2b));bk(5.4,.5,4.4,x,3.4,z,pick(cc));bk(4,1.2,1.5,x,0,z-1.2,0x8a5a2b)},
+    shed:(x,z)=>{bk(5,3,5,x,0,z,pick([0x8a5a2b,0xb8935a,0xa0453a]));bk(5.8,.6,5.8,x,3,z,0x5a3d28)},
+    rock:(x,z)=>{bk(3.4,2.4,3,x,0,z,0x8a8f98);bk(2.2,1.6,2,x+.3,2.4,z,0x9aa0a8)},
+    snowman:(x,z)=>{bk(2.6,2.2,2.6,x,0,z,0xffffff);bk(1.9,1.7,1.9,x,2.2,z,0xffffff);bk(1.3,1.2,1.3,x,3.9,z,0xffffff)},
+    cactus:(x,z)=>{bk(1.2,5,1.2,x,0,z,0x3f8f3f);bk(2.2,.9,.9,x+1.2,2.4,z,0x3f8f3f);bk(.9,2,.9,x+2.1,2.4,z,0x3f8f3f)},
+    tent:(x,z)=>{bk(6,2.4,5,x,0,z,pick([0xd9b878,0xc9a35f,0xb8935a]));bk(4.4,1.6,4,x,2.4,z,0xd9b878)},
+    cont:(x,z)=>{const o=rs()<.5;bk(o?12:5,5,o?5:12,x,0,z,pick(cc))},
+    tank:(x,z)=>{bk(5,7,5,x,0,z,0xcfd3da);bk(5.4,.6,5.4,x,7,z,0xa0a6ae)},
+    pipe:(x,z)=>{const o=rs()<.5;bk(o?12:1.2,1.2,o?1.2:12,x,0,z,0xe0a830);bk(1.4,3,1.4,x+(o?-6:0),0,z+(o?0:-6),0x777b82)},
+    cone:(x,z)=>{bk(.9,1.4,.9,x,0,z,0xff7a1a)},
+    well:(x,z)=>{for(let i=0;i<4;i++){const a=i*1.57;bk(1.6,1.6,1.6,x+Math.cos(a)*1.4,0,z+Math.sin(a)*1.4,0x8a8f98)}bk(.4,3.6,.4,x-1.8,1.6,z,0x6b4a2b);bk(.4,3.6,.4,x+1.8,1.6,z,0x6b4a2b);bk(4.4,.5,2.6,x,5,z,0x7a3b2e)},
+    hay:(x,z)=>{bk(3.2,2.6,3.2,x,0,z,0xe3c060)},
+    boat:(x,z)=>{bk(2.8,1.2,7,x,.3,z,0x8a5a2b);bk(.4,5,.4,x,1.5,z,0x6b4a2b);bk(.3,3.4,2.6,x+.3,2.2,z,0xf5f5f5)}};
+   const T=[['car','bench','lamp','fence','crate','barrel','stall','shed'],['car','lamp','bench','crate','stall','barrel','car'],['barrel','crate','stall','boat','rock','hay','shed'],['hay','well','stall','barrel','crate','shed','rock','lamp'],['cactus','rock','tent','crate','barrel','cactus','rock'],['snowman','rock','crate','fence','shed','barrel','snowman'],['cont','crate','barrel','cone','cont','lamp','crate'],['tank','pipe','barrel','crate','cone','cont','pipe','lamp']][k];
+   const nP=Math.max(22,Math.min(55,Math.round(60-B.length/12)));if(T)for(let i=0;i<nP;i++){const nm=pick(T),sp=spot(nm==='cont'?7:nm==='car'?5:nm==='fence'||nm==='pipe'?7:4);if(sp)PR[nm](sp[0],sp[1])}
+   const pts=(n,y,r,sc)=>{const o=[];for(let i=0;i<n*2&&o.length<n;i++){const a=rs()*6.283,d=8+rs()*80,x=Math.cos(a)*d,z=Math.sin(a)*d;if(Math.hypot(x,z)<86&&free(x,z,r))o.push([x,y,z,rs()*6.28,(sc||1)*(.7+rs()*.7)])}return o},
+    inst=(geo,col,p)=>{if(!p.length)return;const m=new THREE.InstancedMesh(geo,new THREE.MeshLambertMaterial({color:col}),p.length),d=new THREE.Object3D();p.forEach((q,i)=>{d.position.set(q[0],q[1],q[2]);d.rotation.y=q[3];d.scale.setScalar(q[4]);d.updateMatrix();m.setMatrixAt(i,d.matrix)});m.instanceMatrix.needsUpdate=true;m.frustumCulled=false;G.add(m)};
+   if(k===0||k===3){inst(new THREE.ConeGeometry(.35,1.3,4),0x3f9a3a,pts(160,.65,.3));inst(new THREE.SphereGeometry(.35,6,5),0xffd23a,pts(40,.35,.3));inst(new THREE.SphereGeometry(.35,6,5),0xff6fa8,pts(40,.35,.3))}
+   if(k===1||k===6||k===7)inst(new THREE.CylinderGeometry(2.2,2.2,.05,10),0x2a3340,pts(30,.07,2.5));
+   if(k===1||k===6)inst(new THREE.SphereGeometry(1.1,8,6),0x3f9a3a,pts(30,.6,1.2));
+   if(k===2||k===3||k===4||k===7)inst(new THREE.DodecahedronGeometry(.9),0x8a8f98,pts(40,.5,1));
+   if(k===4)inst(new THREE.SphereGeometry(.7,6,5),0x7a6a3a,pts(40,.4,.8));
+   if(k===5){inst(new THREE.SphereGeometry(1.6,8,6),0xffffff,pts(50,.1,1.8));inst(new THREE.DodecahedronGeometry(.8),0x9aa4ab,pts(20,.4,1))}
+   if(k===2)inst(new THREE.CylinderGeometry(.5,.5,.12,8),0xf0d9c0,pts(40,.07,.6))}
   if(trees)for(let i=0;i<14;i++){const a=rs()*6.283,r=66+rs()*28,x=Math.cos(a)*r,z=Math.sin(a)*r,pine=k===5,cac=k===4,pm=k===2;
    const tr=new THREE.Mesh(new THREE.CylinderGeometry(cac?1:.7,cac?1:.9,cac?7:pm?6:4,7),mat(cac?0x3f8f3f:0x7a5230));tr.position.set(x,cac?3.5:pm?3:2,z);G.add(tr);
    if(!cac){const lf=new THREE.Mesh(pine?new THREE.ConeGeometry(3.2,8,8):new THREE.SphereGeometry(3.4,10,8),mat(pine?0x2b5e3a:pm?0x3fa84a:0x4caf50));lf.position.set(x,pine?7:pm?7:6.2,z);G.add(lf)}}},
