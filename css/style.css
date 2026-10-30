@@ -373,3 +373,6 @@ body,.win,#custom,#sp{transition:background-color .4s}
 /* v9b: the generic main{max-width:1000px} rule no longer squeezes the home page; Friends tab sits left of the Netlify badge */
 .chatab{right:200px}
 @media(max-width:860px){.chatab{right:auto;left:14px;bottom:58px;border-radius:8px}}
+
+/* report button in the Esc menu player list */
+.pr .prp{margin-left:6px;padding:2px 6px;border:0;border-radius:8px;background:rgba(255,255,255,.14);color:#fff;font-size:12px;cursor:pointer;pointer-events:auto}.pr .prp:hover{background:rgba(198,40,40,.85)}
