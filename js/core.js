@@ -13,7 +13,7 @@ let SENS=ST.sens*.0006;if(ST.th!=='auto')document.documentElement.dataset.theme=
 const modal=document.getElementById('modal'),view=document.getElementById('view'),petview=document.getElementById('petview'),
  scoreEl=document.getElementById('score'),hint=document.getElementById('hint'),over=document.getElementById('over'),touch=document.getElementById('touch');
 const keys={};let cur=null,raf=0;
-addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
  if(modal.classList.contains('on')&&['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
  keys[e.code]=true;
  if(cur&&cur.P&&!cur.P.dead&&!cur.noEmote){const em=EMK[e.code];if(em)cur.P.emote=em}if(e.code==='KeyR'&&cur&&cur.reset&&!(cur.P&&cur.P.dead))cur.reset();if(cur&&cur.vu&&cur.vu.style.display==='flex'&&/^Digit[1-9]$/.test(e.code)){const vb=cur.vu.querySelectorAll('button')[+e.code.slice(5)-1];if(vb)vb.click()}});
@@ -640,7 +640,7 @@ rbm.onclick=e=>{if(e.target===rbm)rbClose()};
 /* emote wheel */
 [...emp.children].forEach((b,i,a)=>{const m=EMN[i][1].match(/^(\S+)\s+(.*)$/),an=i/a.length*Math.PI*2-Math.PI/2;b.innerHTML='<span>'+m[1]+'</span><small>'+m[2]+'</small>';b.style.setProperty('--x',Math.cos(an)*100+'px');b.style.setProperty('--y',Math.sin(an)*100+'px')});
 /* keys */
-addEventListener('keydown',e=>{if(!inGame()||lobby.style.display==='flex')return;const typing=document.activeElement===chatin||(e.target&&e.target.tagName==='INPUT');
+addEventListener('keydown',e=>{if(!inGame()||lobby.style.display==='flex')return;const typing=document.activeElement===chatin||(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'));
  if(e.code==='Escape'){if(document.activeElement===chatin){chatin.blur();if(SLwant&&is3p())slLock();return}if(emp.style.display==='flex')return;rbIsOpen()?rbClose():rbOpen();return}
  if(typing||rbIsOpen())return;
  if((e.code==='ShiftLeft'||e.code==='ShiftRight')&&!e.repeat&&is3p())slSet(!SLwant);
