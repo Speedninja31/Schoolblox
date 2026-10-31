@@ -38,6 +38,9 @@
 <label class="set"><span>Light / Dark</span><select id="thm"><option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
 <label class="set row"><span>Show game tips</span><input type="checkbox" class="tg" id="hnt"></label>
 <label class="set row"><span>Reduce animations</span><input type="checkbox" class="tg" id="calm"></label>
+<div class="sgrp">Move your data</div>
+<div class="set"><span>Moving to a new website address? Your progress (SchoolBux, avatar, owned items, pets, garden, pizza, settings, friends) is saved in this browser for this address only. Export it here, then import it on the new site.</span><div style="display:flex;gap:6px;flex-wrap:wrap"><button id="dxp">⬇️ Export file</button><button id="dcp">📋 Copy code</button></div><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="dkey"> Include my admin key (keep the file private)</label></div>
+<div class="set"><span>Import data</span><input type="file" id="dfl" accept=".json,application/json"><textarea id="dtx" rows="3" placeholder="...or paste your data code here" style="width:100%;box-sizing:border-box;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.28);color:inherit;padding:8px;font:600 12px system-ui"></textarea><button id="dim">⬆️ Import</button><div id="dmsg" style="font-weight:700;min-height:16px"></div><details><summary style="cursor:pointer;opacity:.8">Old site won't open or is paused?</summary><small>Open the old address, press F12, click Console, paste <code>copy(JSON.stringify(localStorage))</code> and press Enter (Chrome may ask you to type "allow pasting" first). Then paste what you copied into the box above.</small></details></div>
 <button id="rst" class="dng">Reset all saved data</button></div>
 
 <div id="frp"><div class="frh"><b>👥 Friends</b><button id="frx">✕</button></div>
@@ -62,6 +65,7 @@
 <script src="js/config.js" onerror="(window.__fail=window.__fail||[]).push('js/config.js')"></script>
 <script src="js/core.js" onerror="(window.__fail=window.__fail||[]).push('js/core.js')"></script>
 <script src="js/admin.js" onerror="(window.__fail=window.__fail||[]).push('js/admin.js')"></script>
+<script src="js/data.js" onerror="(window.__fail=window.__fail||[]).push('js/data.js')"></script>
 <script src="js/games/avatar.js" onerror="(window.__fail=window.__fail||[]).push('js/games/avatar.js')"></script>
 <script src="js/games/tower.js" onerror="(window.__fail=window.__fail||[]).push('js/games/tower.js')"></script>
 <script src="js/games/survive.js" onerror="(window.__fail=window.__fail||[]).push('js/games/survive.js')"></script>
