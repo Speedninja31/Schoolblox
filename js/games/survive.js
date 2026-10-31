@@ -48,30 +48,41 @@ ENG.survive={d3:true,NAMES:['Meteor Shower','Flood','Tornado','Earthquake','Ligh
    [-30,0,30].forEach(z=>{for(let h=0;h<4;h++)bk(6,5,6,30,h*5,z,[0xcfd3da,0xb8bcc4][h%2])});for(let h=0;h<5;h++)bk(4,6,4,-28,h*6,34,0xa0453a);for(let i=0;i<4;i++)bk(12,2,2,10,2+i*2,-52,0xe05050)}
   /* extra destructible props + cheap ground decor so the maps do not feel empty (kept clear of the middle where players land) */
   {const free=(x,z,r)=>{const d=Math.hypot(x,z);if(d<11||d>86)return false;for(const b of B)if(Math.abs(b.x-x)<b.w/2+r&&Math.abs(b.z-z)<b.d/2+r)return false;return true},
-   spot=r=>{for(let i=0;i<40;i++){const a=rs()*6.283,d=12+rs()*72,x=Math.cos(a)*d,z=Math.sin(a)*d;if(free(x,z,r))return[x,z]}return null},
    pick=a=>a[Math.floor(rs()*a.length)],cc=[0xe53935,0x1e88e5,0xfdd835,0x43a047,0xeceff1,0x6d4c41,0xfb8c00];
    const PR={
     crate:(x,z)=>{bk(2.4,2.4,2.4,x,0,z,0x9a6a3a);if(rs()<.5)bk(2.2,2.2,2.2,x+.2,2.4,z,0x8a5a2b)},
     barrel:(x,z)=>{bk(1.7,2.4,1.7,x,0,z,pick([0x8a5a2b,0x3a6f9a,0xb03a2e]))},
     bench:(x,z)=>{bk(3.6,.5,1.2,x,1.1,z,0x8a5a2b);bk(.5,1.1,1,x-1.4,0,z,0x555a63);bk(.5,1.1,1,x+1.4,0,z,0x555a63);bk(3.6,1,.3,x,1.6,z-.6,0x8a5a2b)},
     lamp:(x,z)=>{bk(.5,6,.5,x,0,z,0x333a44);bk(1.5,.8,1.5,x,6,z,0xffe2a8)},
-    fence:(x,z)=>{const o=rs()<.5;for(let i=0;i<3;i++){const dx=o?i*4-4:0,dz=o?0:i*4-4;bk(.5,2.2,.5,x+dx,0,z+dz,0xe8e0d0);bk(o?4:.3,.5,o?.3:4,x+dx+(o?2:0),1.2,z+dz+(o?0:2),0xe8e0d0)}},
-    car:(x,z)=>{const o=rs()<.5,c=pick(cc);bk(o?8.5:4.4,1.5,o?4.4:8.5,x,.4,z,c);bk(o?4.4:3.7,1.2,o?3.7:4.4,x,1.9,z,0x9fd3ff)},
+    fence:(x,z,o)=>{o=o===undefined?rs()<.5:o;for(let i=0;i<3;i++){const dx=o?i*4-4:0,dz=o?0:i*4-4;bk(.5,2.2,.5,x+dx,0,z+dz,0xe8e0d0);bk(o?4:.3,.5,o?.3:4,x+dx+(o?2:0),1.2,z+dz+(o?0:2),0xe8e0d0)}},
+    car:(x,z,o)=>{o=o===undefined?rs()<.5:o;const c=pick(cc);bk(o?8.5:4.4,1.5,o?4.4:8.5,x,.4,z,c);bk(o?4.4:3.7,1.2,o?3.7:4.4,x,1.9,z,0x9fd3ff)},
     stall:(x,z)=>{[[-2,-1.5],[2,-1.5],[-2,1.5],[2,1.5]].forEach(([a,b])=>bk(.4,3.4,.4,x+a,0,z+b,0x6b4a2b));bk(5.4,.5,4.4,x,3.4,z,pick(cc));bk(4,1.2,1.5,x,0,z-1.2,0x8a5a2b)},
     shed:(x,z)=>{bk(5,3,5,x,0,z,pick([0x8a5a2b,0xb8935a,0xa0453a]));bk(5.8,.6,5.8,x,3,z,0x5a3d28)},
     rock:(x,z)=>{bk(3.4,2.4,3,x,0,z,0x8a8f98);bk(2.2,1.6,2,x+.3,2.4,z,0x9aa0a8)},
     snowman:(x,z)=>{bk(2.6,2.2,2.6,x,0,z,0xffffff);bk(1.9,1.7,1.9,x,2.2,z,0xffffff);bk(1.3,1.2,1.3,x,3.9,z,0xffffff)},
     cactus:(x,z)=>{bk(1.2,5,1.2,x,0,z,0x3f8f3f);bk(2.2,.9,.9,x+1.2,2.4,z,0x3f8f3f);bk(.9,2,.9,x+2.1,2.4,z,0x3f8f3f)},
     tent:(x,z)=>{bk(6,2.4,5,x,0,z,pick([0xd9b878,0xc9a35f,0xb8935a]));bk(4.4,1.6,4,x,2.4,z,0xd9b878)},
-    cont:(x,z)=>{const o=rs()<.5;bk(o?12:5,5,o?5:12,x,0,z,pick(cc))},
+    cont:(x,z,o)=>{o=o===undefined?rs()<.5:o;bk(o?12:5,5,o?5:12,x,0,z,pick(cc))},
     tank:(x,z)=>{bk(5,7,5,x,0,z,0xcfd3da);bk(5.4,.6,5.4,x,7,z,0xa0a6ae)},
-    pipe:(x,z)=>{const o=rs()<.5;bk(o?12:1.2,1.2,o?1.2:12,x,0,z,0xe0a830);bk(1.4,3,1.4,x+(o?-6:0),0,z+(o?0:-6),0x777b82)},
+    pipe:(x,z,o)=>{o=o===undefined?rs()<.5:o;bk(o?12:1.2,1.2,o?1.2:12,x,0,z,0xe0a830);bk(1.4,3,1.4,x+(o?-6:0),0,z+(o?0:-6),0x777b82)},
     cone:(x,z)=>{bk(.9,1.4,.9,x,0,z,0xff7a1a)},
     well:(x,z)=>{for(let i=0;i<4;i++){const a=i*1.57;bk(1.6,1.6,1.6,x+Math.cos(a)*1.4,0,z+Math.sin(a)*1.4,0x8a8f98)}bk(.4,3.6,.4,x-1.8,1.6,z,0x6b4a2b);bk(.4,3.6,.4,x+1.8,1.6,z,0x6b4a2b);bk(4.4,.5,2.6,x,5,z,0x7a3b2e)},
     hay:(x,z)=>{bk(3.2,2.6,3.2,x,0,z,0xe3c060)},
     boat:(x,z)=>{bk(2.8,1.2,7,x,.3,z,0x8a5a2b);bk(.4,5,.4,x,1.5,z,0x6b4a2b);bk(.3,3.4,2.6,x+.3,2.2,z,0xf5f5f5)}};
-   const T=[['car','bench','lamp','fence','crate','barrel','stall','shed'],['car','lamp','bench','crate','stall','barrel','car'],['barrel','crate','stall','boat','rock','hay','shed'],['hay','well','stall','barrel','crate','shed','rock','lamp'],['cactus','rock','tent','crate','barrel','cactus','rock'],['snowman','rock','crate','fence','shed','barrel','snowman'],['cont','crate','barrel','cone','cont','lamp','crate'],['tank','pipe','barrel','crate','cone','cont','pipe','lamp']][k];
-   const nP=Math.max(22,Math.min(55,Math.round(60-B.length/12)));if(T)for(let i=0;i<nP;i++){const nm=pick(T),sp=spot(nm==='cont'?7:nm==='car'?5:nm==='fence'||nm==='pipe'?7:4);if(sp)PR[nm](sp[0],sp[1])}
+   /* hand-placed layouts: 'name x z rot' (rot 1 = turned 90 deg). Only checked against the map structures, so rows and clusters can sit close together. */
+   const n0=B.length,P=(nm,x,z,o)=>{if(!PR[nm]||Math.hypot(x,z)<10)return;const r=nm==='cont'||nm==='pipe'?5:nm==='car'||nm==='fence'?3.5:2.5;for(let i=0;i<n0;i++){const b=B[i];if(Math.abs(b.x-x)<b.w/2+r&&Math.abs(b.z-z)<b.d/2+r){if(window.__lay)window.__lay.push('skip '+nm+' '+x+' '+z);return}}PR[nm](x,z,o)},
+    run=t=>t.split(';').forEach(q=>{const a=q.trim().split(' ');if(a[0])P(a[0],+a[1],+a[2],a[3]===undefined?undefined:a[3]==='1')});
+   const LY=[
+/*0 Suburban*/'car -5.2 -62 0;car 5.2 -38 0;car -5.2 -18 0;car 5.2 24 0;car -5.2 42 0;car 5.2 64 0;lamp -10 -72;lamp 10 -72;lamp -10 -48;lamp 10 -48;lamp -10 -24;lamp 10 -24;lamp -10 24;lamp 10 24;lamp -10 48;lamp 10 48;lamp -10 72;lamp 10 72;fence -16 -46 0;fence 16 -46 0;fence -16 0 0;fence 16 0 0;fence -16 46 0;fence 16 46 0;shed -42 -60;shed 42 -60;shed -42 60;shed 42 60;crate -44 -30;barrel -47 -30;crate 44 30;barrel 47 30;crate 44 -30;barrel 47 -30;stall -14 78;stall 14 78;crate -5 80;barrel 5 80;barrel 8 80;bench -14 -80;bench 14 -80;cone -8 -84;cone 8 -84',
+/*1 Skyscrapers*/'car -12 -22 0;car 12 20 0;car -22 0 1;car 22 -2 1;car -14 -46 0;car 14 46 0;lamp -16 -16;lamp 16 -16;lamp -16 16;lamp 16 16;lamp -8 -62;lamp 8 -62;lamp -8 62;lamp 8 62;lamp -62 -8;lamp -62 8;lamp 62 -8;lamp 62 8;bench -12 -10;bench 12 10;bench -12 10;bench 12 -10;stall -20 -10;stall 20 10;cont 0 64 1;cont -16 72 1;crate 14 66;crate 17 66;cone -8 56;cone 0 55;cone 8 56;barrel -22 62;barrel 22 62;barrel -50 -20;crate -53 -20;barrel 50 20;crate 53 20',
+/*2 Pirate Cove*/'boat -46 -22;boat -46 14;boat -54 -4;barrel -38 -14;barrel -38 -11;crate -38 -8;crate -38 6;barrel -36 9;crate -39 9;stall 12 22;stall 12 -6;crate 8 -24;barrel 11 -24;crate 8 -21;shed 18 -42;shed 46 -22;barrel 20 22;rock 8 58;rock 12 62;rock -6 56;rock -14 62;rock 50 -50;rock 54 -46;hay 48 26;crate 56 24;lamp 20 -16;lamp 16 6;lamp -14 30;lamp -14 -30;barrel -20 40;crate -17 40',
+/*3 Castle*/'well -20 -22;stall -26 18;stall -26 27;hay 24 20;hay 28 22;hay 24 24;barrel 22 -24;barrel 25 -24;crate 28 -24;crate 22 -28;shed -28 -26;lamp -6 14;lamp 6 14;lamp -16 -12;lamp 16 -12;barrel -12 24;crate -9 24;bench -14 12;rock -62 -22;rock -66 -18;rock 62 22;rock 58 26;hay 56 -52;hay 60 -54;shed -56 52;barrel -60 52;crate -57 55;lamp 33 -33;lamp -33 33;rock 0 -66;rock 4 -68;hay 0 66;hay 4 68',
+/*4 Desert Outpost*/'tent -9 30;tent 9 30;tent 0 42;barrel -3 36;crate 3 36;barrel 0 33;stall -24 12;stall 24 10;cactus -48 -22;cactus -52 -18;cactus 50 -24;cactus 46 -30;cactus -60 30;cactus 62 14;cactus 20 -56;cactus 14 -60;rock -22 -54;rock -26 -56;rock 56 40;rock 52 44;rock -50 52;rock -54 48;crate 20 40;barrel 23 40;tent 60 -6;tent -58 -6;cactus -16 70;cactus 18 72',
+/*5 Snowy Cabins*/'@ring52;@ring27;snowman 14 9;snowman 17 11;fence 0 17 1;fence -14 20 1;crate 14 -14;barrel 17 -14;barrel 20 -14;rock 70 0;rock -70 10;rock 0 -70;rock 40 62;rock -50 -60;snowman -48 36;snowman -52 38;snowman 56 -8;shed -10 -40;crate 62 40;barrel 65 40',
+/*6 Harbor Docks*/'cone -8 12;cone -4 14;cone 4 14;cone 8 12;lamp -30 52;lamp -15 52;lamp 0 52;lamp 15 52;lamp 30 52;boat -36 74;boat 0 74;boat 36 74;barrel -40 48;barrel -43 48;crate -46 50;cont -14 -50 1;cont 14 -52 1;cont 40 -50 0;crate 0 -22;crate 3 -22;barrel -6 -24;cont -52 -2 0;cont -60 8 0;crate 52 -2;crate 55 -2;barrel 52 2;lamp -22 -4;lamp 22 -4;lamp -22 24;lamp 22 22;stall 30 6',
+/*7 Industrial Yard*/'cont -40 40 1;cont -40 47 1;cont -14 58 1;cont 10 64 1;tank -48 12;tank -48 -2;tank -14 14;tank -20 22;pipe 10 22 1;pipe 10 26 1;pipe -10 -36 1;pipe 12 -38 0;barrel -18 38;barrel -16 41;crate -16 36;cone -4 -44;cone 4 -44;cone 16 -46;cone 22 -46;lamp -12 -6;lamp 14 -10;lamp 14 12;lamp 44 -14;lamp 44 14;lamp -28 4;crate 52 -48;barrel 55 -48;crate 58 -46;stall 18 40;barrel 40 56;crate 43 56']
+   if(k===5){ring(5,52,(x,z,i)=>P(i%2?'snowman':'shed',x,z));ring(5,27,(x,z)=>P('lamp',x,z))}
+   run(LY[k].replace(/@ring\d+;?/g,''));
    const pts=(n,y,r,sc)=>{const o=[];for(let i=0;i<n*2&&o.length<n;i++){const a=rs()*6.283,d=8+rs()*80,x=Math.cos(a)*d,z=Math.sin(a)*d;if(Math.hypot(x,z)<86&&free(x,z,r))o.push([x,y,z,rs()*6.28,(sc||1)*(.7+rs()*.7)])}return o},
     inst=(geo,col,p)=>{if(!p.length)return;const m=new THREE.InstancedMesh(geo,new THREE.MeshLambertMaterial({color:col}),p.length),d=new THREE.Object3D();p.forEach((q,i)=>{d.position.set(q[0],q[1],q[2]);d.rotation.y=q[3];d.scale.setScalar(q[4]);d.updateMatrix();m.setMatrixAt(i,d.matrix)});m.instanceMatrix.needsUpdate=true;m.frustumCulled=false;G.add(m)};
    if(k===0||k===3){inst(new THREE.ConeGeometry(.35,1.3,4),0x3f9a3a,pts(160,.65,.3));inst(new THREE.SphereGeometry(.35,6,5),0xffd23a,pts(40,.35,.3));inst(new THREE.SphereGeometry(.35,6,5),0xff6fa8,pts(40,.35,.3))}
