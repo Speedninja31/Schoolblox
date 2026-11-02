@@ -72,12 +72,4 @@ showTip();try{renderProfile();renderFs()}catch(e){console.error(e)}try{renderMen
 setInterval(()=>{if(!$e('modal').classList.contains('on')){try{renderProfile();renderFs()}catch(e){console.error(e)}}},2500);
 setInterval(()=>{tipN++;showTip()},8000);
 (()=>{const gp=new URLSearchParams(location.search).get('game');if(gp&&G$(gp))openGd(G$(gp))})();
-/* ---------- forced username ---------- */
-(function(){const g=$e('ugate'),i=$e('ugi'),e=$e('uge'),b=$e('ugb'),nk=$e('nick');
- const bad=v=>{v=v.trim();if(v.length<3||v.length>14)return'Use 3 to 14 characters.';if(!/^[A-Za-z0-9_ ]+$/.test(v))return'Letters, numbers, spaces and _ only.';if(/^player\d{4}$/i.test(v))return'Please pick your own name.';if(chatCheck(v).any)return'Please choose a different name.';return''};
- const need=()=>!!bad(nk.value);
- const show=()=>{g.classList.add('on');i.value='';e.textContent='';setTimeout(()=>i.focus(),60)};
- const go=()=>{const v=i.value.trim().replace(/\s+/g,' '),m=bad(v);if(m){e.textContent=m;return}nk.value=v;nk.dispatchEvent(new Event('change'));nk.dispatchEvent(new Event('input'));g.classList.remove('on')};
- b.onclick=go;i.onkeydown=ev=>{ev.stopPropagation();if(ev.key==='Enter')go()};
- nk.addEventListener('change',()=>{if(need())show()});
- if(need())show()})();
+/* ---------- forced username / login: see js/account.js ---------- */

@@ -38,6 +38,8 @@
 <label class="set"><span>Light / Dark</span><select id="thm"><option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
 <label class="set row"><span>Show game tips</span><input type="checkbox" class="tg" id="hnt"></label>
 <label class="set row"><span>Reduce animations</span><input type="checkbox" class="tg" id="calm"></label>
+<div class="sgrp">Account</div>
+<div class="set" id="accbox"></div>
 <div class="sgrp">Move your data</div>
 <div class="set"><span>Moving to a new website address? Your progress (SchoolBux, avatar, owned items, pets, garden, pizza, settings, friends) is saved in this browser for this address only. Export it here, then import it on the new site.</span><div style="display:flex;gap:6px;flex-wrap:wrap"><button id="dxp">⬇️ Export file</button><button id="dcp">📋 Copy code</button></div><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="dkey"> Include my admin key (keep the file private)</label></div>
 <div class="set"><span>Import data</span><input type="file" id="dfl" accept=".json,application/json"><textarea id="dtx" rows="3" placeholder="...or paste your data code here" style="width:100%;box-sizing:border-box;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.28);color:inherit;padding:8px;font:600 12px system-ui"></textarea><button id="dim">⬆️ Import</button><div id="dmsg" style="font-weight:700;min-height:16px"></div><details><summary style="cursor:pointer;opacity:.8">Old site won't open or is paused?</summary><small>Open the old address, press F12, click Console, paste <code>copy(JSON.stringify(localStorage))</code> and press Enter (Chrome may ask you to type "allow pasting" first). Then paste what you copied into the box above.</small></details></div>
@@ -47,7 +49,7 @@
 <div>Your friend code<div class="frc"><code id="myc"></code><button id="cpc">Copy link</button></div></div>
 <div class="fra"><input id="addc" placeholder="Add a friend by code" maxlength="8"><button id="addb">Add</button></div>
 <div id="frl"></div><small id="frn" style="color:var(--sub)"></small></div><div id="toasts"></div>
-<div id="ugate"><div class="ugw"><div class="ugl">🎮</div><h2>Welcome to SchoolBlox!</h2><p>Choose a username to continue. Other players will see it.</p><input id="ugi" maxlength="14" placeholder="Username" autocomplete="off" spellcheck="false"><div id="uge"></div><button id="ugb">Continue</button></div></div>
+<div id="ugate"><div class="ugw"><div class="ugl">🎮</div><h2>Welcome to SchoolBlox!</h2><div id="agt"><button id="agt1" class="on">Log in</button><button id="agt2">Create account</button><button id="agt3">Guest</button></div><p id="agp">Log in to load your saved progress.</p><input id="ugi" maxlength="14" placeholder="Username" autocomplete="username" spellcheck="false"><input id="agpw" type="password" maxlength="72" placeholder="Password" autocomplete="current-password"><div id="uge"></div><button id="ugb">Log in</button><button id="agx" style="display:none">Cancel</button></div></div>
 <div id="modal"><div class="win">
 <div class="bar"><b id="gtitle"></b><span id="score"></span><span><button id="hlp" title="Controls">❔</button><button id="frb2" title="Friends">👥</button><button id="mt" title="Sound">🔊</button><button id="fs" title="Fullscreen">⛶</button><button id="close">Exit</button></span></div>
 <div id="view"><div id="over"></div><div id="banner"></div><div id="lobby"><div class="lbx"><div class="lba" id="lba"></div><div class="lbc2"><h2 id="lbt"></h2><div class="lbtg" id="lbtg"></div><p class="lbh" id="lbh"></p><div class="lbr"><span id="lbc"></span><button class="lbs" id="lbcp">🔗 Copy invite</button></div><div id="lbl"></div><div class="lbb"><button class="lbs" id="lbback">← Back</button><button class="btn" id="lbgo">▶ Play</button></div></div></div></div><div id="rbtl"><button id="rbm" title="Menu (Esc)">☰</button><button id="rbc" title="Chat (/)">💬</button><button id="rbe" title="Emotes (.)">😀</button><button id="rba" title="Admin panel" style="display:none">🛡️</button></div><div id="plist"></div><button id="slb" title="Shift Lock (Shift)">🔒</button><div id="slc"></div>
@@ -63,6 +65,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.75.0/dist/umd/supabase.js"></script>
 <script src="js/config.js" onerror="(window.__fail=window.__fail||[]).push('js/config.js')"></script>
+<script src="js/account.js" onerror="(window.__fail=window.__fail||[]).push('js/account.js')"></script>
 <script src="js/core.js" onerror="(window.__fail=window.__fail||[]).push('js/core.js')"></script>
 <script src="js/admin.js" onerror="(window.__fail=window.__fail||[]).push('js/admin.js')"></script>
 <script src="js/data.js" onerror="(window.__fail=window.__fail||[]).push('js/data.js')"></script>

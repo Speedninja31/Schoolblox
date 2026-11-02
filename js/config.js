@@ -8,3 +8,8 @@ const SB_KEY='sb_publishable_qC2HUzMp7qCywyEcPgRmWQ_a4_oQS4P';   // publishable 
 /* Admin tools: after you generate your admin key in the /admin panel, paste the PUBLIC key here (it is safe to be public), e.g.
    const ADMIN_PUB={"kty":"EC",...};   Until then admin commands are ignored by everyone. */
 const ADMIN_PUB={"kty":"EC","crv":"P-256","x":"StzeatB7x8RfVSJr0KaOOpdkS5t6naRv4yYtoU0-jcE","y":"pV6WsoLd4ocPsij1ZQ7BG1hX70YrrADioe8EGf-j-pg","ext":true,"key_ops":["verify"]};
+
+
+/* Accounts: the admin panel only works while logged in as this account name. (Only the NAME lives here - the password is never stored in the site.)
+   Register this account yourself first, right after the site goes live, so nobody else can take the name. */
+const ADMIN_ACCOUNT='RandomGoober';
