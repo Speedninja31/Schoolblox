@@ -41,7 +41,7 @@ ENG.tower={d3:true,
    if(L.bounce&&this.bn<=0){P.vy=108;P.gr=false;this.bn=.4;snd(500,.25,'sine',.14,1100);fxBurst(L.x,L.top,L.z,0xff4f9a)}
    if(L.kill)this.res(true);
    if(L.cpi&&L.cpi>this.cpi){this.cpi=L.cpi;this.cp={x:L.x,y:L.top,z:L.z};L.flag.material.color.setHex(0x3ddc84);snd(880,.2,'sine',.14,1320);this.msg=T+2.5}
-   if(L.win&&!this.won){this.won=true;this.tw=T-(this.t0||T);let nb=false;if(!this.best||this.tw<this.best){this.best=this.tw;nb=true;try{localStorage.setItem('tbest',String(this.tw))}catch(e){}}
+   if(L.win&&!this.won){this.won=true;sfx('victory',1);this.tw=T-(this.t0||T);let nb=false;if(!this.best||this.tw<this.best){this.best=this.tw;nb=true;try{localStorage.setItem('tbest',String(this.tw))}catch(e){}}
     reveal('SUMMIT!','#ffd23a','Time '+fmt(this.tw)+(nb?' \u00b7 New best!':''));snd(660,.5,'sine',.16,1320);for(let i=0;i<14;i++)setTimeout(()=>{if(cur===this)fxBurst(P.x+(Math.random()-.5)*10,P.y+3+Math.random()*6,P.z+(Math.random()-.5)*10,[0xff5252,0xffd23a,0x3ddc84,0x3bb0ff,0xb45cff][i%5])},i*120)}}
   if(!this.t0&&P.y>1)this.t0=T;
   if(P.y<this.cp.y-45)this.res(true);

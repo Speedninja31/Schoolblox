@@ -358,7 +358,7 @@ function mulb(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>1
 function hpBar(c,v){if(v==null){if(c.hpS)c.hpS.visible=false;return}
  if(!c.hpS){const cv=document.createElement('canvas');cv.width=128;cv.height=20;c.hpC=cv;c.hpS=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false}));c.hpS.scale.set(3.6,.56,1);c.hpS.position.y=6.55;c.hpS.renderOrder=5;c.g.add(c.hpS);c.hpV=-1}
  c.hpS.visible=true;v=Math.max(0,Math.min(100,Math.round(v)));if(v===c.hpV)return;c.hpV=v;const x=c.hpC.getContext('2d');x.clearRect(0,0,128,20);x.fillStyle='rgba(0,0,0,.6)';x.beginPath();x.roundRect?x.roundRect(0,0,128,20,10):x.rect(0,0,128,20);x.fill();x.fillStyle='hsl('+(v*1.2)+',75%,48%)';x.beginPath();x.roundRect?x.roundRect(3,3,Math.max(0,122*v/100),14,7):x.rect(3,3,Math.max(0,122*v/100),14);x.fill();c.hpS.material.map.needsUpdate=true}
-function tag(txt){const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');x.font='bold 30px system-ui';x.textAlign='center';x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,8,256,48);x.fillStyle='#fff';x.fillText(chatCheck(txt).full.slice(0,16),128,43);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));s.scale.set(5,1.25,1);s.position.y=7.6;return s}
+function tag(txt,adm){const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');x.font=adm?'bold 26px system-ui':'bold 30px system-ui';x.textAlign='center';x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,8,256,48);x.fillStyle=adm?'#ffd24a':'#fff';x.fillText((adm?'🛡️ ':'')+chatCheck(txt).full.slice(0,16),128,43);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));s.scale.set(5,1.25,1);s.position.y=7.6;return s}
 let sb=null,ch=null,mine={};const PEERS=new Map(),myId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Math.random()).slice(2);
 function leaveRoom(){
  if(ch){try{ch.send({type:'broadcast',event:'bye',payload:{id:myId}})}catch(e){}try{sb.removeChannel(ch)}catch(e){}}
@@ -370,7 +370,7 @@ function joinRoom(code){
  try{
   sb=sb||supabase.createClient(SB_URL,SB_KEY);
   const c=sb.channel('hub-'+code,{config:{broadcast:{self:false}}});
-  c.on('broadcast',{event:'p'},m=>{const p=m&&m.payload;if(!p||typeof p.id!=='string'||p.id===myId||typeof p.s!=='object'||!p.s)return;PEERS.set(p.id,{t:Date.now(),s:p.s})})
+  c.on('broadcast',{event:'p'},m=>{const p=m&&m.payload;if(!p||typeof p.id!=='string'||p.id===myId||typeof p.s!=='object'||!p.s)return;PEERS.set(p.id,{t:Date.now(),s:p.s});if(p.s.ab&&window.SBADM&&SBADM.seen)SBADM.seen(p.s)})
    .on('broadcast',{event:'bye'},m=>{if(m&&m.payload)PEERS.delete(m.payload.id)})
    .on('broadcast',{event:'c'},m=>{const p=m&&m.payload;if(p&&typeof p.t==='string'&&typeof p.id==='string'&&p.id!==myId)gotChat(p.id,p.t,p.n)})
    .subscribe();
@@ -386,7 +386,7 @@ addEventListener('beforeunload',leaveRoom);
 function mpTick(dt,id){
  if(!room||!cur||!cur.P)return;
  const P=cur.P,now=performance.now();
- if(now-lastSend>80){lastSend=now;const r=v=>Math.round(v*10)/10;room.presence(Object.assign({g:id,x:r(P.x),y:r(P.y),z:r(P.z),yaw:r(P.yaw),hs:P.hs?1:0,gr:P.gr?1:0,vy:Math.round(P.vy||0),em:P.emote||'',av:AV,fc:myCode,n:(document.getElementById('nick').value||nick),hp:myHP==null?-1:Math.round(myHP)},cur.ex?cur.ex():{})).catch(()=>{})}
+ if(now-lastSend>80){lastSend=now;const r=v=>Math.round(v*10)/10;room.presence(Object.assign({g:id,x:r(P.x),y:r(P.y),z:r(P.z),yaw:r(P.yaw),hs:P.hs?1:0,gr:P.gr?1:0,vy:Math.round(P.vy||0),em:P.emote||'',av:AV,fc:myCode,n:(document.getElementById('nick').value||nick),hp:myHP==null?-1:Math.round(myHP),ab:(window.SBADM&&SBADM.abt?SBADM.abt():undefined)},cur.ex?cur.ex():{})).catch(()=>{})}
  const seen=new Set(),k=1-Math.exp(-12*dt);
  for(const p of room.peers()){
   const q=p.presence;if(p.sameTab||p.kind!=='viewer'||q.g!==id||typeof q.x!=='number')continue;
@@ -397,7 +397,8 @@ function mpTick(dt,id){
   c.x+=(num(q.x)-c.x)*k;c.y+=(num(q.y)-c.y)*k;c.z+=(num(q.z)-c.z)*k;
   let d=num(q.yaw)-c.yaw;d=Math.atan2(Math.sin(d),Math.cos(d));c.yaw+=d*k;
   c.hs=q.hs?16:0;c.gr=!!q.gr;c.vy=num(q.vy);c.emote=Object.values(EMK).includes(q.em)?q.em:null;c.t+=dt;animate(c,dt);c.q=q;hpBar(c,id!=='mm'&&typeof q.hp==='number'&&q.hp>=0?q.hp:null);if(cur.rem)cur.rem(c,q,dt);
-  if(!c.nm){c.nm=1;(async()=>{let nm=String(q.n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';try{if(p.by&&usr&&usr.profiles){const ps=await usr.profiles([p.by]);nm=(ps[p.by]&&ps[p.by].name)||nm}}catch(e){}if(c.tag)c.g.remove(c.tag);c.tag=tag(nm);if(id!=='mm')c.g.add(c.tag)})()}
+  const ad=!!(window.SBADM&&SBADM.badgeOf&&SBADM.badgeOf(q));if(c.nm&&ad!==!!c.adm)c.nm=0;
+  if(!c.nm){c.nm=1;c.adm=ad;(async()=>{let nm=String(q.n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';try{if(p.by&&usr&&usr.profiles){const ps=await usr.profiles([p.by]);nm=(ps[p.by]&&ps[p.by].name)||nm}}catch(e){}if(c.tag)c.g.remove(c.tag);c.tag=tag(nm,ad);if(id!=='mm')c.g.add(c.tag)})()}
  }
  for(const [pk,c] of RM)if(!seen.has(pk)){scene.remove(c.g);RM.delete(pk)}
  scoreEl.textContent+=' · 👥 '+(seen.size+1)
@@ -411,7 +412,7 @@ document.getElementById('fs').onclick=()=>{const d=document.documentElement;if(d
 let lastHp=100;
 let myHP=null;
 function setHP(v){myHP=v;const h=document.getElementById('hp');if(v==null){h.style.display='none';return}h.style.display='block';const f=document.getElementById('hpf');f.style.width=Math.max(0,v)+'%';f.style.background='hsl('+(v*1.2)+',70%,45%)';document.getElementById('hpt').textContent=Math.ceil(v);
- if(v<lastHp-.05){const u=document.getElementById('hurt');u.style.transition='none';u.style.opacity=.5;requestAnimationFrame(()=>{u.style.transition='opacity .5s';u.style.opacity=0})}lastHp=v}
+ if(v<lastHp-.05){const u=document.getElementById('hurt');u.style.transition='none';u.style.opacity=.5;requestAnimationFrame(()=>{u.style.transition='opacity .5s';u.style.opacity=0});sfx('ouch',.9)}else if(lastHp<=.5&&v>=40)sfx('spawn',.9);lastHp=v}
 /* Roblox-style break apart: every body part (and hat) flies off */
 const DEB=[];
 function explode(c,q){if(!q)snd(260,.25,'square',.15,90);
@@ -454,8 +455,8 @@ function bubble(c,txt){if(!c)return;if(c.bub){c.g.remove(c.bub);if(c.bub.materia
  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false,transparent:true}));sp.renderOrder=6;sp.center.set(.5,0);const k=.013;sp.scale.set(cw*k,ch*k,1);sp.position.y=8.4;c.g.add(sp);c.bub=sp;
  const life=3500+txt.length*70;setTimeout(()=>{let o=1;const iv=setInterval(()=>{o-=.12;if(c.bub!==sp){clearInterval(iv);return}sp.material.opacity=Math.max(0,o);if(o<=0){clearInterval(iv);c.g.remove(sp);sp.material.map.dispose();sp.material.dispose();c.bub=null}},40)},life)}
 const CLMAX=120;function clAdd(d){const near=clog.scrollHeight-clog.scrollTop-clog.clientHeight<48;clog.appendChild(d);while(clog.children.length>CLMAX)clog.removeChild(clog.firstChild);if(near)clog.scrollTop=clog.scrollHeight}
-function logChat(n,t){const d=document.createElement('div');const nb=document.createElement('b');nb.textContent=n+': ';nb.style.color=nameColor(n);d.append(nb,document.createTextNode(t));clAdd(d)}
-function gotChat(id,t,n){t=chatCheck(String(t).slice(0,80)).full;n=String(n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';n=chatCheck(n).full;if(window.SBADM&&SBADM.muted(n))return;logChat(n,t);if(cur&&RM.has(id))bubble(RM.get(id),t)}
+function logChat(n,t,adm){const d=document.createElement('div');const nb=document.createElement('b');nb.textContent=(adm?'🛡️ ':'')+n+': ';nb.style.color=adm?'#ffd24a':nameColor(n);d.append(nb,document.createTextNode(t));clAdd(d)}
+function gotChat(id,t,n){t=chatCheck(String(t).slice(0,80)).full;n=String(n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';n=chatCheck(n).full;if(window.SBADM&&SBADM.muted(n))return;logChat(n,t,!!(window.SBADM&&SBADM.badgeOf&&SBADM.badgeOf((PEERS.get(id)||{}).s)));if(cur&&RM.has(id))bubble(RM.get(id),t)}
 /* ---- chat safety: filters bad words, blocks weapon/violence talk and personal info (school-safe) ---- */
 const CF=(()=>{const L={a:'[a4@]',e:'[e3]',i:'[i1!|]',o:'[o0]',s:'[s5$]',t:'[t7]',l:'[l1]'},j=w=>[...w].map(c=>L[c]||c).join('[\\W_]*');
  const stem=w=>new RegExp(j(w),'gi'),word=(w,suf)=>new RegExp('(?<![a-z0-9])'+j(w)+(suf?'(?:s|es|ed|ing|er|ers)?':'')+'(?![a-z])','gi');
@@ -474,7 +475,7 @@ function sendChat(t){t=t.slice(0,80);if(window.SBADM&&SBADM.chat(t))return;const
  if(r.personal){const m='\u26A0\uFE0F Message not sent. Please don\u2019t share links, emails or phone numbers.';sysChat(m,1);toast(m);return}
  const n=performance.now();if(n-lastChat<900){sysChat('Slow down a little!');return}lastChat=n;
  if(r.bad)sysChat('Some words were filtered.');t=r.clean;
- logChat(myName(),t);if(cur&&cur.P)bubble(cur.P,t);if(ch)ch.send({type:'broadcast',event:'c',payload:{id:myId,t,n:myName()}}).catch(()=>{})}
+ logChat(myName(),t,!!(window.SBADM&&SBADM.mine&&SBADM.mine()));if(cur&&cur.P)bubble(cur.P,t);if(ch)ch.send({type:'broadcast',event:'c',payload:{id:myId,t,n:myName()}}).catch(()=>{})}
 addEventListener('keydown',e=>{if(e.code!=='Enter'||!cur||!cur.d3||!modal.classList.contains('on')||lobby.style.display==='flex')return;
  if(document.activeElement===chatin){const t=chatin.value.trim();chatin.value='';chatin.blur();if(t)sendChat(t);if(SLwant&&is3p())slLock()}else{if(document.pointerLockElement)document.exitPointerLock();chatin.focus();e.preventDefault()}});
 let lobbyT=0,pendG=null;
@@ -489,6 +490,11 @@ function showLobby(g){pendG=g;lobby.style.display='flex';const m=META[g.id]||{},
 document.getElementById('lbgo').onclick=()=>{clearInterval(lobbyT);lobby.style.display='none';pendG=null;startGame();lockMouse()};document.getElementById('hlp').onclick=()=>hint.classList.toggle('on');
 let AC=null,mute=false;
 function snd(f,d,t,v,e){if(mute)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume();const o=AC.createOscillator(),g=AC.createGain(),n=AC.currentTime;o.type=t||'square';o.frequency.setValueAtTime(f,n);if(e)o.frequency.exponentialRampToValueAtTime(e,n+d);g.gain.setValueAtTime((v||.12)*(ST.vol==null?1:ST.vol),n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(n+d)}catch(x){}}
+/* recorded sound effects (sounds/*.wav): loaded once, then played through the same audio context and volume setting as snd(). If a file can't load, the game just stays quiet for that sound. */
+const SFXF={victory:'sounds/victory.wav',ouch:'sounds/Kid_saying_Ouch.wav',thunder:'sounds/HalloweenThunder.wav',glass:'sounds/glassbreak.wav',spawn:'sounds/bass.wav'},SFXB={},SFXT={},SFXG={victory:2,ouch:.5,thunder:1.2,glass:.12,spawn:.6};
+function sfxLoad(){if(!window.fetch)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();for(const n in SFXF)if(SFXB[n]===undefined){SFXB[n]=null;fetch(SFXF[n]).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(a=>new Promise((ok,no)=>AC.decodeAudioData(a,ok,no))).then(b=>{SFXB[n]=b}).catch(()=>{SFXB[n]=false})}}catch(e){}}
+function sfx(n,v,r){if(mute||!SFXF[n])return false;try{sfxLoad();const b=SFXB[n];if(!b)return false;const t=performance.now();if(t-(n in SFXT?SFXT[n]:-1e9)<(SFXG[n]||0)*1000)return false;SFXT[n]=t;AC.resume();const s=AC.createBufferSource(),g=AC.createGain();s.buffer=b;if(r)s.playbackRate.value=r;g.gain.value=(v==null?1:v)*(ST.vol==null?1:ST.vol);s.connect(g);g.connect(AC.destination);s.start();return true}catch(e){return false}}
+['pointerdown','keydown'].forEach(ev=>addEventListener(ev,function f(){sfxLoad();removeEventListener(ev,f)}));
 const FXL=[];let shk=0;
 function fxAdd(m,life,v,grow){scene.add(m);FXL.push({m,life,max:life,v:v||null,grow:grow||0})}
 function fxTick(dt){for(let i=FXL.length-1;i>=0;i--){const f=FXL[i];f.life-=dt;if(f.v)f.m.position.addScaledVector(f.v,dt);if(f.grow)f.m.scale.addScalar(f.grow*dt);f.m.material.opacity=Math.max(0,f.life/f.max);if(f.life<=0){if(scene)scene.remove(f.m);FXL.splice(i,1)}}}
@@ -600,7 +606,7 @@ function openGame(g){if(window.SBADM&&SBADM.banned())return;noteRecent(g.id);
  view.style.display=cur.d3?'block':'none';petview.style.display=cur.d3?'none':'block';touch.classList.toggle('on',cur.d3&&g.id!=='avatar');custom.style.display=g.id==='avatar'?'block':'none';emb.style.display=cur.d3?'block':'none';chatin.style.display=cur.d3&&g.id!=='avatar'?'block':'none';emp.style.display='none';setHP(null);document.getElementById('mmb').style.display=['mm','zom','snow','fish','garden'].includes(g.id)?'contents':'none';
  if(cur.d3){if(typeof THREE==='undefined'){hint.textContent='3D library failed to load. Check your connection and reload.';return}initR();yaw=0;pitch=.45;dist=26}
  if(g.id==='avatar'||g.id==='pets')startGame();else showLobby(g)}
-function startGame(){if(ST.hints!==false)hint.classList.add('on');clearTimeout(hint.t);hint.t=setTimeout(()=>hint.classList.remove('on'),7000);setTimeout(hb,400);PMIN=.05;DEB.length=0;FXL.length=0;shk=0;['vote','role','spec','xh','hm','lockmsg'].forEach(i=>document.getElementById(i).style.display='none');SP.on=false;SP.k=null;document.querySelectorAll('.gw').forEach(e=>e.remove());document.getElementById('rev').classList.remove('on');if(document.pointerLockElement)document.exitPointerLock();PMIN=.05;cur.start();resize();clock.getDelta();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+function startGame(){sfxLoad();setTimeout(()=>sfx('spawn',1),300);if(ST.hints!==false)hint.classList.add('on');clearTimeout(hint.t);hint.t=setTimeout(()=>hint.classList.remove('on'),7000);setTimeout(hb,400);PMIN=.05;DEB.length=0;FXL.length=0;shk=0;['vote','role','spec','xh','hm','lockmsg'].forEach(i=>document.getElementById(i).style.display='none');SP.on=false;SP.k=null;document.querySelectorAll('.gw').forEach(e=>e.remove());document.getElementById('rev').classList.remove('on');if(document.pointerLockElement)document.exitPointerLock();PMIN=.05;cur.start();resize();clock.getDelta();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
 document.getElementById('close').onclick=()=>{hint.classList.remove('on');modal.classList.remove('on');setTimeout(hb,400);cancelAnimationFrame(raf);if(room)room.presence({g:null}).catch(()=>{});RM.clear();DEB.length=0;FXL.length=0;setHP(null);['vote','role','spec','xh','hm','lockmsg'].forEach(i=>document.getElementById(i).style.display='none');SP.on=false;SP.k=null;document.querySelectorAll('.gw').forEach(e=>e.remove());document.getElementById('rev').classList.remove('on');if(document.pointerLockElement)document.exitPointerLock();PMIN=.05;leaveRoom();clearInterval(lobbyT);lobby.style.display='none';pendG=null;cur=null;scene=null;showOver('')};
 
 /* ===== Roblox-style in-game GUI, shift lock, menu, chat, player list, emote wheel ===== */
@@ -618,8 +624,8 @@ function rbOpen(){if(!inGame()||rbIsOpen())return;rbm.classList.add('on');modal.
 function rbClose(){if(!rbIsOpen())return;rbm.classList.remove('on');modal.classList.remove('menuopen');if(is3p()&&SLwant)slLock();else if(cur&&cur.fps)lockMouse()}
 function rbRow(label,el){const l=document.createElement('label');l.className='set row';const s=document.createElement('span');s.innerHTML=label;l.append(s,el);return l}
 function rbRender(){const b=$g('rbbody');b.innerHTML='';rm_tabs();
- if(rbTab==='players'){const rows=[[myName()+' (you)',1]];for(const c of RM.values())rows.push([String((c.q&&c.q.n)||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player',0,plCode(c)]);
-  rows.forEach(([n,me,code])=>{const d=plRow(n,me,code);if(!me&&window.SBADM){const f=document.createElement('button');f.className='prp';f.textContent='🚩';f.title='Report this player to the admins';f.onclick=ev=>{ev.stopPropagation();const w=prompt('Report '+n+': what happened? (bad words, bullying, cheating...)');if(w)SBADM.report(n,w)};d.append(f)}b.appendChild(d)});
+ if(rbTab==='players'){const rows=[[myName()+' (you)',1,'',!!(window.SBADM&&SBADM.mine&&SBADM.mine())]];for(const c of RM.values())rows.push([String((c.q&&c.q.n)||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player',0,plCode(c),!!(window.SBADM&&SBADM.badgeOf&&SBADM.badgeOf(c.q))]);
+  rows.forEach(([n,me,code,adm])=>{const d=plRow(n,me,code,adm);if(!me&&window.SBADM){const f=document.createElement('button');f.className='prp';f.textContent='🚩';f.title='Report this player to the admins';f.onclick=ev=>{ev.stopPropagation();const w=prompt('Report '+n+': what happened? (bad words, bullying, cheating...)');if(w)SBADM.report(n,w)};d.append(f)}b.appendChild(d)});
   const fb=document.createElement('button');fb.className='rbbtn';fb.textContent='\uD83D\uDC65 Friends';fb.onclick=()=>$g('frb2').click();b.appendChild(fb)}
  else if(rbTab==='settings'){
   const sl=document.createElement('input');sl.type='checkbox';sl.className='tg';sl.checked=SLwant;sl.onchange=()=>{if(is3p())SLwant=sl.checked,$g('slb').classList.toggle('on',SLwant);else sl.checked=false};b.appendChild(rbRow('Shift Lock'+(is3p()?'':' <small>(third-person games)</small>'),sl));
@@ -649,11 +655,11 @@ addEventListener('keydown',e=>{if(!inGame()||lobby.style.display==='flex')return
  else if(e.code==='Tab'){modal.classList.toggle('plhide');e.preventDefault()}},true);
 document.addEventListener('pointerlockchange',()=>{const lk=!!document.pointerLockElement;
  if(!lk){if(slSelf)slSelf=false;else if(inGame()&&(SLwant||cur.fps)&&!rbIsOpen())rbOpen()}else slSelf=false});
-function plRefresh(){const el=$g('plist');el.innerHTML='';const rows=[[myName(),1]];for(const c of RM.values())rows.push([String((c.q&&c.q.n)||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player',0,plCode(c)]);
- rows.slice(0,14).forEach(([n,me,code])=>el.appendChild(plRow(n,me,code)))}
+function plRefresh(){const el=$g('plist');el.innerHTML='';const rows=[[myName(),1,'',!!(window.SBADM&&SBADM.mine&&SBADM.mine())]];for(const c of RM.values())rows.push([String((c.q&&c.q.n)||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player',0,plCode(c),!!(window.SBADM&&SBADM.badgeOf&&SBADM.badgeOf(c.q))]);
+ rows.slice(0,14).forEach(([n,me,code,adm])=>el.appendChild(plRow(n,me,code,adm)))}
 /* click a player's name to add them as a friend (uses the friend code sent with their presence) */
 function plCode(c){const f=c&&c.q&&c.q.fc;return typeof f==='string'&&/^[a-z0-9]{8}$/.test(f)&&f!==myCode?f:''}
-function plRow(n,me,code){const d=document.createElement('div');d.className='pr'+(me?' me':'');const i=document.createElement('i');i.style.background=nameColor(n);const s=document.createElement('span');s.textContent=n;d.append(i,s);
+function plRow(n,me,code,adm){const d=document.createElement('div');d.className='pr'+(me?' me':'');const i=document.createElement('i');i.style.background=nameColor(n);const s=document.createElement('span');s.textContent=(adm?'🛡️ ':'')+n;d.append(i,s);
  if(!me&&code){const a=document.createElement('b');a.className='pra';a.textContent=FRS[code]?'✓':'➕';d.append(a);d.classList.add('clk');d.title=FRS[code]?'Already your friend':'Click to add as a friend';
   d.onclick=()=>{if(FRS[code]){toast(n+' is already your friend.');return}addFriend(code,n,false);a.textContent='✓';d.title='Already your friend'}}
  return d}

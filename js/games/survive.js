@@ -8,7 +8,7 @@ ENG.survive={d3:true,NAMES:['Meteor Shower','Flood','Tornado','Earthquake','Ligh
  toLobby(){const P=this.P;Object.assign(P,{x:(Math.random()-.5)*16,y:7,z:this.LZ+12+(Math.random()-.5)*6,vy:0,yaw:Math.PI});yaw=Math.PI;pitch=.3},
  clear(){this.M.forEach(o=>scene.remove(o.m,o.ring));this.M=[];this.CR.forEach(c=>scene.remove(c.m));this.CR=[];this.LB.forEach(b=>{scene.remove(b.m);if(b.bolt)scene.remove(b.bolt)});this.LB=[];this.tw.visible=false;this.fl.visible=false;this.rain.visible=false;clearDebris()},
  topAt(x,z){let t=0;for(const b of this.B)if(b.a&&b.p.top>t&&Math.abs(x-b.x)<b.w/2&&Math.abs(z-b.z)<b.d/2)t=b.p.top;return t},
- kill(b,v,q){if(!b.a)return;b.a=0;this.G.remove(b.m);const i=this.S.indexOf(b.p);if(i>=0)this.S.splice(i,1);
+ kill(b,v,q){if(!b.a)return;b.a=0;if(!q)sfx('glass',.5);this.G.remove(b.m);const i=this.S.indexOf(b.p);if(i>=0)this.S.splice(i,1);
   if(!q&&DEB.length<90){const g=new THREE.Mesh(b.m.geometry,b.m.material);g.position.copy(b.m.position);scene.add(g);DEB.push({g,v:v||new THREE.Vector3((Math.random()-.5)*22,8+Math.random()*14,(Math.random()-.5)*22),w:new THREE.Vector3((Math.random()-.5)*8,(Math.random()-.5)*8,(Math.random()-.5)*8),life:7})}},
  blast(x,y,z,r){for(const b of this.B)if(b.a){const dx=b.x-x,dy=b.y+b.h/2-y,dz=b.z-z,dd=Math.hypot(dx,dy,dz);if(dd<r+2)this.kill(b,new THREE.Vector3(dx/(dd||1)*24,10+Math.random()*12,dz/(dd||1)*24))}
   if(y<4){const m=new THREE.Mesh(new THREE.CircleGeometry(r*.8,16),new THREE.MeshBasicMaterial({color:0x2a2018,transparent:true,opacity:.6}));m.rotation.x=-Math.PI/2;m.position.set(x,.12,z);this.G.add(m)}},
@@ -170,7 +170,7 @@ ENG.survive={d3:true,NAMES:['Meteor Shower','Flood','Tornado','Earthquake','Ligh
   const hurt=a=>{if(!this.in||this.dead)return;this.hp-=a;if(this.hp<=0){this.hp=0;this.dead=true;this.in=false;this.back=false;this.rt=now+1500;shk=1;explode(P);P.g.visible=false}};
   if(cyc!==this.cyc){this.cyc=cyc;this.hp=100;this.dead=false;this.in=false;this.back=true;this.won=false;this.lk=false;this.vote=-1;this.mk=-1;this.elig=s<15;this.entered=false;P.g.visible=true;this.clear();this.buildMap(-1);this.toLobby()}
   if(s>=12&&!this.lk&&now-this.ts>2500){this.lk=true;this.mk=pickMap(NM,cyc,this.vote);this.buildMap(this.mk);snd(660,.15,'sine',.12,990)}
-  if(this.lk&&this.elig&&!this.entered&&s>=15&&s<19&&!this.dead){this.entered=true;this.in=true;const sa=Math.random()*6.283;Object.assign(P,{x:Math.cos(sa)*80,y:1,z:Math.sin(sa)*80,vy:0});snd(660,.15,'sine',.12,990)}
+  if(this.lk&&this.elig&&!this.entered&&s>=15&&s<19&&!this.dead){this.entered=true;this.in=true;const sa=Math.random()*6.283;Object.assign(P,{x:Math.cos(sa)*80,y:1,z:Math.sin(sa)*80,vy:0});sfx('spawn',1);snd(660,.15,'sine',.12,990)}
   if(this.dead&&!this.back&&now>this.rt){this.back=true;P.g.visible=true;this.toLobby()}
   if(s>=57&&this.in){this.in=false;this.toLobby()}
   const sk=act?[0xd9763a,0x7c8fa3,0x6f7480,0x8a6f5a,0x3b3f58,0x7d9a6a,0x8a3a2a][d]:0x87c7ff;
@@ -194,12 +194,12 @@ ENG.survive={d3:true,NAMES:['Meteor Shower','Flood','Tornado','Earthquake','Ligh
     if(t>3&&this.B.length)for(let q=0;q<2;q++){const b=this.B[Math.floor(r1()*this.B.length)],ab=r1()<.55;if(b&&b.a){this.kill(b);if(ab)this.above(b)}}}}
   this.CR=this.CR.filter(c=>{c.t+=dt;if(c.t>1)c.m.material.color.setHex(0x111111);if(c.t>1&&this.in&&!this.dead&&P.y<3&&Math.hypot(P.x-c.x,P.z-c.z)<8)hurt(40*dt);if(c.t>3||!act){scene.remove(c.m);return false}return true});
   if(act&&d===4){const wi=Math.floor(Date.now()/600);if(wi!==this.lw){this.lw=wi;const r2=mulb(wi+77),a=r2()*6.283,rr=Math.sqrt(r2())*90,x=Math.cos(a)*rr,z=Math.sin(a)*rr,m=new THREE.Mesh(new THREE.RingGeometry(0,6,20),new THREE.MeshBasicMaterial({color:0xffffaa,transparent:true,opacity:.5}));m.rotation.x=-Math.PI/2;m.position.set(x,.25,z);scene.add(m);this.LB.push({m,x,z,t:0})}}
-  this.LB=this.LB.filter(b=>{b.t+=dt;if(b.t>1&&!b.h){b.h=1;const ty=this.topAt(b.x,b.z),bolt=new THREE.Mesh(new THREE.BoxGeometry(1.2,120,1.2),new THREE.MeshBasicMaterial({color:0xffffff}));bolt.position.set(b.x,60,b.z);scene.add(bolt);b.bolt=bolt;shk=.6;snd(120,.3,'sawtooth',.2,40);this.blast(b.x,ty,b.z,5);if(this.in&&Math.hypot(P.x-b.x,P.z-b.z)<6&&Math.abs(P.y-ty)<10)hurt(70)}if(b.t>1.15||!act){scene.remove(b.m);if(b.bolt)scene.remove(b.bolt);return false}return true});
+  this.LB=this.LB.filter(b=>{b.t+=dt;if(b.t>1&&!b.h){b.h=1;sfx('thunder',.85);const ty=this.topAt(b.x,b.z),bolt=new THREE.Mesh(new THREE.BoxGeometry(1.2,120,1.2),new THREE.MeshBasicMaterial({color:0xffffff}));bolt.position.set(b.x,60,b.z);scene.add(bolt);b.bolt=bolt;shk=.6;snd(120,.3,'sawtooth',.2,40);this.blast(b.x,ty,b.z,5);if(this.in&&Math.hypot(P.x-b.x,P.z-b.z)<6&&Math.abs(P.y-ty)<10)hurt(70)}if(b.t>1.15||!act){scene.remove(b.m);if(b.bolt)scene.remove(b.bolt);return false}return true});
   this.rain.visible=act&&d===5;
   if(act&&d===5){const a=this.rain.geometry.attributes.position;for(let i=0;i<a.count;i++){let y=a.getY(i)-60*dt;if(y<0)y+=60;a.setY(i,y)}a.needsUpdate=true;this.rain.position.set(P.x,0,P.z);
    if(this.in&&!this.dead&&!this.S.some(sd=>!sd.r&&bt(sd)>=P.y+3&&Math.abs(P.x-sd.x)<sd.hw&&Math.abs(P.z-sd.z)<sd.hd))hurt(7*dt);
    const wi=Math.floor(Date.now()/350);if(wi!==this.aw&&this.B.length){this.aw=wi;const r3=mulb(wi+5);for(let q=0;q<4;q++){const b=this.B[Math.floor(r3()*this.B.length)];if(b&&b.a&&this.topAt(b.x,b.z)<=b.p.top+.1)this.kill(b,null,1)}}}
-  if(s>=54&&!this.won&&this.in&&!this.dead){this.won=true;this.n++;snd(660,.2,'sine',.14,990)}
+  if(s>=54&&!this.won&&this.in&&!this.dead){this.won=true;this.n++;snd(660,.2,'sine',.14,990);sfx('victory',1)}
   voteSet(this.vu,tally(NM,cyc,this.vote),this.vote,s<12);
   const wat=!this.elig&&s>=15&&s<57,nm=this.NAMES[d];
   setB(s<9?'Lobby — vote for a map! '+Math.ceil(9-s)+'s':s<15?(this.mk>=0?'Map: '+this.MN[this.mk]:'Counting votes...')+' — '+(this.elig?'teleporting in ':'next round in ')+Math.ceil(15-s)+'s':s<19?'⚠ '+nm+' incoming!':act?(this.in?nm+' — ':'Watching: '+nm+' — ')+Math.ceil(54-s)+'s left':s<57?(this.in?'You survived! 🎉':this.dead?'You did not survive. Watching from the lobby...':wat?'Round over':'Round over'):'Returning to the lobby...');

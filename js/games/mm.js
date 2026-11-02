@@ -75,7 +75,7 @@ ENG.mm={d3:true,MMN:['Warehouse','Mansion','Subway Station','Carnival'],
   if(live||(inR&&s>=140&&!this.res)){
    const mid=Object.keys(this.rl).find(id=>this.rl[id]==='m'),md=dd(mid),inn=this.pl.filter(id=>id!==mid&&!dd(id)).length;let m='';
    if(md)m='The murderer was stopped!';else if(inn===0)m='The murderer got everyone!';else if(s>=140)m='Time is up \u2014 the innocents survive!';
-   if(m){const mw=!md&&inn===0,win=(this.role==='m')===mw;this.res=(this.role?(win?'\ud83c\udfc6 You win!':'You lost'):'Round over')+'\n'+m;this.hold=Math.ceil((T+8)/50)*50;showOver(this.res+'\nNext lobby soon...');snd(win?880:200,.4,'sine',.15,win?1320:120)}}
+   if(m){const mw=!md&&inn===0,win=(this.role==='m')===mw;if(this.role&&win)sfx('victory',1);this.res=(this.role?(win?'\ud83c\udfc6 You win!':'You lost'):'Round over')+'\n'+m;this.hold=Math.ceil((T+8)/50)*50;showOver(this.res+'\nNext lobby soon...');snd(win?880:200,.4,'sine',.15,win?1320:120)}}
   this.cs.forEach((m,i)=>{if(!m.visible)return;m.position.y=2.5+Math.sin(T*3+i)*.4;if(!P.dead&&Math.hypot(P.x-m.position.x,P.z-m.position.z)<3&&P.y<6){m.visible=false;this.cn++;snd(1200,.08,'sine',.1,1800)}});
   const rb=document.getElementById('role');
   if(this.role&&s>=20&&s<140){const R=this.RMS[this.role];rb.style.display='block';const rt=document.getElementById('rt');rt.textContent=R[0]+' \u00b7 '+R[2];rt.style.color=R[1];document.getElementById('rcd').style.width=Math.min(100,100*(1-Math.max(0,this.cd)/(this.cdm||1)))+'%';
