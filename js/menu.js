@@ -20,7 +20,7 @@ function renderFs(){const el=$e('frs');if(!el)return;const ids=Object.keys(FRS),
  el.appendChild(bx);const b=$e('fbadge');b.textContent=on.length;b.style.display=on.length?'flex':'none'}
 /* ---------- game cards ---------- */
 function mkCard(g){const m=META[g.id]||{},b=document.createElement('div');b.className='sgc';b.tabIndex=0;
- b.innerHTML='<div class="art" style="background:'+bgOf(g)+'">'+g.e+(g.soon?'<span class="nw" style="background:#555">SOON</span>':m.n?'<span class="nw">NEW</span>':'')+'<button class="fv" title="Favorite">'+(ST.fav.includes(g.id)?'\u2665':'\u2661')+'</button></div><div class="bd"><b></b><small></small><small></small></div>';
+ b.innerHTML='<div class="art" style="background:'+bgOf(g)+'">'+g.e+(g.soon?'<span class="nw" style="background:#555">SOON</span>':m.n?'<span class="nw">NEW</span>':'')+'<span class="pcn" data-g="'+g.id+'"></span>'+'<button class="fv" title="Favorite">'+(ST.fav.includes(g.id)?'\u2665':'\u2661')+'</button></div><div class="bd"><b></b><small></small><small></small></div>';
  b.querySelector('b').textContent=g.name;const sm=b.querySelectorAll('small');sm[0].textContent=g.soon?'Coming soon':(m.m||g.tag);sm[1].textContent=catOf(g);
  b.onclick=e=>{if(e.target.classList.contains('fv')){e.stopPropagation();toggleFav(g.id);return}if(g.soon)return;openGd(g)};b.onkeydown=e=>{if(e.key==='Enter'&&!g.soon)openGd(g)};return b}
 function toggleFav(id){const i=ST.fav.indexOf(id);if(i<0)ST.fav.push(id);else ST.fav.splice(i,1);saveS();renderMenu()}
@@ -73,3 +73,7 @@ setInterval(()=>{if(!$e('modal').classList.contains('on')){try{renderProfile();r
 setInterval(()=>{tipN++;showTip()},8000);
 (()=>{const gp=new URLSearchParams(location.search).get('game');if(gp&&G$(gp))openGd(G$(gp))})();
 /* ---------- forced username / login: see js/account.js ---------- */
+
+/* live "N playing" badges on the game cards */
+function updCounts(){let c={};try{c=gameCounts()}catch(e){}document.querySelectorAll('.pcn').forEach(e=>{const x=c[e.dataset.g],n=x?x.play+x.lobby:0;e.textContent=n?'🟢 '+n+' playing':''})}
+setInterval(updCounts,1500);setTimeout(updCounts,300);

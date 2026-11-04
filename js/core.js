@@ -381,7 +381,17 @@ function joinRoom(code){
   };
  }catch(e){console.warn('multiplayer failed',e);ch=null;room=null}
 }
-setInterval(()=>{if(room){const n=room.peers().length+1;online.textContent=n>1?'\ud83d\udfe2 '+n+' online':'\ud83d\udfe2 connected'}},1000);
+/* live counts: how many players are in each game right now. Everyone (even on the home page) joins a tiny "hub" presence channel that only says
+   which game you're in (no names), so the home cards can show "N playing". If the hub isn't available it falls back to the people in your room. -> {gameId:{play,lobby}} */
+let hub=null,hubS={},hubLast='';
+function hubJoin(){if(hub)return;const c=sbGet();if(!c)return;try{hub=c.channel('sb-hub',{config:{presence:{key:myId}}});hub.on('presence',{event:'sync'},()=>{try{hubS=hub.presenceState()||{}}catch(e){}}).subscribe(st=>{if(st==='SUBSCRIBED'){hubLast='';hubPush()}})}catch(e){hub=null}}
+function hubPush(){if(!hub)return;let s={g:null};try{if(pendG)s={g:pendG.id,lb:1};else if(typeof curId==='string'&&curId&&cur)s={g:curId}}catch(e){}const j=JSON.stringify(s);if(j===hubLast)return;hubLast=j;try{hub.track(s)}catch(e){}}
+setTimeout(hubJoin,900);setInterval(hubPush,1500);
+function onlineCount(){let n=hub?Object.keys(hubS||{}).length:0;if(!n&&room)n=room.peers().length+1;return n||1}
+function gameCounts(){const o={},add=(g,lb)=>{if(!g||typeof g!=='string')return;const e=o[g]=o[g]||{play:0,lobby:0};if(lb)e.lobby++;else e.play++};let used=false;
+ try{const ks=hub?Object.keys(hubS||{}):[];if(ks.length){used=true;for(const k of ks)for(const m of (hubS[k]||[]))add(m.g,m.lb)}}catch(e){}
+ if(!used){try{if(room)for(const p of room.peers()){const q=p.presence||{};add(q.g,q.lb)}}catch(e){}try{if(pendG)add(pendG.id,1);else if(typeof curId==='string'&&curId&&cur)add(curId,0)}catch(e){}}return o}
+setInterval(()=>{if(!hub&&!room)return;const n=onlineCount(),c=gameCounts();let pl=0;for(const k in c)pl+=c[k].play;online.textContent=n>1?'🟢 '+n+' online'+(pl?' · '+pl+' playing':''):'🟢 connected'},1000);
 addEventListener('beforeunload',leaveRoom);
 function mpTick(dt,id){
  if(!room||!cur||!cur.P)return;
@@ -479,14 +489,20 @@ function sendChat(t){t=t.slice(0,80);if(window.SBADM&&SBADM.chat(t))return;const
 addEventListener('keydown',e=>{if(e.code!=='Enter'||!cur||!cur.d3||!modal.classList.contains('on')||lobby.style.display==='flex')return;
  if(document.activeElement===chatin){const t=chatin.value.trim();chatin.value='';chatin.blur();if(t)sendChat(t);if(SLwant&&is3p())slLock()}else{if(document.pointerLockElement)document.exitPointerLock();chatin.focus();e.preventDefault()}});
 let lobbyT=0,pendG=null;
-function lobbyTick(){if(!pendG)return;const names=[myName()+' (you)'];
- if(room){room.presence({g:pendG.id,lb:1,n:myName()}).catch(()=>{});for(const p of room.peers())if(p.presence.g===pendG.id)names.push(String(p.presence.n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player')}
- document.getElementById('lbl').innerHTML='<div style="margin-bottom:4px">Players here ('+names.length+')</div>'+names.map(n=>'<span class="pc">👤 '+n+'</span>').join('')}
-function showLobby(g){pendG=g;lobby.style.display='flex';const m=META[g.id]||{},a=document.getElementById('lba');a.style.background=bgOf(g);a.textContent=g.e;
- document.getElementById('lbt').textContent=g.name;document.getElementById('lbtg').innerHTML=[catOf(g),m.m].concat(m.t||[]).filter(Boolean).map(t=>'<span>'+t+'</span>').join('');document.getElementById('lbh').textContent=g.hint||'';
- document.getElementById('lbc').textContent='Room: '+roomCode()+(room?'':' \u00b7 offline (solo)')+(g.id==='mm'?' \u00b7 needs 2+ players':'');
- document.getElementById('lbcp').onclick=function(){const u=location.origin+location.pathname+'?room='+roomCode()+'&game='+g.id;(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{this.textContent='Copied!'}).catch(()=>prompt('Copy this invite link',u));setTimeout(()=>{this.textContent='\ud83d\udd17 Copy invite'},1800)};
- document.getElementById('lbback').onclick=()=>document.getElementById('close').click();lobbyT=setInterval(lobbyTick,700);lobbyTick()}
+function lobbyTick(){if(!pendG)return;const me=myName(),$=id=>document.getElementById(id);
+ if(room)room.presence({g:pendG.id,lb:1,n:me}).catch(()=>{});
+ const ppl=[{n:me,me:1,lb:1,adm:!!(window.SBADM&&SBADM.mine&&SBADM.mine())}];
+ if(room){const ps=room.peers();for(const p of ps){const q=p.presence||{};if(q.g===pendG.id)ppl.push({n:chatCheck(String(q.n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player').full,lb:!!q.lb,adm:!!(window.SBADM&&SBADM.badgeOf&&SBADM.badgeOf(q))})}}
+ const c=gameCounts()[pendG.id]||{play:0,lobby:1},tot=c.play+c.lobby;
+ $('lbn1').textContent=c.play;$('lbn2').textContent=c.lobby;$('lbn3').textContent=onlineCount();$('lbbd').textContent=tot>0?'🟢 '+tot+(tot===1?' player here':' players here'):'';
+ const L=$('lbl');L.textContent='';
+ ppl.slice(0,30).forEach(p=>{const row=document.createElement('div');row.className='lbp'+(p.me?' me':'');const i=document.createElement('i');i.textContent=(p.n[0]||'?').toUpperCase();i.style.background=nameColor(p.n);const sp=document.createElement('span');sp.textContent=(p.adm?'🛡️ ':'')+p.n;const em=document.createElement('em');em.textContent=p.me?'you':p.lb?'in lobby':'in game';if(!p.me&&!p.lb)em.className='pl';row.append(i,sp,em);L.appendChild(row)});
+ $('lbc').textContent=!room?'Offline: you will play solo.':pendG.id==='mm'?(tot>=2?'✅ Enough players to start a round.':'⏳ Needs 2 or more players. Invite a friend!'):''}
+function showLobby(g){pendG=g;lobby.style.display='flex';const m=META[g.id]||{},$=id=>document.getElementById(id);$('lbhero').style.background=bgOf(g);$('lba').textContent=g.e;
+ $('lbt').textContent=g.name;$('lbtg').innerHTML=[catOf(g),m.m].concat(m.t||[]).filter(Boolean).map(t=>'<span>'+t+'</span>').join('');$('lbh').textContent=g.hint||'';
+ $('lbrc').textContent=roomCode()+(room?'':' (offline)');
+ $('lbcp').onclick=function(){const u=location.origin+location.pathname+'?room='+roomCode()+'&game='+g.id;(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{this.textContent='Copied!'}).catch(()=>prompt('Copy this invite link',u));setTimeout(()=>{this.textContent='🔗 Invite'},1800)};
+ $('lbback').onclick=()=>$('close').click();lobbyT=setInterval(lobbyTick,700);lobbyTick()}
 document.getElementById('lbgo').onclick=()=>{clearInterval(lobbyT);lobby.style.display='none';pendG=null;startGame();lockMouse()};document.getElementById('hlp').onclick=()=>hint.classList.toggle('on');
 let AC=null,mute=false;
 function snd(f,d,t,v,e){if(mute)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume();const o=AC.createOscillator(),g=AC.createGain(),n=AC.currentTime;o.type=t||'square';o.frequency.setValueAtTime(f,n);if(e)o.frequency.exponentialRampToValueAtTime(e,n+d);g.gain.setValueAtTime((v||.12)*(ST.vol==null?1:ST.vol),n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(n+d)}catch(x){}}
