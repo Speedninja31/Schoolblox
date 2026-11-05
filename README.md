@@ -54,3 +54,13 @@ Open `js/config.js` and paste your Supabase project URL and publishable key. The
 
 - **Page looks like plain unstyled text, or the menu is empty:** a file did not load. The page now shows a red bar naming the missing file. Make sure `css/style.css`, `js/config.js`, `js/core.js`, `js/menu.js` and everything in `js/games/` are in the repository in those exact folders.
 - **Still the old version after uploading:** wait for the Netlify/Vercel deploy to show "Published", then hard refresh (Ctrl+Shift+R).
+
+## Quests, badges and gamepasses (js/quests.js)
+
+- **Quests:** every game has one easy quest (+20 SchoolBux) and one hard quest (+100). They reset every hour (the top of the hour) and the wording rotates. Progress is read from the running game, so game files did not need changes. Edit the `Q` table in `js/quests.js` to change quests or rewards.
+- **Income:** just being on the site gives +1 SchoolBux per minute (the Idle Income gamepass makes it +4). Pizza Place wages are now 1/4 of what they were.
+- **Badges:** permanent achievements, listed in the `BD` table.
+- **Gamepasses:** bought once with SchoolBux. VIP, Quest Reroll, Speed Coil, High Jump, Idle Income (the `PASSES` table).
+- **Tools:** Speed Coil (Z) and High Jump (X) are real tools. Buy the gamepass, then equip it from the hotbar on the left of the screen (click it, or press the key). The tool shows in your hand and only works while equipped. Tools are off in Murder Mystery. Add a tool in the `TOOLS` table in `js/quests.js`.
+- **Buttons:** Quests, Badges and Gamepasses are three separate buttons (top bar and side menu in the hub, and in the game bar while playing).
+- Saved as `hubquests`, `hubbadges`, `hubpasses`, so accounts and export/import include them.

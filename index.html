@@ -9,11 +9,11 @@
 <body>
 <div id="sbx">
 <header id="nav"><a class="brand" id="brand"><svg class="lgo" viewBox="0 0 40 40" width="30" height="30"><g transform="rotate(-12 20 20)"><rect x="6" y="6" width="28" height="28" rx="6" fill="#ff8a00" stroke="#fff" stroke-width="2.5"/><text x="20" y="28" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="21" fill="#fff">S</text></g></svg><span class="b1">School</span><span class="b2">Blox</span></a>
-<nav class="links"><button data-go="games">Games</button><button data-go="catalog">Catalog</button><button data-go="friends">Friends</button><button data-go="settings">Settings</button></nav>
+<nav class="links"><button data-go="games">Games</button><button data-go="catalog">Catalog</button><button data-go="friends">Friends</button><button data-go="quests">Quests</button><button data-go="badges">Badges</button><button data-go="passes">Gamepasses</button><button data-go="settings">Settings</button></nav>
 <div class="srch"><input id="q" placeholder="Search" autocomplete="off"><span>🔎</span></div>
-<div class="curs"><span class="cc" title="SchoolBux: earn 10 every minute">💵 <b id="bxn">0</b></span><button id="adbtn" title="Admin panel" style="display:none">🛡️</button><button id="gear" title="Settings">⚙️</button></div></header>
+<div class="curs"><span class="cc" title="SchoolBux: complete quests to earn them">💵 <b id="bxn">0</b></span><button id="adbtn" title="Admin panel" style="display:none">🛡️</button><button id="gear" title="Settings">⚙️</button></div></header>
 <aside id="sbside"><div class="uname" id="uname">Player</div>
-<nav><button data-nav="home">🏠<span>Home</span></button><button data-nav="games">🕹️<span>Games</span></button><button data-nav="friends">👥<span>Friends</span><i id="fbadge"></i></button><button data-nav="avatar">🧢<span>Character</span></button><button data-nav="favorites">♥<span>Favorites</span></button><button data-nav="recent">⏱<span>Recent</span></button><button data-nav="settings">⚙️<span>Settings</span></button></nav>
+<nav><button data-nav="home">🏠<span>Home</span></button><button data-nav="games">🕹️<span>Games</span></button><button data-nav="friends">👥<span>Friends</span><i id="fbadge"></i></button><button data-nav="quests">🎯<span>Quests</span></button><button data-nav="badges">🏅<span>Badges</span></button><button data-nav="passes">🎟️<span>Gamepasses</span></button><button data-nav="avatar">🧢<span>Character</span></button><button data-nav="favorites">♥<span>Favorites</span></button><button data-nav="recent">⏱<span>Recent</span></button><button data-nav="settings">⚙️<span>Settings</span></button></nav>
 <button id="inv" class="upg">🔗 Invite Friends</button></aside>
 <main id="sbmain"><div id="ban"></div>
 <div id="prof"><div class="pav" id="pav"></div><div class="pgr"><h1>Hello, <span id="hn">Player</span>!</h1><div class="pin"><label>Your name<input id="nick" placeholder="Your name" maxlength="14"></label><label>Room code<input id="roomcode" placeholder="Room" maxlength="20" value="public"></label><span id="online"></span></div></div></div>
@@ -81,6 +81,7 @@
 <script src="js/games/snow.js" onerror="(window.__fail=window.__fail||[]).push('js/games/snow.js')"></script>
 <script src="js/games/pizza.js" onerror="(window.__fail=window.__fail||[]).push('js/games/pizza.js')"></script>
 <script src="js/games/coming-soon.js" onerror="(window.__fail=window.__fail||[]).push('js/games/coming-soon.js')"></script>
+<script src="js/quests.js" onerror="(window.__fail=window.__fail||[]).push('js/quests.js')"></script>
 <script src="js/menu.js" onerror="(window.__fail=window.__fail||[]).push('js/menu.js')"></script>
 <script>
 /* If any file failed to load (wrong folder, missing upload, old deploy), show exactly which one. */

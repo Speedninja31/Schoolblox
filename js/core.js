@@ -216,7 +216,7 @@ let CAT='hat';
 function bxUpdate(){document.querySelectorAll('#bxn,.bxs').forEach(e=>e.textContent=BX.b);const t=document.getElementById('bxt');if(t)t.textContent=Math.max(1,Math.ceil(60-BX.acc))+'s'}
 let bxLast=Date.now(),bxSave=0;
 setInterval(()=>{const n=Date.now(),dt=Math.min(5,(n-bxLast)/1000);bxLast=n;if(document.hidden)return;BX.acc+=dt;
- if(BX.acc>=60){BX.acc-=60;BX.b+=10;saveBX();toast('+10 SchoolBux \uD83D\uDCB5');if(custom.style.display==='block')buildCustom()}
+ if(BX.acc>=60){BX.acc-=60;const _i=window.SBQ?SBQ.idle():1;BX.b+=_i;saveBX();toast('+'+_i+' SchoolBux \uD83D\uDCB5');if(custom.style.display==='block')buildCustom()}
  else if(++bxSave%10===0)saveBX();bxUpdate()},1000);
 bxUpdate();
 let SHOPMODE='catalog',PV={};
@@ -232,7 +232,7 @@ function buildCustom(){
  const pend=Object.keys(PV),tot=pend.reduce((a,c)=>a+priceOf(c),0);
  const note=cat?`${CATN[k]} \u00b7 ${pr?pr+' SchoolBux each':'Free'} \u00b7 tap an item to try it on`:`${CATN[k]} \u00b7 items you own${hidden?` \u00b7 ${hidden} more in the Catalog`:''}`;
  const bar=cat&&pend.length?`<div class="sh-buy"><span>Trying on ${pend.length} item${pend.length>1?'s':''}${tot?` \u00b7 \uD83D\uDCB5 ${tot}`:''}</span><button id="shbuy">${tot?'Buy & wear':'Wear'}</button><button id="shclr">Clear</button></div>`:'';
- custom.innerHTML=`<div class="sh-top"><div class="sh-bal">\uD83D\uDCB5 <b class="bxs">${BX.b}</b> SchoolBux</div><div class="sh-nx">Next +10 in <b id="bxt">${Math.max(1,Math.ceil(60-BX.acc))}s</b></div><button class="sh-sw" id="shsw">${cat?'\uD83D\uDC64 My Avatar':'\uD83D\uDECD\uFE0F Catalog'}</button></div><div class="sh-tabs">${tabs}</div><div class="sh-note">${note}</div><div class="sh-grid">${items}</div>${bar}`;
+ custom.innerHTML=`<div class="sh-top"><div class="sh-bal">\uD83D\uDCB5 <b class="bxs">${BX.b}</b> SchoolBux</div><div class="sh-nx">Next +${window.SBQ?SBQ.idle():1} in <b id="bxt">${Math.max(1,Math.ceil(60-BX.acc))}s</b></div><button class="sh-sw" id="shsw">${cat?'\uD83D\uDC64 My Avatar':'\uD83D\uDECD\uFE0F Catalog'}</button></div><div class="sh-tabs">${tabs}</div><div class="sh-note">${note}</div><div class="sh-grid">${items}</div>${bar}`;
  custom.scrollTop=sc;
  const redo=()=>{buildCustom();bxUpdate();ENG.avatar.rebuild()};
  custom.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{CAT=b.dataset.t;buildCustom()});
@@ -332,10 +332,10 @@ function npcTick(n,P,dt){if(!n)return;n.gr=true;n.vy=0;n.hs=0;n.t+=dt;const dx=P
 function ctrl(P,dt,S){
  const f=(F()?1:0)-(B()?1:0),r=(R()?1:0)-(L()?1:0),sy=Math.sin(yaw),cy=Math.cos(yaw);
  let dx=-sy*f+cy*r,dz=-cy*f-sy*r;const m=Math.hypot(dx,dz);
- if(m>0){dx/=m;dz/=m;P.emote=null;P.hs=16;P.x+=dx*16*dt;P.z+=dz*16*dt;
+ if(m>0){dx/=m;dz/=m;P.emote=null;const sp=window.SBQ?SBQ.spd():1;P.hs=16*sp;P.x+=dx*16*sp*dt;P.z+=dz*16*sp*dt;
   let d=Math.atan2(dx,dz)-P.yaw;d=Math.atan2(Math.sin(d),Math.cos(d));P.yaw+=d*Math.min(1,dt*14)}else P.hs=0;
  slOff+=((slOn()?2.4:0)-slOff)*Math.min(1,dt*12);if(slOn()){let d=yaw+Math.PI-P.yaw;d=Math.atan2(Math.sin(d),Math.cos(d));P.yaw+=d*Math.min(1,dt*22)}
- if(P.gr&&keys.Space){P.vy=53;P.gr=false;P.emote=null}
+ if(P.gr&&keys.Space){P.vy=53*(window.SBQ?SBQ.jmp():1);P.gr=false;P.emote=null}
  const py=P.y;P.vy-=196*(P.gs||1)*dt;P.y+=P.vy*dt;P.gr=false;
  for(const s of S){
   const inside=s.r?Math.hypot(P.x-s.x,P.z-s.z)<s.r:Math.abs(P.x-s.x)<s.hw+.6&&Math.abs(P.z-s.z)<s.hd+.6;

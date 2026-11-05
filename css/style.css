@@ -406,3 +406,24 @@ body,.win,#custom,#sp{transition:background-color .4s}
 .sgc .art .pcn{position:absolute;left:6px;bottom:6px;z-index:2;background:rgba(0,0,0,.62);color:#fff;font:700 10px system-ui;border-radius:10px;padding:2px 8px;backdrop-filter:blur(3px)}.sgc .art .pcn:empty{display:none}
 .lbb{position:sticky;bottom:-1px;z-index:2;background:linear-gradient(180deg,transparent,var(--panel) 28%);padding:14px 0 2px}
 @media(max-width:760px){#lobby{align-items:flex-start;padding-top:64px;box-sizing:border-box}.lbx2{max-height:100%}}
+
+/* ===== quests, badges, gamepasses ===== */
+#qp{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);z-index:55;background:linear-gradient(180deg,var(--k20,#3b2364),var(--k21,#2a1749));color:#fff;border-left:1px solid rgba(255,255,255,.12);border-radius:22px 0 0 22px;box-shadow:-14px 0 44px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s;overflow:auto;padding:0 14px 80px;font-family:system-ui}#qp.on{transform:none}
+#qp .frh{position:sticky;top:0;z-index:3;display:flex;justify-content:space-between;align-items:center;margin:0 -14px;padding:16px 18px;font-size:20px;font-weight:800;background:rgba(59,35,100,.96)}
+#qp button{background:var(--accent,#f7890b);color:#fff;border:0;border-radius:8px;padding:6px 11px;cursor:pointer;font-weight:700}#qp .frh button{width:34px;height:34px;padding:0;border-radius:50%;background:rgba(255,255,255,.16)}
+.qtabs{display:flex;gap:6px;margin:12px 0 8px}.qtabs button{flex:1;background:rgba(255,255,255,.12)!important}.qtabs button.on{background:var(--accent,#f7890b)!important}
+.qtop{font-size:18px;margin:6px 0}.qnote{opacity:.85;font-size:13px;margin:4px 0 10px}
+.qcard{background:rgba(255,255,255,.08);border-radius:14px;padding:10px 12px;margin-bottom:10px}.qcard.now{outline:2px solid var(--accent,#f7890b)}.qgh{font-weight:800;margin-bottom:6px}
+.qrow{display:flex;gap:8px;align-items:center;padding:6px 0;border-top:1px solid rgba(255,255,255,.1)}.qrow.done{opacity:.55}.qtx{flex:1;font-size:13px}.qtx small{opacity:.8}
+.qtag{font:800 10px system-ui;padding:3px 6px;border-radius:6px;background:#2e9e5b}.qtag.hard{background:#c62828}.qrw{text-align:center;font-weight:800;font-size:13px}.qrw button{padding:1px 6px;margin-top:2px}
+.qbar{height:7px;border-radius:5px;background:rgba(255,255,255,.18);margin:4px 0;overflow:hidden}.qbar i{display:block;height:100%;background:#ffd23a}
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.bd{background:rgba(255,255,255,.08);border-radius:12px;padding:10px;text-align:center;font-size:12px;display:flex;flex-direction:column;gap:3px;filter:grayscale(1);opacity:.75}.bd.got{filter:none;opacity:1;outline:2px solid #ffd23a}.bd small{opacity:.85}.bd em{color:#ffd23a;font-style:normal;font-weight:700}
+.be{font-size:30px}.gp{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.08);border-radius:12px;padding:10px;margin-bottom:8px}.gpt{flex:1;display:flex;flex-direction:column;gap:2px;font-size:13px}.gpt small{opacity:.85}.gp em{font-style:normal;font-weight:700;color:#7dffb0}.gp button.no{opacity:.55}
+#qhb{display:none}#vipt{margin-left:10px;padding:2px 8px;border-radius:8px;background:#ffd23a;color:#3b2364;font:800 12px system-ui;vertical-align:middle}
+
+#qhb,#bhb,#phb{display:none}
+#hotbar{position:fixed;left:12px;top:50%;transform:translateY(-50%);z-index:45;display:none;flex-direction:column;gap:8px}
+#hotbar button{position:relative;width:64px;padding:8px 4px 6px;border-radius:14px;border:2px solid rgba(255,255,255,.25);background:rgba(20,16,40,.72);backdrop-filter:blur(8px);color:#fff;cursor:pointer;font-family:system-ui;display:flex;flex-direction:column;align-items:center;gap:2px;touch-action:manipulation}
+#hotbar button span{font-size:26px;line-height:1}#hotbar button small{font-size:10px;opacity:.9}
+#hotbar button i{position:absolute;top:3px;left:6px;font:800 11px system-ui;font-style:normal;opacity:.8}
+#hotbar button.on{border-color:#ffd23a;background:rgba(255,210,58,.28);box-shadow:0 0 14px rgba(255,210,58,.55)}
