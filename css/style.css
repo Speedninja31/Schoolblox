@@ -439,3 +439,7 @@ body,.win,#custom,#sp{transition:background-color .4s}
 .fcd small{display:block;margin-top:3px}
 @media(max-width:700px){#fst{top:52px}#fxp{width:80px}}
 #ftalk{position:absolute;left:50%;bottom:132px;transform:translateX(-50%);display:none;z-index:6;background:rgba(255,210,58,.9);color:#222;border:2px solid #fff;border-radius:24px;padding:9px 22px;font:800 15px system-ui;cursor:pointer;touch-action:manipulation}
+
+/* no page scrollbar behind an open game */
+html:has(#modal.on),body:has(#modal.on){overflow:hidden!important;scrollbar-width:none}
+html:has(#modal.on)::-webkit-scrollbar,body:has(#modal.on)::-webkit-scrollbar{display:none}
