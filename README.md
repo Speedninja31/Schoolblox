@@ -64,3 +64,11 @@ Open `js/config.js` and paste your Supabase project URL and publishable key. The
 - **Tools:** Speed Coil (Z) and High Jump (X) are real tools. Buy the gamepass, then equip it from the hotbar on the left of the screen (click it, or press the key). The tool shows in your hand and only works while equipped. Tools are off in Murder Mystery. Add a tool in the `TOOLS` table in `js/quests.js`.
 - **Buttons:** Quests, Badges and Gamepasses are three separate buttons (top bar and side menu in the hub, and in the game bar while playing).
 - Saved as `hubquests`, `hubbadges`, `hubpasses`, so accounts and export/import include them.
+
+## Fishing Frenzy (js/games/fish.js)
+- **Real fish:** every species is a low-poly 3D model that swims in the water. Cast near one to lure it: it swims over, nibbles (the bobber dips), then bites. Rare fish have a glowing ring on the surface.
+- **Rods and reeling:** 5 rods that bend while you reel, bait, Perfect Cast zone, Perfect Hook, Flawless bonus, three fight styles (steady, dart, power), junk and treasure chests.
+- **NPCs:** a shopkeeper on each island (Old Finn, Granny Moss, Capt. Coral) with speech bubbles, a request board and shop. Ambient anglers fish on the docks.
+- **Progression:** angler levels (luck bonus), bigger bags, a Fish Book, three islands with their own fish.
+- **World:** day/night with sun, moon and stars, rain every few minutes (fish bite more), clouds, gulls, fireflies. Time and weather come from the clock, so everyone online sees the same sky.
+- Data lives at the top of the file (`FISH`, `RODS`, `BAITS`, `NPCD`, `ANGD`). Fish looks are in `FV`.

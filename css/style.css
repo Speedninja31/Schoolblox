@@ -427,3 +427,15 @@ body,.win,#custom,#sp{transition:background-color .4s}
 #hotbar button span{font-size:26px;line-height:1}#hotbar button small{font-size:10px;opacity:.9}
 #hotbar button i{position:absolute;top:3px;left:6px;font:800 11px system-ui;font-style:normal;opacity:.8}
 #hotbar button.on{border-color:#ffd23a;background:rgba(255,210,58,.28);box-shadow:0 0 14px rgba(255,210,58,.55)}
+
+/* Fishing Frenzy v2 */
+#fst{position:absolute;left:12px;top:58px;z-index:6;color:#fff;font:600 12px/1.45 system-ui;text-shadow:0 1px 3px #000;pointer-events:none;max-width:min(330px,70%)}
+#fst .fr1{display:flex;align-items:center;gap:8px;margin-bottom:3px}#flv{background:rgba(10,12,18,.65);border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:2px 9px;font-size:13px}
+#fxp{width:110px;height:9px;border-radius:6px;background:rgba(10,12,18,.6);border:1px solid rgba(255,255,255,.3);overflow:hidden}#fxp i{display:block;height:100%;width:0;background:linear-gradient(90deg,#29b6f6,#7dff9a)}
+#fln{background:rgba(10,12,18,.5);border-radius:8px;padding:3px 8px;display:inline-block}#fq{margin-top:4px;font-size:11px;opacity:.95;background:rgba(10,12,18,.4);border-radius:8px;padding:2px 8px;display:inline-block;min-height:0}#fq:empty{display:none}
+#fpw{position:relative}#fpw u{position:absolute;top:0;bottom:0;right:0;width:12%;background:rgba(255,235,120,.55);border-left:2px solid #fff;text-decoration:none}
+#fbang{position:absolute;left:50%;top:26%;transform:translateX(-50%);font:900 110px system-ui;color:#ff3b30;text-shadow:0 0 18px #fff,0 4px 0 #7a0000;display:none;z-index:7;pointer-events:none}
+#rfn{font:800 15px system-ui;margin-bottom:8px;letter-spacing:.3px}#rtr{box-shadow:inset 0 0 0 2px rgba(255,255,255,.15)}
+.fcd small{display:block;margin-top:3px}
+@media(max-width:700px){#fst{top:52px}#fxp{width:80px}}
+#ftalk{position:absolute;left:50%;bottom:132px;transform:translateX(-50%);display:none;z-index:6;background:rgba(255,210,58,.9);color:#222;border:2px solid #fff;border-radius:24px;padding:9px 22px;font:800 15px system-ui;cursor:pointer;touch-action:manipulation}
