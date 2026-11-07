@@ -74,7 +74,10 @@ Open it with **`** (backquote), the /admin chat command, or the shield button. I
 - Every event is a signed command, so nobody else can fake one. See `NEW` in `js/admin.js` to add your own.
 
 ## Cops & Robbers (js/games/jail.js)
-Pick Police or Prisoner. Prisoners start in a cell, escape (hack the gate keypad or dig the tunnel), rob the Bank, Jewelry Store, Gas Station and ATMs by holding E, and get away in cars. Crimes raise a wanted level and bot cops chase you. Police press E to arrest, F or right-click to taser, and can drive the police cars. Bots fill both teams when you play solo. Heists and arrests count for quests.
+Pick Police or Prisoner. Prisoners start in a cell, escape (hack the gate keypad or dig the tunnel), rob the Bank, Jewelry Store, Gas Station and ATMs by holding E, and get away in cars. Crimes raise a wanted level and bot cops chase you. Police press E to arrest, F or right-click to taser, and can drive the police cars. Bots fill both teams when you play solo. Heists and arrests count for quests. The city is 400x400 with a ring road and three extra districts (Downtown with the Museum heist, the Docks with the Warehouse, and the Casino). Press M or tap the minimap to enlarge it.
+
+## Avatar catalog
+Cosmetics are the `OPT` lists in `js/core.js`; the 3D models are built by key in `dress()` and the `dress2` to `dress5` functions. Always add new items to the END of a list so saved avatars keep working. Items in the `NEWP` table cost that many SchoolBux; everything else uses the flat category price (`priceOf`). The newest 25: Knight Helm, Sombrero, Astronaut, Witch Hat, Rubber Duck, Pharaoh, Ninja Band, Mullet, Braid, Unicorn Mane, Poncho, Kimono, Space Suit, Butterfly Wings, Dragon Wings, Guitar, Gold Chain, Flower Lei, Heart Specs, Monocle, Laser Sword, Bouquet, Ice Cream, Floating Hearts and Fire Aura.
 
 ## Fishing Frenzy (js/games/fish.js)
 - **Real fish:** every species is a low-poly 3D model that swims in the water. Cast near one to lure it: it swims over, nibbles (the bobber dips), then bites. Rare fish have a glowing ring on the surface.
