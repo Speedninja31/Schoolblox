@@ -76,7 +76,8 @@ function toolSync(){/* keep the held model on the current player's right hand */
  if(want&&!TL.m){const t=TOOLS.find(x=>x[0]===TL.eq),m=toolMesh(t[0],t[5]);m.position.set(0,-2,.55);m.rotation.x=Math.PI/2;want.J.aR.add(m);TL.m=m;TL.mp=want;TL.mk=TL.eq}
  else if(want&&TL.mp!==want){toolDrop()}
  if(TL.m){TL.m.rotation.z+=.04}}
-function equip(k){const t=TOOLS.find(x=>x[0]===k);if(!t||!has(k)||!active||fair())return;TL.eq=TL.eq===k?null:k;toast(TL.eq?t[1]+' '+t[2]+' equipped':t[1]+' '+t[2]+' put away');toolSync();toolBar()}
+const hmsg=document.createElement('div');hmsg.id='hmsg';document.body.appendChild(hmsg);let hmt=0;
+function equip(k){const t=TOOLS.find(x=>x[0]===k);if(!t||!has(k)||!active||fair())return;TL.eq=TL.eq===k?null:k;hmsg.textContent=TL.eq?t[1]+' '+t[2]:'Put away';hmsg.style.opacity=1;clearTimeout(hmt);hmt=setTimeout(()=>{hmsg.style.opacity=0},1100);toolSync();toolBar()}
 const hbar=document.createElement('div');hbar.id='hotbar';document.body.appendChild(hbar);
 function toolBar(){const own=TOOLS.filter(t=>has(t[0])),show=active&&own.length&&!fair()&&typeof inGame==='function'&&inGame()&&!(typeof rbIsOpen==='function'&&rbIsOpen());hbar.style.display=show?'flex':'none';if(!show)return;
  const h=own.map(t=>`<button data-t="${t[0]}" class="${TL.eq===t[0]?'on':''}" title="${t[2]} (${t[4]})"><i>${t[4]}</i><span>${t[1]}</span><small>${t[2]}</small></button>`).join('');if(hbar.dataset.h!==h+TL.eq){hbar.dataset.h=h+TL.eq;hbar.innerHTML=h}}

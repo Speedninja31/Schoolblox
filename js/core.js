@@ -411,7 +411,7 @@ function mpTick(dt,id){
   if(!c.nm){c.nm=1;c.adm=ad;(async()=>{let nm=String(q.n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';try{if(p.by&&usr&&usr.profiles){const ps=await usr.profiles([p.by]);nm=(ps[p.by]&&ps[p.by].name)||nm}}catch(e){}if(c.tag)c.g.remove(c.tag);c.tag=tag(nm,ad);if(id!=='mm')c.g.add(c.tag)})()}
  }
  for(const [pk,c] of RM)if(!seen.has(pk)){scene.remove(c.g);RM.delete(pk)}
- scoreEl.textContent+=' · 👥 '+(seen.size+1)
+ scoreEl.textContent=scoreEl.textContent.replace(/( · 👥 \d+)+$/,'')+' · 👥 '+(seen.size+1)
 }
 const EMK={Digit1:'wave',Digit2:'dance',Digit3:'cheer',Digit4:'point',Digit5:'laugh',Digit6:'sit',Digit7:'shrug'};
 const EMN=[['wave','\ud83d\udc4b Wave'],['dance','\ud83d\udc83 Dance'],['cheer','\ud83d\ude4c Cheer'],['point','\ud83d\udc49 Point'],['laugh','\ud83d\ude02 Laugh'],['sit','\ud83e\ude91 Sit'],['shrug','\ud83e\udd37 Shrug']];
@@ -570,7 +570,7 @@ let FRS={};try{FRS=JSON.parse(localStorage.getItem('hubf')||'{}')}catch(e){}
 const SEEN={},FCH=new Map(),frp=document.getElementById('frp'),saveF=()=>{try{localStorage.setItem('hubf',JSON.stringify(FRS))}catch(e){}};
 function sbGet(){if(!SB_URL||!SB_KEY||!window.supabase)return null;try{sb=sb||supabase.createClient(SB_URL,SB_KEY)}catch(e){}return sb}
 function fsend(code,ev,p){if(!sbGet())return;let c=FCH.get(code);if(!c){c={ch:sb.channel('u-'+code),ok:false,q:[]};c.ch.subscribe(st=>{if(st==='SUBSCRIBED'){c.ok=true;c.q.splice(0).forEach(m=>c.ch.send(m))}});FCH.set(code,c)}const m={type:'broadcast',event:ev,payload:p};if(c.ok)c.ch.send(m);else c.q.push(m)}
-function toast(txt,btns){const t=document.createElement('div');t.className='toast';const sp=document.createElement('span');sp.textContent=txt;t.appendChild(sp);(btns||[]).forEach(([l,f])=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>{f();t.remove()};t.appendChild(b)});const x=document.createElement('button');x.textContent='\u2715';x.onclick=()=>t.remove();t.appendChild(x);document.getElementById('toasts').appendChild(t);setTimeout(()=>t.remove(),25000)}
+function toast(txt,btns){const t=document.createElement('div');t.className='toast';const sp=document.createElement('span');sp.textContent=txt;t.appendChild(sp);(btns||[]).forEach(([l,f])=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>{f();t.remove()};t.appendChild(b)});const x=document.createElement('button');x.textContent='\u2715';x.onclick=()=>t.remove();t.appendChild(x);const box=document.getElementById('toasts');if(!(btns&&btns.length))[...box.children].forEach(o=>{if(o.firstChild&&o.firstChild.textContent===txt)o.remove()});box.appendChild(t);while(box.children.length>4)box.firstChild.remove();setTimeout(()=>t.remove(),btns&&btns.length?25000:7000)}
 const gameName=id=>{const g=GAMES.find(x=>x.id===id);return g?g.name:''};
 function addFriend(code,name,silent){code=String(code||'').trim().toLowerCase();if(!/^[a-z0-9]{8}$/.test(code)||code===myCode){if(!silent)toast('That friend code is not valid.');return}
  if(!FRS[code]){FRS[code]=cl(name)||'Friend';saveF();fsend(code,'fr',{from:myCode,n:myName()});if(!silent)toast('Friend added! They will see you when they are online.')}renderFriends()}
