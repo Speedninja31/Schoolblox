@@ -16,14 +16,15 @@ const Q={
  pizza:['Pizza Place','🍕',[[20,[['Serve 4 orders','served',4],['Serve 5 orders','served',5]]],[100,[['Serve 20 orders','served',20],['Serve 25 orders','served',25]]]]],
  mm:['Murder Mystery','🕵️',[[20,[['Collect 8 coins','coins',8],['Collect 10 coins','coins',10]]],[100,[['Win 2 rounds','wins',2],['Win 3 rounds','wins',3]]]]],
  pets:['Pet Hatchery','🥚',[[20,[['Hatch 5 eggs','hatch',5],['Hatch 6 eggs','hatch',6]]],[100,[['Hatch 30 eggs','hatch',30],['Hatch 40 eggs','hatch',40]]]]],
- hang:['Plaza Hangout','🏙️',[[20,[['Use 3 emotes','emotes',3],['Send 3 chat messages','chats',3]]],[100,[['Walk around for 6 minutes','move',360],['Walk around for 8 minutes','move',480]]]]]
+ hang:['Plaza Hangout','🏙️',[[20,[['Use 3 emotes','emotes',3],['Send 3 chat messages','chats',3]]],[100,[['Walk around for 6 minutes','move',360],['Walk around for 8 minutes','move',480]]]]],
+ jail:['Cops & Robbers','🚓',[[20,[['Pull off 2 heists','rob',2],['Make 2 arrests','arrest',2]]],[100,[['Pull off 6 heists','rob',6],['Make 6 arrests','arrest',6]]]]]
 };
 let mmw={k:'',n:0},hv={m:0,e:0,pe:null,c:0};
 /* How progress is read from each running game: kind 'inc' counts increases, 'max' keeps the highest value */
 const M={tower:{cp:['max',e=>e.cpi],win:['max',e=>e.won?1:0]},survive:{rounds:['inc',e=>e.n]},zom:{wave:['max',e=>e.wave]},snow:{kills:['inc',e=>e.kc]},
  fish:{fish:['inc',e=>e.cgn]},garden:{crops:['inc',e=>e.D.bag.length]},pizza:{served:['inc',e=>e.D.served]},pets:{hatch:['inc',e=>e.S.ht]},
  mm:{coins:['inc',e=>e.cn],wins:['inc',e=>{const k=(e.res||'')+'|'+e.hold;if(e.res&&e.res.indexOf('You win')>=0&&k!==mmw.k)mmw.n++;mmw.k=k;return mmw.n}]},
- hang:{move:['inc',e=>{if(e.P&&e.P.hs>0)hv.m++;return hv.m}],emotes:['inc',e=>{const x=e.P&&e.P.emote;if(x&&!hv.pe)hv.e++;hv.pe=x;return hv.e}],chats:['inc',e=>hv.c]}};
+ hang:{move:['inc',e=>{if(e.P&&e.P.hs>0)hv.m++;return hv.m}],emotes:['inc',e=>{const x=e.P&&e.P.emote;if(x&&!hv.pe)hv.e++;hv.pe=x;return hv.e}],chats:['inc',e=>hv.c]},jail:{rob:['inc',e=>e.rbc],arrest:['inc',e=>e.arc]}};
 const PASSES=[['vip','👑','VIP',400,'+25% SchoolBux from every quest, plus a VIP tag next to your name.'],
  ['rr','🔁','Quest Reroll',250,'Swap any unfinished quest for a different one (once per quest each hour).'],
  ['spd','⚡','Speed Coil',350,'A TOOL for your hotbar. Equip it (Z) to run 25% faster in the 3D games (not in Murder Mystery).'],
@@ -77,7 +78,7 @@ function toolSync(){/* keep the held model on the current player's right hand */
  if(TL.m){TL.m.rotation.z+=.04}}
 function equip(k){const t=TOOLS.find(x=>x[0]===k);if(!t||!has(k)||!active||fair())return;TL.eq=TL.eq===k?null:k;toast(TL.eq?t[1]+' '+t[2]+' equipped':t[1]+' '+t[2]+' put away');toolSync();toolBar()}
 const hbar=document.createElement('div');hbar.id='hotbar';document.body.appendChild(hbar);
-function toolBar(){const own=TOOLS.filter(t=>has(t[0])),show=active&&own.length&&!fair()&&typeof inGame==='function'&&inGame();hbar.style.display=show?'flex':'none';if(!show)return;
+function toolBar(){const own=TOOLS.filter(t=>has(t[0])),show=active&&own.length&&!fair()&&typeof inGame==='function'&&inGame()&&!(typeof rbIsOpen==='function'&&rbIsOpen());hbar.style.display=show?'flex':'none';if(!show)return;
  const h=own.map(t=>`<button data-t="${t[0]}" class="${TL.eq===t[0]?'on':''}" title="${t[2]} (${t[4]})"><i>${t[4]}</i><span>${t[1]}</span><small>${t[2]}</small></button>`).join('');if(hbar.dataset.h!==h+TL.eq){hbar.dataset.h=h+TL.eq;hbar.innerHTML=h}}
 hbar.onclick=e=>{const b=e.target.closest('button');if(b)equip(b.dataset.t)};
 addEventListener('keydown',e=>{if(e.repeat||!active||e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'))return;const t=TOOLS.find(x=>x[3]===e.code);if(t)equip(t[0])});

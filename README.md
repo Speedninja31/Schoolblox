@@ -65,6 +65,17 @@ Open `js/config.js` and paste your Supabase project URL and publishable key. The
 - **Buttons:** Quests, Badges and Gamepasses are three separate buttons (top bar and side menu in the hub, and in the game bar while playing).
 - Saved as `hubquests`, `hubbadges`, `hubpasses`, so accounts and export/import include them.
 
+## Admin Console + special weather (js/admin.js, js/weather.js)
+Open it with **`** (backquote), the /admin chat command, or the shield button. It only works while you are logged in as the admin account with your key on the device. It is a centered, draggable window (double-click the header to recenter).
+- **Powers (only you, in any 3D game):** Fly (G, Space up, Shift/C down), Noclip (N), God mode, Air jump, Invisible, Teleport to your aim (T) or to a player, plus sliders for speed, jump, gravity and size. On phones, Fly shows up/down buttons.
+- **Weather (everyone, or only you):** Rain, Thunderstorm, Blizzard, Meteor Shower, Aurora, Blood Moon, Disco Party, Gold Rush, Tornado, Dense Fog, Heatwave, Candy Rain, Eclipse, Starfall. It is drawn as an overlay, so it works in every game. Add a new one in the `TYPES` table in `js/weather.js`.
+- **Events (everyone online):** Speed Party, Moon Gravity, Giant Party, Tiny Party, Bux Rain, Fireworks, Confetti, a 10 second Countdown, global message, clear chat.
+- **Players:** teleport to, mute, kick, ban, give or take SchoolBux, and the report inbox.
+- Every event is a signed command, so nobody else can fake one. See `NEW` in `js/admin.js` to add your own.
+
+## Cops & Robbers (js/games/jail.js)
+Pick Police or Prisoner. Prisoners start in a cell, escape (hack the gate keypad or dig the tunnel), rob the Bank, Jewelry Store, Gas Station and ATMs by holding E, and get away in cars. Crimes raise a wanted level and bot cops chase you. Police press E to arrest, F or right-click to taser, and can drive the police cars. Bots fill both teams when you play solo. Heists and arrests count for quests.
+
 ## Fishing Frenzy (js/games/fish.js)
 - **Real fish:** every species is a low-poly 3D model that swims in the water. Cast near one to lure it: it swims over, nibbles (the bobber dips), then bites. Rare fish have a glowing ring on the surface.
 - **Rods and reeling:** 5 rods that bend while you reel, bait, Perfect Cast zone, Perfect Hook, Flawless bonus, three fight styles (steady, dart, power), junk and treasure chests.
