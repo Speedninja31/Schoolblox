@@ -98,7 +98,7 @@ ENG.zom={d3:true,fps:true,MN:['Abandoned Compound','Farmstead','Bunker','Graveya
    const bm=new THREE.Mesh(new THREE.BoxGeometry(zx?9:1.3,1.2,zx?1.3:9),tmat(0x5a3d28,'wood'));bm.position.set(gx,7.6,gz);G.add(bm);this.BR.push({x:gx,z:gz,s:sb,pl,ux,uz})});KEEP=false;
 
   if(E.lamp)[[-30,-30],[30,-30],[-30,30],[30,30]].forEach(([x,z])=>{const p=new THREE.Mesh(new THREE.CylinderGeometry(.25,.3,9,6),lam(0x333a44));p.position.set(x,4.5,z);const b=new THREE.Mesh(new THREE.SphereGeometry(.7,8,6),new THREE.MeshBasicMaterial({color:0xffe2a8}));b.position.set(x,9.4,z);const Lt=new THREE.PointLight(0xffd9a0,.9,38);Lt.position.set(x,9,z);G.add(p,b,Lt)});
-  if(k===0){for(let i=0;i<7;i++){const x=(rs()-.5)*80,z=(rs()-.5)*80,c=i%2?0x7a3b2e:0x2e5a7a;box(12,5,5,x,z,c);if(i%2)box(12,5,5,x,z,c,5)}
+  if(k===0){for(let i=0;i<7;i++){const x=(rs()-.5)*80,z=(rs()-.5)*80,c=i%2?0x7a3b2e:0x2e5a7a,hh=5+i*.04;box(12,hh,5,x,z,c);if(i%2)box(12,5,5,x,z,c,hh)}
    box(10,2,10,0,0,0x888d96);[[-22,-22],[22,-22],[-22,22],[22,22]].forEach(([x,z])=>box(3,12,3,x,z,0x555a63));[[0,-44,14,2],[0,44,14,2],[-44,0,2,14],[44,0,2,14]].forEach(([x,z,w,d])=>box(w,3,d,x,z,0x6b5a3f));
    for(let i=0;i<8;i++){const[x,z]=rp(2);dec(new THREE.CylinderGeometry(1,1,2.4,10),i%2?0xb03a2e:0x3a6f9a,x,1.2,z,'metal')}}
   if(k===1){box(22,12,16,-30,-28,0x8a2f2f,0,'brick');box(8,20,8,32,-30,0xb8bcc4);box(6,3,4,20,18,0x2e7d32);for(let i=0;i<7;i++)box(4,3,4,(rs()-.5)*80,(rs()-.5)*80,0xd9b84a,0,'wood');

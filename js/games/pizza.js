@@ -90,7 +90,7 @@ ENG.pizza={d3:true,noEmote:1,
   for(let i=0;i<20;i++){const a=i/20*6.283,m=new THREE.Mesh(new THREE.PlaneGeometry(.6,5),new THREE.MeshBasicMaterial({color:0xf5e9a8}));m.rotation.x=-Math.PI/2;m.rotation.z=-a;m.position.set(Math.cos(a)*120,.08,Math.sin(a)*120);G.add(m)}
   const pl=new THREE.Mesh(new THREE.CylinderGeometry(15,15,.14,40),tmat(0xd9d2c0,'stone',4));pl.position.set(0,.07,10);G.add(pl);box(70,.3,6,0,-4,0xd9d2c0,0,'stone',false);
   /* ===== the pizzeria: brick walls, glass storefront, striped awning, pitched roof, dining room + open kitchen ===== */
-  box(64,.3,52,0,-36,0xe8d9b0,0,'stone',false);
+  box(63.8,.3,51.8,0,-36,0xe8d9b0,0,'stone',false);
   const ck=(w,d,cx,cz,a,b)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshLambertMaterial({map:cvT(64,64,x=>{x.fillStyle=a;x.fillRect(0,0,64,64);x.fillStyle=b;x.fillRect(0,0,32,32);x.fillRect(32,32,32,32)},[w/8,d/8])}));m.rotation.x=-Math.PI/2;m.position.set(cx,.32,cz);G.add(m)};
   ck(64,18,0,-19,'#f4f0e6','#c62828');ck(64,34,0,-45,'#eceff1','#90a4ae');
   const BR=0xb5523b,wl=(w,h,d,x,z,y0)=>box(w,h,d,x,z,BR,y0,'brick');
@@ -106,7 +106,7 @@ ENG.pizza={d3:true,noEmote:1,
   /* dining room: tables, chairs, booths, menu board, hanging lights */
   const table=(x,z)=>{box(4.2,3,4.2,x,z,0xf3e9d2,0,'wood');[[-3.4,0],[3.4,0],[0,-3.4],[0,3.4]].forEach(([a,b])=>box(1.6,2,1.6,x+a,z+b,0xc62828,0,'',false))};
   [[-25,-24],[-25,-16],[16,-24],[26,-16]].forEach(([x,z])=>table(x,z));
-  [-1,1].forEach(q=>{box(4,2,10,q*29.2,-18,0xc62828,0,'',false);box(1.2,5,10,q*31,-18,0xa51c1c,0,'',false)});
+  [-1,1].forEach(q=>{box(4,2,10,q*29.2,-18,0xc62828,0,'',false);box(1.2,5,10.1,q*31,-18,0xa51c1c,0,'',false)});
   const menu=new THREE.Mesh(new THREE.PlaneGeometry(10,6),new THREE.MeshBasicMaterial({map:cvT(256,154,x=>{x.fillStyle='#1b1b1b';x.fillRect(0,0,256,154);x.fillStyle='#ffd23a';x.font='bold 26px system-ui';x.textAlign='center';x.fillText('MENU',128,32);x.fillStyle='#fff';x.font='16px system-ui';['Cheese  🍕','Pepperoni  🍕','Sausage & Mushroom','Pineapple Party','Veggie Supreme','Fresh Garlic Knots'].forEach((t,i)=>x.fillText(t,128,62+i*18))})}));menu.rotation.y=Math.PI/2;menu.position.set(-31.1,6.5,-35);G.add(menu);
   [[-20,-16],[20,-16],[-20,-44],[20,-44],[0,-36]].forEach(([x,z])=>{const l=new THREE.Mesh(new THREE.SphereGeometry(.9,10,8),new THREE.MeshBasicMaterial({color:0xfff0b0}));l.position.set(x,10.8,z);G.add(l)});
   /* counter between the dining room and the kitchen (staff door in the middle) */
@@ -121,7 +121,7 @@ ENG.pizza={d3:true,noEmote:1,
   stn('trash',4,-44,3,3,3.4,0x546e7a,'metal','Trash','🗑️');box(5,8,4,13,-59.5,0xeceff1,0,'metal');
   this.ob=[];[-52,-42].forEach((z,i)=>{const b=dec(new THREE.BoxGeometry(4,.5,.2),0x666666,24.8,4.2,z);b.rotation.y=Math.PI/2;b.material=new THREE.MeshBasicMaterial({color:0x666666});this.ob.push(b)});
   /* supply truck by the back door */
-  box(14,6,7,-50,-48,0xeceff1,0,'metal');box(4.4,4.4,7,-41.5,-48,0x1e88e5,0,'metal');lab('🚚 Supply Truck',-50,9.5,-48,10);this.ST.truck={x:-46,z:-48,r:10,name:'Supply Truck',sym:'🚚'};
+  box(14,6,7,-50,-48,0xeceff1,0,'metal');box(4.4,4.4,6.9,-41.5,-48,0x1e88e5,0,'metal');lab('🚚 Supply Truck',-50,9.5,-48,10);this.ST.truck={x:-46,z:-48,r:10,name:'Supply Truck',sym:'🚚'};
   /* town: houses, plaza fountain, planters, park, pond, trees, hills */
   this.HS=[];const hc=[0xd9b878,0xb8c9a5,0xc99a8a,0x9fb8d0,0xe3c88a,0xd0a0a0,0xa9c0d6,0xcfb38a],HX=[];
   const house=(x,z,i)=>{const a=Math.atan2(z,x);box(14,8,12,x,z,hc[i%8],0,'stone');box(15.6,1.5,13.6,x,z,0x7a3b2e,8,'brick',false);const dx=x-Math.cos(a)*9,dz=z-Math.sin(a)*9;dec(new THREE.BoxGeometry(2.6,4.4,.5),0x6b4a2b,dx,2.2,dz,'wood');dec(new THREE.BoxGeometry(.4,2.2,.4),0x5a3d28,dx+3,1.1,dz);dec(new THREE.BoxGeometry(1.4,1,.9),0x3b82f6,dx+3,2.4,dz);this.HS.push({x,z,dx,dz,i});HX.push([x,z])};

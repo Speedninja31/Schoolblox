@@ -76,8 +76,14 @@ Open it with **`** (backquote), the /admin chat command, or the shield button. I
 ## Cops & Robbers (js/games/jail.js)
 Pick Police or Prisoner. Prisoners start in a cell, escape (hack the gate keypad or dig the tunnel), rob the Bank, Jewelry Store, Gas Station and ATMs by holding E, and get away in cars. Crimes raise a wanted level and bot cops chase you. Police press E to arrest, F or right-click to taser, and can drive the police cars. Bots fill both teams when you play solo. Heists and arrests count for quests. The city is 400x400 with a ring road and three extra districts (Downtown with the Museum heist, the Docks with the Warehouse, and the Casino). Press M or tap the minimap to enlarge it.
 
-## Avatar catalog
-Cosmetics are the `OPT` lists in `js/core.js`; the 3D models are built by key in `dress()` and the `dress2` to `dress5` functions. Always add new items to the END of a list so saved avatars keep working. Items in the `NEWP` table cost that many SchoolBux; everything else uses the flat category price (`priceOf`). The newest 25: Knight Helm, Sombrero, Astronaut, Witch Hat, Rubber Duck, Pharaoh, Ninja Band, Mullet, Braid, Unicorn Mane, Poncho, Kimono, Space Suit, Butterfly Wings, Dragon Wings, Guitar, Gold Chain, Flower Lei, Heart Specs, Monocle, Laser Sword, Bouquet, Ice Cream, Floating Hearts and Fire Aura.
+## Avatar catalog (js/core.js + js/cosmetics.js)
+- The lists of items are the `OPT` tables in `js/core.js`. **Always add new items to the END of a list** so saved avatars keep working. `NEWP` holds per-item prices; everything else uses the flat category price (`priceOf`).
+- **All 3D accessories are built in `js/cosmetics.js`** (hats, hair, jackets, back items, held items, neck, glasses, effects, shoes). `dress()` in core.js blanks those slots for the old chain and calls `COS.dress`. To add an item: add its entry to `OPT`, then add a builder with the same key to `HAT`, `HAIR`, `JACKET`, `BACK`, `HAND`, `NECK`, `GLASS`, `EFFECT` (or `SHOES`). Builders use the shared helpers (`add`, `grp`, `rbx`, `sph`, `cyl`, `tor`, `lathe`, `chain`, `bone`).
+- Fit rules: the skull top is y=0.6 and a crown sits at y~0.26 with radius ~0.64-0.7. The torso is 2x2x1 centred at y=3 (shoulders y=4). **Keep overlays at least 0.03 clear of the surface under them** (same-size faces z-fight).
+- Hats that cover the hair top hide the hair dome automatically (`X.cover`); headbands and things that sit on top are listed in `KEEP`.
+- Held items (`HAND`) are built upright; the right arm lifts forward (`C.hold`, handled in `animate()`).
+- Animated parts register with `X.anim(t=>...)` (they run every frame via `C.fxu`).
+- Unknown avatar indexes fall back to "none", so a player on a different version of the site cannot crash anyone.
 
 ## Fishing Frenzy (js/games/fish.js)
 - **Real fish:** every species is a low-poly 3D model that swims in the water. Cast near one to lure it: it swims over, nibbles (the bobber dips), then bites. Rare fish have a glowing ring on the surface.

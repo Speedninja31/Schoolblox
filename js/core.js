@@ -99,7 +99,9 @@ const NEWP={knight:150,sombrero:90,astro:220,witch:100,duck:120,pharaoh:180,ninj
 const ORDER=['skin','hair','shirt','jacket','design','sleeves','pants','legs','shoes','face','glasses','hat','neck','back','hand','effect','anim'];
 let AV={skin:0,shirt:0,pants:0,face:0,hat:0,back:0,design:0,sleeves:0,legs:0,shoes:0,glasses:0,neck:0,hand:0,effect:0};try{Object.assign(AV,JSON.parse(localStorage.getItem('avatar')||'{}'))}catch(e){}
 for(const k in OPT)if(!OPT[k][AV[k]])AV[k]=0;
-function dress(C){
+/* accessories (hat, hair, jacket, back, hand, neck, glasses, effect) are built by js/cosmetics.js; clothes, sleeves, legs and shoes by the old chain below */
+function dress(C){const real=AV;if(window.COS){AV=Object.assign({},real,{hat:0,hair:0,jacket:0,back:0,hand:0,neck:0,glasses:0,effect:0,shoes:0});try{dressOld(C)}finally{AV=real}COS.dress(C,real)}else dressOld(C)}
+function dressOld(C){
  const h=OPT.hat[AV.hat][1],b=OPT.back[AV.back][1],H=C.J.head;
  const add=(geo,col,x,y,z,par,basic)=>{const m=new THREE.Mesh(geo,basic?new THREE.MeshBasicMaterial({color:col}):lam(col));m.position.set(x,y,z);m.castShadow=true;(par||H).add(m);return m};
  if(h==='cap'){const d=add(new THREE.SphereGeometry(.7,20,12,0,Math.PI*2,0,Math.PI/2),0xe0352b,0,.3,0);d.scale.y=.65;add(new THREE.BoxGeometry(.9,.08,.6),0xb02a22,0,.32,.6)}
@@ -187,52 +189,7 @@ function dress4(C,add){
   else if(jk==='overall'){add(bx(1.3,1.1,.12),c,0,3.1,.54,U);[-1,1].forEach(q=>add(bx(.25,2.0,.12),c,q*.5,3.0,.54,U));[-1,1].forEach(q=>add(bx(.25,1.9,.12),c,q*.55,3.1,-.54,U));add(bx(2.06,.55,1.06),c,0,2.25,0,U);[J.lL,J.lR].forEach(l=>add(bx(1.08,1.25,1.08),c,0,-.65,0,l))}
   else if(jk==='vest'){add(bx(2.12,1.8,1.12),c,0,3.05,0,U);[-1,1].forEach(q=>add(bx(.8,1.3,.1),0xc0c6cc,q*.5,3.2,.58,U));add(bx(2.14,.2,1.14),dk,0,2.2,0,U);[-1,1].forEach(q=>add(bx(.7,.35,1.14),0xc0c6cc,q*1.3,4.0,0,U))}}
 }
-/* ---- 25 newer cosmetics: hats, hair, jackets, back, neck, glasses, hand, effects ---- */
-function dress5(C,add,h,b){
- const J=C.J,U=C.up,fx=k=>OPT[k][AV[k]||0][1],bx=(w,hh,d)=>new THREE.BoxGeometry(w,hh,d),sp=(r,a,c)=>new THREE.SphereGeometry(r,a||14,c||10),cyl=(a,c,hh,sg)=>new THREE.CylinderGeometry(a,c,hh,sg||16),cone=(r,hh,sg)=>new THREE.ConeGeometry(r,hh,sg||12),cap=r=>new THREE.SphereGeometry(r,20,12,0,Math.PI*2,0,Math.PI/2);
- /* hats (parent = head, head centre is the origin, face points +z) */
- if(h==='knight'){add(cap(.78),0xb8c0cc,0,.1,0).scale.y=.95;add(cyl(.8,.8,.12,22),0x8f98a6,0,.1,0);add(bx(.14,.62,.1),0x8f98a6,0,.1,.74);add(bx(.16,.55,.7),0xd03030,0,.98,-.05);add(bx(.9,.14,.1),0x6b7280,0,.52,.74)}
- if(h==='sombrero'){add(cyl(1.55,1.55,.07,28),0xe8b04a,0,.6,0);add(cyl(.36,.5,.62,18),0xe8b04a,0,.95,0);add(cyl(.52,.52,.14,18),0xc0262c,0,.72,0);for(let i=0;i<14;i++){const a=i/14*6.283;add(sp(.07,6,5),i%2?0xffd23a:0x3bb0ff,Math.cos(a)*1.5,.57,Math.sin(a)*1.5)}}
- if(h==='astro'){const g=add(sp(1.05,22,16),0x9fd8ff,0,.1,0);g.material.transparent=true;g.material.opacity=.32;g.castShadow=false;const r=add(new THREE.TorusGeometry(.85,.14,8,24),0xf2f2f2,0,-.78,0);r.rotation.x=Math.PI/2;add(cyl(.04,.04,.5,6),0xaab2bd,.7,1.0,0);add(sp(.1,8,6),0xff3b3b,.7,1.28,0,0,1)}
- if(h==='witch'){add(cone(.62,1.5,16),0x2a1b3d,0,1.4,0).rotation.z=.14;add(cyl(1.05,1.05,.07,26),0x2a1b3d,0,.62,0);add(cyl(.64,.64,.18,18),0xff8a1f,0,.72,0);add(bx(.3,.3,.06),0xffd23a,0,.72,.64)}
- if(h==='duck'){add(sp(.55,16,12),0xffd84a,0,.98,0).scale.set(1,.85,1.15);add(sp(.34,14,10),0xffd84a,0,1.5,.22);add(bx(.34,.1,.28),0xff8a1f,0,1.44,.56);[-1,1].forEach(s=>add(sp(.05,6,5),0x111111,s*.14,1.58,.45,0,1));add(bx(.22,.26,.1),0xffc21a,0,1.0,-.52)}
- if(h==='pharaoh'){add(cap(.78),0xe8c04a,0,.14,0).scale.y=.8;[-1,1].forEach(s=>{add(bx(.3,1.35,.55),0xe8c04a,s*.68,-.25,-.05);add(bx(.31,.2,.56),0x1f4fa8,s*.68,-.05,-.05);add(bx(.31,.2,.56),0x1f4fa8,s*.68,-.5,-.05)});add(cone(.1,.38,6),0x1f4fa8,0,.78,.62);add(bx(1.0,.14,.1),0xe8c04a,0,.5,.72)}
- if(h==='ninja'){add(cyl(.74,.74,.24,24,1,true),0x1a1a1a,0,.3,0);add(bx(.55,.22,.06),0xc0c6cc,0,.3,.74);[-1,1].forEach(s=>{const t=add(bx(.14,.7,.06),0x1a1a1a,s*.14,.1,-.8);t.rotation.z=s*.35})}
- /* hair (dress4 already draws the coloured cap for these) */
- const hk=OPT.hair[AV.hair||0][1];
- if(hk==='mullet'){const c=0x6b3a1e;add(bx(1.0,1.7,.3),c,0,-.5,-.58);[-1,1].forEach(q=>add(bx(.2,1.0,.55),c,q*.62,-.15,-.1));add(bx(.95,.2,.12),c,0,.28,.62)}
- if(hk==='braid'){const c=0xf2d36b;for(let i=0;i<6;i++)add(sp(.24-i*.012,10,8),c,0,.1-i*.34,-.72-i*.02).scale.set(1,.9,1);add(sp(.16,8,6),0xd03030,0,-1.95,-.76,0,1);add(bx(1.3,.5,.3),c,0,.0,-.62)}
- if(hk==='unicorn'){['#ff4f6a','#ff9a2e','#ffd23a','#5fd36a','#3bb0ff','#b45cff'].forEach((col,i)=>{add(bx(.5,.55,.3),parseInt(col.slice(1),16),0,.55-i*.28,-.28-i*.12).rotation.x=.3});add(cone(.14,.7,8),0xffe066,0,.98,.42).rotation.x=.35}
- /* jackets (parent = torso; arms are J.aL / J.aR) */
- const jk=OPT.jacket[AV.jacket||0][1],arms=(col,len,w,y)=>[J.aL,J.aR].forEach(a=>add(bx(w||1.1,len||2.05,w||1.1),col,0,y!=null?y:-(len||2.05)/2,0,a));
- if(jk==='poncho'){[[0xd2691e,2.3,1.35,3.75],[0xffd23a,2.7,1.55,3.2],[0xc0262c,3.1,1.75,2.65]].forEach(p=>add(bx(p[1],.62,p[2]),p[0],0,p[3],0,U));add(bx(.5,.5,.14),0x3a2a1a,0,3.75,.7,U)}
- if(jk==='kimono'){add(bx(2.12,2.1,1.12),0xe0527a,0,3,0,U);arms(0xe0527a,1.9,1.35);[-1,1].forEach(s=>{const c=add(bx(.34,1.5,.06),0xf8f2e8,s*.28,3.35,.58,U);c.rotation.z=-s*.28});add(bx(2.16,.55,1.16),0xd4a017,0,2.4,0,U);add(bx(.7,.55,.18),0xb8860b,0,2.4,-.62,U)}
- if(jk==='space'){add(bx(2.16,2.1,1.16),0xf4f4f4,0,3,0,U);arms(0xf4f4f4,2.05,1.14);[J.aL,J.aR].forEach(a=>add(bx(1.22,.28,1.22),0xff8a1f,0,-1.85,0,a));add(bx(.9,.7,.08),0x6b7280,0,3.1,.6,U);[0xe0352b,0x3ddc84,0x3bb0ff].forEach((c,i)=>add(sp(.08,6,5),c,-.28+i*.28,3.1,.67,U,1));add(bx(2.18,.2,1.18),0xff8a1f,0,2.15,0,U);add(bx(.5,.32,.06),0x1a7fe0,.65,3.75,.6,U)}
- /* back */
- if(b==='butterfly')[-1,1].forEach(s=>{const u=add(bx(.08,2.1,1.6),0xb45cff,s*1.0,3.9,-.8,U);u.rotation.z=s*.65;u.rotation.y=s*.4;const l=add(bx(.08,1.3,1.0),0x3bd1ff,s*.85,2.75,-.8,U);l.rotation.z=s*.3;l.rotation.y=s*.4;add(sp(.2,8,6),0xffffff,s*1.35,4.2,-.95,U,1)});
- if(b==='dragon')[-1,1].forEach(s=>{const m=add(bx(.07,2.3,2.0),0x8a1c1c,s*1.05,3.6,-.85,U);m.rotation.z=s*.55;m.rotation.y=s*.5;const bone=add(cyl(.07,.07,2.6,6),0x2b1a1a,s*.7,3.7,-.8,U);bone.rotation.z=s*.55;for(let i=0;i<3;i++){const sk=add(cone(.1,.45,6),0x2b1a1a,s*(.95+i*.38),4.45-i*.45,-.85+i*.1,U);sk.rotation.z=-s*.2}});
- if(b==='guitar'){add(bx(1.25,1.5,.26),0xc47a2a,0,2.7,-.78,U);add(sp(.45,12,10),0xc47a2a,0,3.35,-.78,U).scale.z=.35;const hole=add(cyl(.2,.2,.05,14),0x1a1208,0,2.85,-.92,U);hole.rotation.x=Math.PI/2;add(bx(.22,1.9,.14),0x3a2412,0,4.55,-.8,U);add(bx(.34,.45,.16),0x1a1208,0,5.62,-.8,U);const st=add(bx(.14,3.4,.05),0x1a1a1a,0,3.4,-.68,U);st.rotation.z=.62}
- /* neck */
- const nk=fx('neck');
- if(nk==='chain'){const r=add(new THREE.TorusGeometry(1,.06,8,28),0xffd23a,0,3.88,.02,U);r.rotation.x=Math.PI/2;r.scale.set(1.05,.7,1);const r2=add(new THREE.TorusGeometry(.7,.045,8,24,Math.PI),0xffd23a,0,3.55,.52,U);r2.rotation.z=Math.PI;r2.scale.set(1,.9,.2);const m=add(cyl(.24,.24,.06,6),0xffd23a,0,2.95,.6,U);m.rotation.x=Math.PI/2}
- if(nk==='lei')for(let i=0;i<16;i++){const a=i/16*6.283,z=Math.sin(a)*.62,front=Math.max(0,Math.sin(a));add(sp(.17,8,6),[0xff6fa8,0xff9a2e,0xffd23a,0xffffff][i%4],Math.cos(a)*1.05,3.9-front*.85,z+.02,U)}
- /* glasses */
- const gl=fx('glasses');
- if(gl==='heart')[-1,1].forEach(s=>{const x=s*.2;add(sp(.1,8,6),0xff4f8a,x-.06,.1,.72,0,1);add(sp(.1,8,6),0xff4f8a,x+.06,.1,.72,0,1);const t=add(cone(.17,.24,4),0xff4f8a,x,-.03,.72,0,1);t.rotation.z=Math.PI;t.rotation.y=Math.PI/4});
- if(gl==='monocle'){add(new THREE.TorusGeometry(.14,.025,8,18),0xd4a017,.2,.04,.72);const c=add(bx(.02,.6,.02),0xd4a017,.34,-.26,.7);c.rotation.z=.12}
- /* hand (parent = right arm; hand is at y -2, items point up the arm) */
- const hd=fx('hand');
- if(hd==='laser'){const g1=add(cyl(.09,.09,.7,8),0x4a4f58,0,-1.9,.35,J.aR);g1.rotation.x=Math.PI/2;const bl=add(cyl(.07,.07,2.6,10),0x3df0ff,0,-1.9,2.0,J.aR,1);bl.rotation.x=Math.PI/2;const gw=add(cyl(.15,.15,2.7,10),0x3df0ff,0,-1.9,2.0,J.aR,1);gw.rotation.x=Math.PI/2;gw.material.transparent=true;gw.material.opacity=.3;gw.castShadow=false}
- if(hd==='bouquet'){const w=add(cone(.38,.95,10),0xff9acb,0,-1.45,.45,J.aR);w.rotation.z=Math.PI;add(cyl(.05,.05,.5,6),0x3f8f3a,0,-.85,.45,J.aR);[[0,-.5,0,0xff4f6a],[.25,-.62,.1,0xffd23a],[-.25,-.62,.1,0xffffff],[.12,-.66,-.2,0xb45cff],[-.14,-.55,-.2,0xff9a2e]].forEach(f=>add(sp(.2,8,6),f[3],f[0],f[1],.45+f[2],J.aR))}
- if(hd==='icecream'){const c=add(cone(.3,1.0,10),0xe0a95a,0,-1.4,.45,J.aR);c.rotation.z=Math.PI;add(sp(.4,12,10),0xff9acb,0,-.82,.45,J.aR);add(sp(.34,12,10),0x9bffd0,0,-.45,.45,J.aR);add(sp(.12,8,6),0xe0352b,0,-.1,.45,J.aR)}
- /* effects (animated, C.fxu is called every frame with the time) */
- const ef=fx('effect');
- if(ef==='hearts'){const hs=[];for(let i=0;i<7;i++){const g=new THREE.Group(),m=new THREE.MeshBasicMaterial({color:0xff5f9a});[-1,1].forEach(s=>{const o=new THREE.Mesh(new THREE.SphereGeometry(.13,8,6),m);o.position.set(s*.1,.06,0);g.add(o)});const c=new THREE.Mesh(new THREE.ConeGeometry(.2,.3,4),m);c.rotation.z=Math.PI;c.rotation.y=Math.PI/4;c.position.y=-.1;g.add(c);C.g.add(g);hs.push(g)}
-  C.fxu=t=>hs.forEach((g,i)=>{const p=(t*.35+i/7)%1;g.position.set(Math.cos(i*2.1+t*.8)*1.5,.8+p*5.5,Math.sin(i*2.1+t*.8)*1.5);g.scale.setScalar(1.3-p*.9);g.rotation.y=t*2+i})}
- if(ef==='fire'){const fl=[];for(let i=0;i<12;i++){const a=i/12*6.283,m=add(cone(.32,1.3,7),i%2?0xff6a00:0xffd23a,Math.cos(a)*1.9,.65,Math.sin(a)*1.9,C.g,1);m.castShadow=false;fl.push(m)}
-  C.fxu=t=>fl.forEach((m,i)=>{const k=.75+Math.sin(t*9+i*2.3)*.4;m.scale.set(1,k,1);m.position.y=.4+.65*k;const a=i/12*6.283+t*.5;m.position.x=Math.cos(a)*1.9;m.position.z=Math.sin(a)*1.9})}
-}
-function dress3(C,add,h,b){dress4(C,add);dress5(C,add,h,b);
+function dress3(C,add,h,b){dress4(C,add);
  const J=C.J,U=C.up,fx=k=>OPT[k][AV[k]][1],cyl=(a,c,hh,sg)=>new THREE.CylinderGeometry(a,c,hh,sg||14);
  if(h==='santa'){const d=add(new THREE.ConeGeometry(.65,1.2,16),0xd62828,0,1.1,0);d.rotation.z=.25;add(new THREE.SphereGeometry(.16,10,8),0xffffff,.45,1.6,0);add(cyl(.7,.7,.2,20),0xffffff,0,.62,0)}
  if(h==='pirate'){add(new THREE.BoxGeometry(1.6,.5,1.1),0x1a1a1a,0,.8,0);add(new THREE.BoxGeometry(.3,.3,.04),0xffffff,0,.8,.56)}
@@ -370,6 +327,7 @@ function animate(c,dt){
   else if(n==='sit'){E.ry=-1.5;E.lLx=E.lRx=-1.55;E.aLx=E.aRx=-.5}
   else if(n==='shrug'){E.aLz=-1.2;E.aRz=1.2;E.aLx=E.aRx=-.6;E.hx=.12;E.hy=Math.sin(t*3)*.2}}
  const V={};for(const k in I){let v=I[k];v+=(Wk[k]-v)*ww;if(E)v+=(E[k]-v)*ew*(1-ww);v+=(A[k]-v)*aw;V[k]=v}
+ if(c.hold){const hw=(1-aw)*(1-ew)*(c.anim?.4:1);V.aRx+=(-1.12+(Wk.aRx||0)*.12-V.aRx)*hw;V.aRz+=(.1-V.aRz)*hw}
  /* critically-damped-ish springs: smooth velocity, tiny natural overshoot */
  const sp2=(key,o,p,tg,S,D)=>{const v=((sd[key]||0)+(tg-o[p])*S*dt)/(1+D*dt);sd[key]=v;o[p]+=v*dt};
  sp2('aLx',J.aL.rotation,'x',V.aLx,900,60);sp2('aLz',J.aL.rotation,'z',V.aLz,700,53);sp2('aRx',J.aR.rotation,'x',V.aRx,900,60);sp2('aRz',J.aR.rotation,'z',V.aRz,700,53);
