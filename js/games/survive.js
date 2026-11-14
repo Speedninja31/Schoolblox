@@ -2,10 +2,12 @@
 GAMES.push({id:'survive',name:'Disaster Survival',tag:'Survival',e:'☄️',c:['#ff8a4f','#ff4f6a'],like:'91%',pl:'8.9K',hint:'You start in the lobby and watch the map. Vote for a map, then you are teleported in! Climb to a roof for floods and lava, hide inside for acid rain, dodge red rings (meteors, lightning), stay off cracks (earthquake) and run from tornadoes. Buildings break apart! WASD move, Space jump.'});
 META.survive={c:'Survival',m:'Multiplayer',t:['Rounds','Map voting','Destruction']};
 ENG.survive={d3:true,NAMES:['Meteor Shower','Flood','Tornado','Earthquake','Lightning Storm','Acid Rain','Lava Rise'],MN:['Suburban Street','Skyscrapers','Pirate Cove','Castle','Desert Outpost','Snowy Cabins','Harbor Docks','Industrial Yard'],
- LZ:-195,GE:{},MT:{},B:[],M:[],CR:[],LB:[],
+ LZ:-230,GE:{},MT:{},B:[],M:[],CR:[],LB:[],
  ex(){return{dd:this.dead?1:0,dc:this.cyc,v:this.vote,vc:this.cyc,mk:this.mk,mc:this.cyc}},
  rem(c,q){const d=!!(q.dd&&q.dc===this.cyc),n=performance.now();if(d&&!c.dd){explode(c);c.hid=n+1500}c.dd=d;c.dead=false;c.g.visible=!(c.hid&&n<c.hid)},
- toLobby(){const P=this.P;Object.assign(P,{x:(Math.random()-.5)*16,y:7,z:this.LZ+12+(Math.random()-.5)*6,vy:0,yaw:Math.PI});yaw=Math.PI;pitch=.3},
+ toLobby(){const P=this.P,q=this.lb?this.lb.spawn():[(Math.random()-.5)*9,this.LZ+19];Object.assign(P,{x:q[0],y:this.TOP+1,z:q[1],vy:0,yaw:Math.PI});yaw=0;pitch=.3},
+ TOP:26.4,
+ stop(){if(this.vh){document.removeEventListener('visibilitychange',this.vh);this.vh=null}if(this.lb){this.lb.dispose();this.lb=null}},
  clear(){this.M.forEach(o=>scene.remove(o.m,o.ring));this.M=[];this.CR.forEach(c=>scene.remove(c.m));this.CR=[];this.LB.forEach(b=>{scene.remove(b.m);if(b.bolt)scene.remove(b.bolt)});this.LB=[];this.tw.visible=false;this.fl.visible=false;this.rain.visible=false;clearDebris()},
  topAt(x,z){let t=0;for(const b of this.B)if(b.a&&b.p.top>t&&Math.abs(x-b.x)<b.w/2&&Math.abs(z-b.z)<b.d/2)t=b.p.top;return t},
  kill(b,v,q){if(!b.a)return;b.a=0;if(!q)sfx('glass',.5);this.G.remove(b.m);const i=this.S.indexOf(b.p);if(i>=0)this.S.splice(i,1);
@@ -14,9 +16,9 @@ ENG.survive={d3:true,NAMES:['Meteor Shower','Flood','Tornado','Earthquake','Ligh
   if(y<4){const m=new THREE.Mesh(new THREE.CircleGeometry(r*.8,16),new THREE.MeshBasicMaterial({color:0x2a2018,transparent:true,opacity:.6}));m.rotation.x=-Math.PI/2;m.position.set(x,.12,z);this.G.add(m)}},
  above(b){for(const c of this.B)if(c.a&&c.y>=b.y+b.h-.5&&Math.abs(c.x-b.x)<(b.w+c.w)/2-.2&&Math.abs(c.z-b.z)<(b.d+c.d)/2-.2)this.kill(c,new THREE.Vector3((Math.random()-.5)*8,Math.random()*4,(Math.random()-.5)*8))},
  buildMap(k){
-  const S=this.S;S.length=this.nb;if(this.mg)scene.remove(this.mg);const G=this.mg=new THREE.Group();scene.add(G);this.G=G;const B=this.B=[],rs=mulb(k*77+5),GE=this.GE,MT=this.MT;
+  const S=this.S;S.length=this.nb;if(this.mg){scene.remove(this.mg);const kg=new Set(Object.values(this.GE)),km=new Set(Object.values(this.MT));this.mg.traverse(o=>{if(o.geometry&&!kg.has(o.geometry))o.geometry.dispose();if(o.material&&!km.has(o.material))[].concat(o.material).forEach(q=>q.dispose())})}const G=this.mg=new THREE.Group();scene.add(G);this.G=G;const B=this.B=[],rs=mulb(k*77+5),GE=this.GE,MT=this.MT;
   const mat=c=>MT[c]||(MT[c]=tmat(c)),geo=(w,h,d)=>{const q=w+'_'+h+'_'+d;return GE[q]||(GE[q]=new THREE.BoxGeometry(w,h,d))};
-  const bk=(w,h,d,x,y,z,c)=>{const m=new THREE.Mesh(geo(w,h,d),mat(c));m.position.set(x,y+h/2,z);G.add(m);const p={x,z,hw:w/2,hd:d/2,top:y+h,bot:y};S.push(p);B.push({m,p,x,y,z,w,h,d,a:1})};
+  const bk=(w,h,d,x,y,z,c)=>{const m=new THREE.Mesh(geo(w,h,d),mat(c));m.position.set(x,y+h/2,z);m.matrixAutoUpdate=false;m.updateMatrix();G.add(m);const p={x,z,hw:w/2,hd:d/2,top:y+h,bot:y};S.push(p);B.push({m,p,x,y,z,w,h,d,a:1})};
   /* building from 4x3x4 chunks: 2 rows per floor, slab between floors, a door gap on the ground floor */
   const bld=(cx,cz,nw,nd,fl,c,rc,dr)=>{const x0=cx-nw*2+2,z0=cz-nd*2+2,mi=nw>>1,mj=nd>>1;
    for(let f=0;f<fl;f++){const y=f*7;if(f>0)for(let i=0;i<nw;i++)for(let j=0;j<nd;j++)bk(4,1,4,x0+i*4,y-1,z0+j*4,rc);
@@ -152,17 +154,13 @@ ENG.survive={d3:true,NAMES:['Meteor Shower','Flood','Tornado','Earthquake','Ligh
   baseScene(0x87c7ff);showOver('');scene.fog.near=300;scene.fog.far=900;const LZ=this.LZ;
   const isl=new THREE.Mesh(new THREE.CylinderGeometry(100,100,4,64),tmat(0x9bc27a,'grass',36));isl.position.y=-2;isl.receiveShadow=true;scene.add(isl);this.isl=isl;
   const sea=new THREE.Mesh(new THREE.PlaneGeometry(1200,1200),new THREE.MeshBasicMaterial({color:0x2a7fd4}));sea.rotation.x=-Math.PI/2;sea.position.y=-6;scene.add(sea);
-  /* lobby: raised viewing platform away from the map */
-  const lb=new THREE.Mesh(new THREE.CylinderGeometry(32,35,12,40),tmat(0xb9a7e8,'stone',6));lb.position.set(0,0,LZ);lb.receiveShadow=true;scene.add(lb);
-  const rg=new THREE.Mesh(new THREE.TorusGeometry(31,.4,8,64),new THREE.MeshBasicMaterial({color:0xf7890b}));rg.rotation.x=Math.PI/2;rg.position.set(0,6.4,LZ);scene.add(rg);
-  for(let i=0;i<10;i++){const a=i/10*6.283,x=Math.cos(a)*29,z=LZ+Math.sin(a)*29,p=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,5,8),lam(0x555a66));p.position.set(x,8.5,z);scene.add(p);const l=new THREE.Mesh(new THREE.SphereGeometry(.8,10,8),new THREE.MeshBasicMaterial({color:0xfff2b0}));l.position.set(x,11.3,z);scene.add(l)}
-  const cv=document.createElement('canvas');cv.width=512;cv.height=128;const x=cv.getContext('2d');x.fillStyle='#2a1749';x.fillRect(0,0,512,128);x.fillStyle='#ffb347';x.font='bold 46px system-ui';x.textAlign='center';x.fillText('DISASTER SURVIVAL',256,60);x.fillStyle='#fff';x.font='28px system-ui';x.fillText('Watch the round from the lobby',256,100);
-  const sg=new THREE.Mesh(new THREE.PlaneGeometry(24,6),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv)}));sg.position.set(0,12,LZ-26);scene.add(sg);
+  /* lobby: floating island hangout (see js/lobby.js) */
+  if(this.lb)this.lb.dispose();this.lb=SBLobby.build(scene,LZ,this.TOP);sea.material.map=this.lb.seaTex;sea.material.color.setHex(0x4aa6ee);sea.material.needsUpdate=true;
   this.fl=new THREE.Mesh(new THREE.CylinderGeometry(115,115,1,48),new THREE.MeshBasicMaterial({color:0x3d8fe0,transparent:true,opacity:.6}));this.fl.visible=false;scene.add(this.fl);
   this.tw=new THREE.Group();for(let i=0;i<7;i++){const r=new THREE.Mesh(new THREE.CylinderGeometry(2.4+i*1.5,1.6+i*1.5,6,14,1,true),new THREE.MeshLambertMaterial({color:0x8a8f98,transparent:true,opacity:.75,side:THREE.DoubleSide}));r.position.y=3+i*5.5;this.tw.add(r)}this.tw.visible=false;scene.add(this.tw);
   const rp0=new Float32Array(900),rs0=mulb(9);for(let i=0;i<300;i++){rp0[i*3]=(rs0()-.5)*90;rp0[i*3+1]=rs0()*60;rp0[i*3+2]=(rs0()-.5)*90}const rgm=new THREE.BufferGeometry();rgm.setAttribute('position',new THREE.BufferAttribute(rp0,3));this.rain=new THREE.Points(rgm,new THREE.PointsMaterial({color:0x8aff6a,size:1.1}));this.rain.visible=false;this.rain.frustumCulled=false;scene.add(this.rain);
-  this.S=[{x:0,z:0,r:100,top:0},{x:0,z:LZ,r:32,top:6}];this.nb=2;this.B=[];this.M=[];this.CR=[];this.LB=[];this.mg=null;this.sk=null;
-  this.P=newP(0,7,LZ+12);this.cyc=-1;this.n=0;this.hp=100;this.dead=false;this.in=false;this.back=true;this.vote=-1;this.mk=-1;this.ts=performance.now();this.buildMap(-1);this.toLobby();
+  this.S=[{x:0,z:0,r:100,top:0},{x:0,z:LZ,r:this.lb.floorR,top:this.TOP}].concat(this.lb.colliders);this.nb=this.S.length;this.B=[];this.M=[];this.CR=[];this.LB=[];this.mg=null;this.sk=null;
+  this.P=newP(0,this.TOP+1,LZ+27);this.cyc=-1;this.n=0;this.hp=100;this.dead=false;this.in=false;this.back=true;this.vote=-1;this.mk=-1;this.ts=performance.now();this.buildMap(-1);this.toLobby();
   if(this.vh)document.removeEventListener('visibilitychange',this.vh);this.hs=0;this.vh=()=>{if(document.hidden)this.hs=Date.now();else if(this.hs&&Date.now()-this.hs>3000){this.hs=0;this.cyc=-1;this.lk=false;this.ts=0}};document.addEventListener('visibilitychange',this.vh);
   this.vu=voteUI(this.MN,i=>{if(Date.now()/1000%60<9)this.vote=i})},
  update(dt){
@@ -176,7 +174,8 @@ ENG.survive={d3:true,NAMES:['Meteor Shower','Flood','Tornado','Earthquake','Ligh
   const sk=act?[0xd9763a,0x7c8fa3,0x6f7480,0x8a6f5a,0x3b3f58,0x7d9a6a,0x8a3a2a][d]:0x87c7ff;
   if(this.sk!==sk){this.sk=sk;scene.background.setHex(sk);scene.fog.color.setHex(sk)}
   if(this.dead&&!this.back)orbitCam(P);else ctrl(P,dt,this.S);
-  if(!this.in&&!(this.dead&&!this.back)){const dx=P.x,dz=P.z-LZ,r=Math.hypot(dx,dz);if(r>30.5){P.x=dx/r*30.5;P.z=LZ+dz/r*30.5}if(P.y<-20)this.toLobby()}
+  if(!this.in&&!(this.dead&&!this.back)){this.lb.clamp(P);if(P.y<-20)this.toLobby()}
+  if(this.lb)this.lb.tick(dt,{P,s,cyc,names:this.NAMES,inLobby:!this.in&&!(this.dead&&!this.back)});
   else if(this.in&&P.y<-20)hurt(999);
   const fld=(d===1||d===6)&&this.lk,lvl=fld?(act?-1+t/35*19:(s>=54?Math.max(-1,18-(s-54)/6*19):-1)):-1;
   this.fl.visible=lvl>-.5;this.fl.position.y=lvl;this.fl.material.color.setHex(d===6?0xff5a1a:0x3d8fe0);this.fl.material.opacity=d===6?.9:.6;

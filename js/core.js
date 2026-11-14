@@ -7,11 +7,20 @@ const GAMES=[];
 const META={};
 const ST={sens:5,q:'auto',th:'auto',skin:'auto',sh:'high',fps:false,cap:0,shake:true,hints:true,calm:false,vol:1,fav:[],rec:[]};try{Object.assign(ST,JSON.parse(localStorage.getItem('hubs')||'{}'))}catch(e){}
 const saveS=()=>{try{localStorage.setItem('hubs',JSON.stringify(ST))}catch(e){}};
-const pr=()=>ST.q==='low'?1:ST.q==='high'?2:Math.min(Math.max(devicePixelRatio,1.5),2);
+/* ---- performance governor: Auto quality scales resolution/shadows to hold the frame rate ---- */
+const GOV={l:0,n:0,t:0,bad:[0,0,0,0],ok:0,fr:0,hold:0,SC:[1,.85,.7,.55]};
+const pr=()=>{const b=ST.q==='low'?1:ST.q==='high'?Math.min(devicePixelRatio||1,2):Math.min(devicePixelRatio||1,1.5);return ST.q==='auto'?Math.max(.5,b*GOV.SC[GOV.l]):b};
+function govTick(rdt){if(ST.q!=='auto'||!renderer||rdt>.25)return;GOV.n++;GOV.t+=rdt;if(GOV.t<1.2)return;const fps=GOV.n/GOV.t,want=ST.cap>0?Math.min(ST.cap,60):60;GOV.n=0;GOV.t=0;
+ if(GOV.hold>0){GOV.hold--;return}
+ if(fps<want*.86&&GOV.l<3){GOV.bad[GOV.l+1]=Math.min(8,GOV.bad[GOV.l+1]+1);GOV.l++;GOV.ok=0;GOV.hold=1;renderer.setPixelRatio(pr());resize();applyGfx()}
+ else if(fps>=want*.95&&GOV.l>0){if(++GOV.ok>=6*GOV.bad[GOV.l]){GOV.ok=0;GOV.l--;GOV.hold=2;renderer.setPixelRatio(pr());resize();applyGfx()}}else if(fps<want*.95)GOV.ok=0}
 if(ST.calm)document.documentElement.classList.add('calm');
 let SENS=ST.sens*.0006;if(ST.th!=='auto')document.documentElement.dataset.theme=ST.th;
 const modal=document.getElementById('modal'),view=document.getElementById('view'),petview=document.getElementById('petview'),
  scoreEl=document.getElementById('score'),hint=document.getElementById('hint'),over=document.getElementById('over'),touch=document.getElementById('touch');
+/* score text: only touch the DOM when it really changes (games rewrote it every frame) */
+(()=>{const nd=Object.getOwnPropertyDescriptor(Node.prototype,'textContent');let base='',sfx='',last=null;const put=()=>{const o=base+sfx;if(o!==last){last=o;nd.set.call(scoreEl,o)}};
+ Object.defineProperty(scoreEl,'textContent',{configurable:true,get(){return base+sfx},set(v){base=String(v==null?'':v).replace(/( · 👥 \d+)+$/,'');put()}});scoreEl.setSfx=x=>{sfx=x;put()}})();
 const keys={};let cur=null,raf=0;
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
  if(modal.classList.contains('on')&&['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
@@ -27,13 +36,14 @@ const F=()=>keys.KeyW||keys.ArrowUp,B=()=>keys.KeyS||keys.ArrowDown,L=()=>keys.K
 let renderer,scene,camera,sun,yaw=0,pitch=.45,dist=26;const clock=new THREE.Clock();
 function resize(){if(!renderer)return;const w=view.clientWidth||700,h=view.clientHeight||420;renderer.setSize(w,h,false);if(camera){camera.aspect=w/h;camera.updateProjectionMatrix()}}
 function applyGfx(){if(!renderer)return;const on=ST.sh!=='off';if(renderer.shadowMap.enabled!==on){renderer.shadowMap.enabled=on;if(scene)scene.traverse(o=>{if(o.material)[].concat(o.material).forEach(m=>m.needsUpdate=true)})}
- if(sun){sun.castShadow=on;const z=ST.sh==='low'?1024:2048;if(sun.shadow.mapSize.x!==z){sun.shadow.mapSize.set(z,z);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null}}}}
+ if(sun){sun.castShadow=on;const z=(ST.sh==='low'||(ST.q==='auto'&&GOV.l>=1))?1024:2048;if(sun.shadow.mapSize.x!==z){sun.shadow.mapSize.set(z,z);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null}}}
+ renderer.shadowMap.autoUpdate=!(ST.q==='auto'&&GOV.l>=3)}
 const fpsEl=document.createElement('div');fpsEl.id='fpsc';document.body.appendChild(fpsEl);let fpsN=0,fpsT=performance.now(),lastF=0;
 function fpsTick(){if(!ST.fps){fpsEl.style.display='none';return}fpsEl.style.display='block';fpsN++;const n=performance.now();if(n-fpsT>=500){fpsEl.textContent=Math.round(fpsN*1000/(n-fpsT))+' FPS';fpsN=0;fpsT=n}}
 addEventListener('resize',resize);
 function initR(){
  if(renderer)return;
- renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance',logarithmicDepthBuffer:true});renderer.setPixelRatio(pr());renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;view.prepend(renderer.domElement);
+ renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(pr());renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;view.prepend(renderer.domElement);
  const c=renderer.domElement;let drag=false,lx=0,ly=0;
  c.style.touchAction='none';c.addEventListener('contextmenu',e=>e.preventDefault());c.addEventListener('pointerdown',()=>{if(SLwant&&!document.pointerLockElement&&!rbIsOpen()&&is3p())slLock()});
  c.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;c.setPointerCapture(e.pointerId)});
@@ -360,7 +370,7 @@ function ctrl(P,dt,S){
  camera.lookAt(P.x+cy*slOff,P.y+4,P.z-sy*slOff);
  sunFollow(P.x,P.y,P.z);
 }
-const setB=t=>{const b=document.getElementById('banner');b.textContent=t||'';b.style.display=t?'block':'none'};const showOver=t=>{if(!t)setB('');over.textContent=t||'';over.style.display=t?'flex':'none'};
+const setB=t=>{t=t||'';if(setB.l===t)return;setB.l=t;const b=document.getElementById('banner');b.textContent=t;b.style.display=t?'block':'none'};const showOver=t=>{if(!t)setB('');over.textContent=t||'';over.style.display=t?'flex':'none'};
 
 /* ---------- Games ---------- */
 /* ---------- Multiplayer (room presence) ---------- */
@@ -413,6 +423,7 @@ function mpTick(dt,id){
  const seen=new Set(),k=1-Math.exp(-12*dt);
  for(const p of room.peers()){
   const q=p.presence;if(p.sameTab||p.kind!=='viewer'||q.g!==id||typeof q.x!=='number')continue;
+  if(cur.seen&&!cur.seen(q))continue;   /* a game can hide peers that are in a different instance (e.g. another Tower Defense match) */
   seen.add(p.peer);let c=RM.get(p.peer);
   if(!c){const av={},sv=AV;for(const f in OPT){const i=q.av&&q.av[f];av[f]=Number.isInteger(i)&&OPT[f][i]?i:0}
    AV=av;c=newP(num(q.x),num(q.y),num(q.z));AV=sv;c.yaw=num(q.yaw);c.pid=p.peer;RM.set(p.peer,c)}
@@ -424,7 +435,7 @@ function mpTick(dt,id){
   if(!c.nm){c.nm=1;c.adm=ad;(async()=>{let nm=String(q.n||'Player').replace(/[^\w ]/g,'').slice(0,16)||'Player';try{if(p.by&&usr&&usr.profiles){const ps=await usr.profiles([p.by]);nm=(ps[p.by]&&ps[p.by].name)||nm}}catch(e){}if(c.tag)c.g.remove(c.tag);c.tag=tag(nm,ad);if(id!=='mm')c.g.add(c.tag)})()}
  }
  for(const [pk,c] of RM)if(!seen.has(pk)){scene.remove(c.g);RM.delete(pk)}
- scoreEl.textContent=scoreEl.textContent.replace(/( · 👥 \d+)+$/,'')+' · 👥 '+(seen.size+1)
+ scoreEl.setSfx(' · 👥 '+(seen.size+1))
 }
 const EMK={Digit1:'wave',Digit2:'dance',Digit3:'cheer',Digit4:'point',Digit5:'laugh',Digit6:'sit',Digit7:'shrug'};
 const EMN=[['wave','\ud83d\udc4b Wave'],['dance','\ud83d\udc83 Dance'],['cheer','\ud83d\ude4c Cheer'],['point','\ud83d\udc49 Point'],['laugh','\ud83d\ude02 Laugh'],['sit','\ud83e\ude91 Sit'],['shrug','\ud83e\udd37 Shrug']];
@@ -434,7 +445,7 @@ emb.onclick=()=>{emp.style.display=emp.style.display==='flex'?'none':'flex'};
 document.getElementById('fs').onclick=()=>{const d=document.documentElement;if(document.fullscreenElement)document.exitFullscreen();else if(d.requestFullscreen)d.requestFullscreen().catch(()=>{})};
 let lastHp=100;
 let myHP=null;
-function setHP(v){myHP=v;const h=document.getElementById('hp');if(v==null){h.style.display='none';return}h.style.display='block';const f=document.getElementById('hpf');f.style.width=Math.max(0,v)+'%';f.style.background='hsl('+(v*1.2)+',70%,45%)';document.getElementById('hpt').textContent=Math.ceil(v);
+function setHP(v){myHP=v;if(setHP.l===v&&v!=null)return;setHP.l=v;const h=document.getElementById('hp');if(v==null){h.style.display='none';return}h.style.display='block';const f=document.getElementById('hpf');f.style.width=Math.max(0,v)+'%';f.style.background='hsl('+(v*1.2)+',70%,45%)';document.getElementById('hpt').textContent=Math.ceil(v);
  if(v<lastHp-.05){const u=document.getElementById('hurt');u.style.transition='none';u.style.opacity=.5;requestAnimationFrame(()=>{u.style.transition='opacity .5s';u.style.opacity=0});sfx('ouch',.9)}else if(lastHp<=.5&&v>=40)sfx('spawn',.9);lastHp=v}
 /* Roblox-style break apart: every body part (and hat) flies off */
 const DEB=[];
@@ -628,15 +639,17 @@ function wpn(c,k){const g=new THREE.Group(),p=(geo,col,x,y,z,e)=>{const m=new TH
  else{p(new THREE.BoxGeometry(.26,.7,.3),0x5a3a22,0,-1.95,-.1);p(new THREE.BoxGeometry(.3,.9,.34),0x2b2f36,0,-2.55,0);p(new THREE.BoxGeometry(.16,.9,.16),0x8d96a3,0,-3.3,0,0x222a33)}
  c.J.aR.add(g);g.visible=false;c.w=g}
 const ENG={};
-function loop(){if(ST.cap){const n=performance.now();if(n-lastF<1000/ST.cap-3){raf=requestAnimationFrame(loop);return}lastF=n}fpsTick();const dt=Math.min(clock.getDelta(),.05);cur.update(dt);guiTick(dt);debrisTick(dt);fxTick(dt);if(window.SBWX)SBWX.tick(dt);if(window.SBADM&&SBADM.tick)SBADM.tick(dt);lockUI();if(cur.d3&&curId!=='avatar')mpTick(dt,curId);if(shk>0&&camera){if(ST.shake!==false){camera.position.x+=(Math.random()-.5)*shk;camera.position.y+=(Math.random()-.5)*shk}shk=Math.max(0,shk-dt*3)}if(cur.d3)renderer.render(scene,camera);raf=requestAnimationFrame(loop)}
+/* free GPU memory of the scene we are leaving (geometries + materials; shared cached textures are kept) */
+function disposeScene(sc){if(!sc)return;const gs=new Set,ms=new Set;sc.traverse(o=>{if(o.geometry)gs.add(o.geometry);if(o.material)[].concat(o.material).forEach(m=>ms.add(m))});gs.forEach(g=>g.dispose());ms.forEach(m=>m.dispose());if(renderer)renderer.renderLists.dispose()}
+function loop(){if(ST.cap){const n=performance.now();if(n-lastF<1000/ST.cap-3){raf=requestAnimationFrame(loop);return}lastF=n}fpsTick();const rdt=clock.getDelta(),dt=Math.min(rdt,.05);govTick(rdt);cur.update(dt);guiTick(dt);debrisTick(dt);fxTick(dt);if(window.SBWX)SBWX.tick(dt);if(window.SBADM&&SBADM.tick)SBADM.tick(dt);lockUI();if(cur.d3&&curId!=='avatar')mpTick(dt,curId);if(shk>0&&camera){if(ST.shake!==false){camera.position.x+=(Math.random()-.5)*shk;camera.position.y+=(Math.random()-.5)*shk}shk=Math.max(0,shk-dt*3)}if(cur.d3){if(!renderer.shadowMap.autoUpdate)renderer.shadowMap.needsUpdate=((++GOV.fr)&1)===0;renderer.render(scene,camera)}raf=requestAnimationFrame(loop)}
 function openGame(g){if(window.SBADM&&SBADM.banned())return;noteRecent(g.id);
- cur=ENG[g.id];curId=g.id;RM.clear();document.getElementById('clog').innerHTML='';if(g.id!=='avatar'&&g.id!=='pets')joinRoom(roomCode());document.getElementById('gtitle').textContent=g.name;hint.textContent=g.hint;scoreEl.textContent='';
+ cur=ENG[g.id];curId=g.id;RM.clear();document.getElementById('clog').innerHTML='';if(g.id!=='avatar'&&g.id!=='pets')joinRoom(roomCode());document.getElementById('gtitle').textContent=g.name;hint.textContent=g.hint;scoreEl.textContent='';scoreEl.setSfx('');
  document.getElementById('rev').classList.remove('on');modal.classList.add('on');modal.classList.toggle('shop',g.id==='avatar');modal.classList.toggle('rbx',!!cur.d3&&g.id!=='avatar');rbm.classList.remove('on');modal.classList.remove('menuopen');SLwant=false;$g('slb').classList.remove('on');
  view.style.display=cur.d3?'block':'none';petview.style.display=cur.d3?'none':'block';touch.classList.toggle('on',cur.d3&&g.id!=='avatar');custom.style.display=g.id==='avatar'?'block':'none';emb.style.display=cur.d3?'block':'none';chatin.style.display=cur.d3&&g.id!=='avatar'?'block':'none';emp.style.display='none';setHP(null);document.getElementById('mmb').style.display=['mm','zom','snow','fish','garden'].includes(g.id)?'contents':'none';
  if(cur.d3){if(typeof THREE==='undefined'){hint.textContent='3D library failed to load. Check your connection and reload.';return}initR();yaw=0;pitch=.45;dist=26}
  if(g.id==='avatar'||g.id==='pets')startGame();else showLobby(g)}
 function startGame(){sfxLoad();setTimeout(()=>sfx('spawn',1),300);if(ST.hints!==false)hint.classList.add('on');clearTimeout(hint.t);hint.t=setTimeout(()=>hint.classList.remove('on'),7000);setTimeout(hb,400);PMIN=.05;DEB.length=0;FXL.length=0;shk=0;['vote','role','spec','xh','hm','lockmsg'].forEach(i=>document.getElementById(i).style.display='none');SP.on=false;SP.k=null;document.querySelectorAll('.gw').forEach(e=>e.remove());document.getElementById('rev').classList.remove('on');if(document.pointerLockElement)document.exitPointerLock();PMIN=.05;cur.start();resize();clock.getDelta();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
-document.getElementById('close').onclick=()=>{hint.classList.remove('on');modal.classList.remove('on');setTimeout(hb,400);cancelAnimationFrame(raf);if(room)room.presence({g:null}).catch(()=>{});RM.clear();DEB.length=0;FXL.length=0;setHP(null);['vote','role','spec','xh','hm','lockmsg'].forEach(i=>document.getElementById(i).style.display='none');SP.on=false;SP.k=null;document.querySelectorAll('.gw').forEach(e=>e.remove());document.getElementById('rev').classList.remove('on');if(document.pointerLockElement)document.exitPointerLock();PMIN=.05;leaveRoom();clearInterval(lobbyT);lobby.style.display='none';pendG=null;cur=null;scene=null;showOver('')};
+document.getElementById('close').onclick=()=>{hint.classList.remove('on');modal.classList.remove('on');setTimeout(hb,400);cancelAnimationFrame(raf);if(room)room.presence({g:null}).catch(()=>{});RM.clear();DEB.length=0;FXL.length=0;setHP(null);['vote','role','spec','xh','hm','lockmsg'].forEach(i=>document.getElementById(i).style.display='none');SP.on=false;SP.k=null;document.querySelectorAll('.gw').forEach(e=>e.remove());document.getElementById('rev').classList.remove('on');if(document.pointerLockElement)document.exitPointerLock();PMIN=.05;leaveRoom();clearInterval(lobbyT);lobby.style.display='none';pendG=null;if(cur&&cur.stop)try{cur.stop()}catch(e){}disposeScene(scene);cur=null;scene=null;showOver('')};
 
 /* ===== Roblox-style in-game GUI, shift lock, menu, chat, player list, emote wheel ===== */
 let SLwant=false,slSelf=false,slOff=0,plT=0;
