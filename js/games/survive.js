@@ -1,6 +1,6 @@
 /* Game: Natural Disaster Survival (id: survive) - destructible maps, lobby viewing deck, 7 disasters. */
 GAMES.push({id:'survive',name:'Disaster Survival',tag:'Survival',e:'☄️',c:['#ff8a4f','#ff4f6a'],like:'91%',pl:'8.9K',hint:'You start in the lobby and watch the map. Vote for a map, then you are teleported in! Climb to a roof for floods and lava, hide inside for acid rain, dodge red rings (meteors, lightning), stay off cracks (earthquake) and run from tornadoes. Buildings break apart! WASD move, Space jump.'});
-META.survive={c:'Survival',m:'Multiplayer',t:['Rounds','Map voting','Destruction']};
+META.survive={img:'img/games/survive.png',c:'Survival',m:'Multiplayer',t:['Rounds','Map voting','Destruction']};
 ENG.survive={d3:true,NAMES:['Meteor Shower','Flood','Tornado','Earthquake','Lightning Storm','Acid Rain','Lava Rise'],MN:['Suburban Street','Skyscrapers','Pirate Cove','Castle','Desert Outpost','Snowy Cabins','Harbor Docks','Industrial Yard'],
  LZ:-230,GE:{},MT:{},B:[],M:[],CR:[],LB:[],
  ex(){return{dd:this.dead?1:0,dc:this.cyc,v:this.vote,vc:this.cyc,mk:this.mk,mc:this.cyc}},

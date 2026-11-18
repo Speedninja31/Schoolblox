@@ -451,3 +451,17 @@ html:has(#modal.on)::-webkit-scrollbar,body:has(#modal.on)::-webkit-scrollbar{di
 #jsel{position:absolute;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:rgba(10,14,28,.78);backdrop-filter:blur(6px)}.jbox{text-align:center;color:#fff;font-family:system-ui}.jbox h2{margin:0 0 4px;font-size:30px}.jbox p{margin:0 0 16px;opacity:.8}.jbox button{width:180px;margin:6px;padding:20px 10px;border-radius:18px;border:3px solid rgba(255,255,255,.4);background:linear-gradient(160deg,#2f4f9a,#1b2f66);color:#fff;font:800 20px system-ui;cursor:pointer}.jbox button+button{background:linear-gradient(160deg,#c2570c,#8a3a08)}.jbox button small{display:block;margin-top:6px;font:600 12px system-ui;opacity:.85}.jbox button:hover{transform:scale(1.05)}
 #jact,#jtz{position:absolute;z-index:6;width:62px;height:62px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:rgba(10,12,18,.6);color:#fff;font:800 20px system-ui;touch-action:none}#jact{right:18px;bottom:96px}#jtz{right:92px;bottom:70px}@media(pointer:fine){#jact,#jtz{display:none}}
 #hmsg{position:fixed;left:84px;top:calc(50% + 8px);z-index:45;padding:5px 10px;border-radius:10px;background:rgba(20,16,40,.85);color:#fff;font:700 13px system-ui;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
+
+/* ---------- loading screen (shown while any game starts) ---------- */
+#ldg{position:fixed;inset:0;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(1100px 700px at 50% 35%,#1d202a,#12141b 70%);color:#fff;opacity:0;transition:opacity .35s ease}
+#ldg.on{display:flex}#ldg.show{opacity:1}
+#ldg .ldlogo{position:absolute;left:34px;top:26px;display:flex;font:800 36px/1 "Nunito","Poppins","Segoe UI",system-ui,sans-serif;letter-spacing:-.5px}#ldg .ldlogo .o{color:#ff9422}
+#ldg .ldc{display:flex;flex-direction:column;align-items:center;gap:0;width:min(804px,86vw)}
+#ldg .ldi{width:min(262px,46vw);aspect-ratio:1;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:118px;background-size:cover;background-position:center;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+#ldg h2{margin:26px 0 8px;font:800 clamp(30px,4.2vw,50px)/1.1 "Nunito","Poppins","Segoe UI",system-ui,sans-serif;text-align:center}
+#ldg .lds{margin:0;color:#8d92a0;font:700 clamp(17px,2vw,24px)/1.3 "Nunito","Poppins","Segoe UI",system-ui,sans-serif;text-align:center}
+#ldg .ldsp{width:54px;height:54px;border-radius:50%;border:6px solid #2d3039;border-top-color:#ff9422;margin:34px 0 36px;animation:ldspin .9s linear infinite}
+#ldg .ldbar{width:100%;height:21px;border-radius:11px;background:#262932;overflow:hidden;margin-bottom:20px}
+#ldg .ldbar i{display:block;height:100%;width:0;border-radius:11px;background:linear-gradient(90deg,#ff9a22,#ff8a00);box-shadow:0 0 18px rgba(255,150,30,.45)}
+@keyframes ldspin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#ldg .ldsp{animation-duration:2.4s}}

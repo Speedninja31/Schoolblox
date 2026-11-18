@@ -1,0 +1,9 @@
+Tower Defense audio
+- growl1-3.mp3 : "Guttural (wet zombie)" sound effects supplied by the project owner.
+- Music: the game looks for these four files in this folder (see the MUS table at the top of the audio section in js/games/td.js):
+    grasswalk.mp3        lobby
+    watery_graves.mp3    waves 1-4
+    graze_the_roof.mp3   waves 5-10
+    loon_skirmish.mp3    boss wave
+  They are NOT included in the repository (the originals are copyrighted Plants vs. Zombies tracks). If a file is missing the game
+  simply plays no music. Drop in licensed or original tracks with these names, or change the names in the MUS table.

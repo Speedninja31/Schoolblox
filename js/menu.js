@@ -22,7 +22,7 @@ function renderFs(){const el=$e('frs');if(!el)return;const ids=Object.keys(FRS),
 function mkCard(g){const m=META[g.id]||{},b=document.createElement('div');b.className='sgc';b.tabIndex=0;
  b.innerHTML='<div class="art" style="background:'+bgOf(g)+'">'+g.e+(g.soon?'<span class="nw" style="background:#555">SOON</span>':'')+'<span class="pcn" data-g="'+g.id+'"></span>'+'<button class="fv" title="Favorite">'+(ST.fav.includes(g.id)?'\u2665':'\u2661')+'</button></div><div class="bd"><b></b><small></small><small></small></div>';
  b.querySelector('b').textContent=g.name;const sm=b.querySelectorAll('small');sm[0].textContent=g.soon?'Coming soon':(m.m||g.tag);sm[1].textContent=catOf(g);
- b.onclick=e=>{if(e.target.classList.contains('fv')){e.stopPropagation();toggleFav(g.id);return}if(g.soon)return;openGd(g)};b.onkeydown=e=>{if(e.key==='Enter'&&!g.soon)openGd(g)};return b}
+ b.onclick=e=>{if(e.target.classList.contains('fv')){e.stopPropagation();toggleFav(g.id);return}if(g.soon)return;openGame(g)};b.onkeydown=e=>{if(e.key==='Enter'&&!g.soon)openGame(g)};return b}
 function toggleFav(id){const i=ST.fav.indexOf(id);if(i<0)ST.fav.push(id);else ST.fav.splice(i,1);saveS();renderMenu()}
 function noteRecent(id){ST.rec=[id,...ST.rec.filter(x=>x!==id)].slice(0,4);saveS();renderMenu()}
 function renderMenu(){const R=$e('rows');R.innerHTML='';if(!Array.isArray(ST.fav))ST.fav=[];if(!Array.isArray(ST.rec))ST.rec=[];

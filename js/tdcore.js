@@ -10,7 +10,7 @@
    Ownership / equipped slots / personal stats are saved in localStorage 'hubtd' (matches the cloud-save pattern, so it follows the account). */
 const SBTD=(()=>{
  const KEY='hubtd',MAXEQ=5,REG={},ORDER=[];
- let D={own:{ph1:1},eq:['ph1'],w:0,k:0,m:0,p:120};   /* p = Petals, this game's own currency (starter gift of 120). It is NOT SchoolBux and never touches the global balance. */
+ let D={own:{ph1:1},eq:['ph1'],w:0,k:0,m:0,p:120,map:'farm'};   /* p = Petals, this game's own currency (starter gift of 120). It is NOT SchoolBux and never touches the global balance. */
  try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&typeof s==='object'){D=Object.assign(D,s);if(!D.own||typeof D.own!=='object')D.own={ph1:1};if(typeof D.p!=='number'||!isFinite(D.p)||D.p<0)D.p=s.p===undefined?120:0;if(!Array.isArray(D.eq))D.eq=['ph1']}}catch(e){}
  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}};
  const num=v=>typeof v==='number'&&isFinite(v)?v:0;
@@ -23,6 +23,7 @@ const SBTD=(()=>{
  const equipped=()=>D.eq.filter(id=>REG[id]&&owned(id)).slice(0,MAXEQ);
  const bal=()=>Math.floor(D.p);
  const CUR={name:'Petals',icon:'\uD83C\uDF38'},fmtP=n=>CUR.icon+' '+n;
+ const getMap=()=>D.map||'farm',setMap=k=>{D.map=k;save()};
  function addPetals(n){n=Math.max(0,Math.floor(n)||0);D.p+=n;save();return n}
  function buy(id){const t=REG[id];if(!t||!t.avail)return{ok:false,msg:'Not available yet'};if(owned(id))return{ok:false,msg:'You already own this'};const lk=lockInfo(id);if(lk)return{ok:false,msg:'Locked: '+lk};
   if(bal()<t.price)return{ok:false,msg:'Need '+(t.price-bal())+' more Petals'};D.p-=t.price;D.own[id]=1;if(D.eq.length<MAXEQ&&!D.eq.includes(id))D.eq.push(id);save();return{ok:true,msg:'Purchased '+t.name+'!'}}
@@ -36,14 +37,14 @@ const SBTD=(()=>{
  async function pushScore(){try{const c=typeof sbGet==='function'?sbGet():null,u=window.SBACC&&SBACC.user?SBACC.user():null;if(!c||!u)return;await c.from('td_scores').upsert({user_id:u.id,name:u.name,wins:D.w,kills:D.k,matches:D.m},{onConflict:'user_id'})}catch(e){}}
  async function fetchTop(){try{const c=typeof sbGet==='function'?sbGet():null;if(!c)return null;const r=await c.from('td_scores').select('name,wins,kills,matches').order('wins',{ascending:false}).order('kills',{ascending:false}).limit(8);return r.error||!r.data?null:r.data}catch(e){return null}}
  /* ---------- enemies + waves (shared by every client, fully deterministic) ---------- */
- const ENEMY={grunt:{n:'Shambler',hp:34,spd:7.5,rw:7,sz:1,skin:0x7fb069,top:0x6a5a4a,legs:0x3a4a6a},runner:{n:'Sprinter',hp:20,spd:12.5,rw:6,sz:.88,skin:0x8fc46a,top:0xd9822b,legs:0x2e2e38},tank:{n:'Brute',hp:150,spd:4.6,rw:20,sz:1.4,skin:0x6a9455,top:0x5a5f6e,legs:0x44464f},swarm:{n:'Crawler',hp:9,spd:10,rw:3,sz:.62,skin:0x92b858,top:0x7a4a4a,legs:0x4a4a3a},boss:{n:'Zombie King',hp:1700,spd:3.6,rw:300,sz:2.1,skin:0x6a8f5a,top:0x5a2f7a,legs:0x2a1f3a}};
+ const ENEMY={grunt:{n:'Zombie',hp:34,spd:7.5,rw:7,sz:.9,h:6.7,skin:0x8d9c7c},cone:{n:'Cone Zombie',hp:80,spd:6.2,rw:11,sz:.9,h:8.6,skin:0x8d9c7c},tank:{n:'Bucket Zombie',hp:160,spd:4.4,rw:20,sz:1,h:8.4,skin:0x8d9c7c},runner:{n:'Football Zombie',hp:48,spd:11,rw:9,sz:1,h:7,skin:0x8d9c7c},swarm:{n:'Imp',hp:9,spd:10,rw:3,sz:.62,h:5.4,skin:0x8d9c7c},boss:{n:'Zombie King',hp:1700,spd:3.6,rw:300,sz:2.2,h:7.8,skin:0x8d9c7c}};
  const WAVES=11;
  /* returns a list of {t:type,at:secondsAfterWaveStart} */
  function wave(n){const L=[],add=(t,c,gap,d)=>{for(let i=0;i<c;i++)L.push({t,at:(d||0)+i*gap})};
-  if(n===1){add('grunt',8,1.6)}else if(n===2){add('grunt',10,1.3);add('runner',4,1.5,6)}else if(n===3){add('swarm',18,.55);add('grunt',6,1.4,6)}else if(n===4){add('runner',10,.9);add('tank',2,4,5)}
-  else if(n===5){add('grunt',14,1);add('tank',4,3,4);add('swarm',10,.5,12)}else if(n===6){add('runner',14,.7);add('swarm',24,.4,5)}else if(n===7){add('tank',8,2.4);add('grunt',16,.9,3)}
-  else if(n===8){add('runner',20,.6);add('tank',6,2,4);add('swarm',24,.35,10)}else if(n===9){add('tank',12,1.8);add('grunt',24,.7,4);add('runner',12,.8,10)}else if(n===10){add('swarm',50,.3);add('tank',10,1.6,6);add('runner',20,.6,12)}
-  else if(n===11){add('boss',1,1,2);add('grunt',20,.9,6);add('tank',8,2.2,8)}
+  if(n===1){add('grunt',8,1.6)}else if(n===2){add('grunt',8,1.3);add('runner',4,1.5,6)}else if(n===3){add('swarm',18,.55);add('grunt',3,1.4,6);add('cone',3,2,8)}else if(n===4){add('runner',10,.9);add('tank',2,4,5)}
+  else if(n===5){add('grunt',10,1);add('cone',4,2.4,3);add('tank',4,3,5);add('swarm',10,.5,12)}else if(n===6){add('runner',14,.7);add('swarm',24,.4,5)}else if(n===7){add('tank',7,2.4);add('cone',8,1.5,2);add('grunt',8,.9,6)}
+  else if(n===8){add('runner',20,.6);add('tank',6,2,4);add('swarm',24,.35,10)}else if(n===9){add('tank',10,1.8);add('cone',14,1,3);add('grunt',14,.7,6);add('runner',12,.8,12)}else if(n===10){add('swarm',50,.3);add('tank',10,1.6,6);add('runner',20,.6,12)}
+  else if(n===11){add('boss',1,1,2);add('cone',12,1.2,5);add('grunt',10,.9,8);add('tank',8,2.2,10)}
   return L.sort((a,b)=>a.at-b.at)}
  /* ---------- placeholder plant models (TEMPORARY - replace via setModel) ---------- */
  const mat=(c,e)=>new THREE.MeshLambertMaterial({color:c,emissive:e||0x000000});
@@ -66,4 +67,4 @@ const SBTD=(()=>{
  register({id:'ph2',name:'Placeholder Tower 2',model:MODELS.ph2,price:120,cost:150,desc:'Temporary close-range chomper. Bites hard, slowly, and shrugs off armored enemies.',stats:{type:'chomper',dmg:58,rate:.72,range:15,bonus:{tank:1.6,boss:1.25}}});
  register({id:'ph3',name:'Placeholder Tower 3',model:MODELS.ph3,price:250,cost:170,desc:'Temporary frost bloom. Chills everything nearby so your other towers get more shots.',stats:{type:'frost',dmg:3,rate:1,range:28,slow:.5,slowTime:2.2}});
  register({id:'ph4',name:'Placeholder Tower 4',model:MODELS.ph4,price:450,cost:250,unlock:{wins:1},desc:'Temporary long-range thorn spire. Slow, but its spikes hit very hard from far away.',stats:{type:'thorn',dmg:78,rate:.45,range:62,speed:130}});
- return{CUR,fmtP,addPetals,register,get,list,setModel,owned,lockInfo,equipped,buy,equip,unequip,stats,addKills,endMatch,fetchTop,pushScore,MAXEQ,ENEMY,WAVES,wave,save,data:()=>D,bal}})();
+ return{getMap,setMap,CUR,fmtP,addPetals,register,get,list,setModel,owned,lockInfo,equipped,buy,equip,unequip,stats,addKills,endMatch,fetchTop,pushScore,MAXEQ,ENEMY,WAVES,wave,save,data:()=>D,bal}})();
